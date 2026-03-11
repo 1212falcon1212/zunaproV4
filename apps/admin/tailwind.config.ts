@@ -1,5 +1,5 @@
 import type { Config } from 'tailwindcss';
-import sharedConfig from '@zunapro/config/tailwind';
+import sharedConfig from '../../packages/config/tailwind/base';
 
 const config: Config = {
   presets: [sharedConfig],

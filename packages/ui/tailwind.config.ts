@@ -1,5 +1,5 @@
 import type { Config } from "tailwindcss";
-import basePreset from "@zunapro/config/tailwind/base";
+import basePreset from "../config/tailwind/base";
 
 const config: Config = {
   presets: [basePreset as Config],

@@ -35,6 +35,9 @@
       "default": "./src/payment.ts"
     }
   },
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
   "devDependencies": {
     "typescript": "^5.7.0"
   }
