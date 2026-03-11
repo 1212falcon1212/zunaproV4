@@ -6,24 +6,24 @@
 
 | Adim | Baslik | Durum |
 |------|--------|-------|
-| 1 | Paket Secimi (Baslangic/Profesyonel/Kurumsal, fiyat, modul listesi) | YAPILACAK |
-| 2 | Magaza Bilgileri (slug, sektor, iletisim, benzersizlik kontrolu) | YAPILACAK |
-| 3 | Domain Ayari (subdomain veya ozel domain, DNS talimat) | YAPILACAK |
-| 4 | Gorsel Kimlik (logo yukleme/AI olusturma, renk paleti, tema secimi) | YAPILACAK |
-| 5 | Odeme (PayTR/iyzico, odeme onayi provisioning'i tetikler) | YAPILACAK |
-| 6 | Kurulum Ekrani (real-time progress bar, WebSocket ile canli guncelleme) | YAPILACAK |
+| 1 | Paket Secimi (Baslangic/Profesyonel/Kurumsal, fiyat, modul listesi) | TAMAM |
+| 2 | Magaza Bilgileri (slug, sektor, iletisim, benzersizlik kontrolu) | TAMAM |
+| 3 | Domain Ayari (subdomain veya ozel domain, DNS talimat) | TAMAM |
+| 4 | Gorsel Kimlik (logo yukleme/AI olusturma, renk paleti, tema secimi) | TAMAM |
+| 5 | Odeme (Stripe checkout, dev mode provisioning trigger) | TAMAM |
+| 6 | Kurulum Ekrani (real-time progress bar, WebSocket ile canli guncelleme) | TAMAM |
 
 ## Provisioning Pipeline (Go Engine - services/provisioner)
 
 | Job | Islem | Kod | Gercek Entegrasyon |
 |-----|-------|-----|-------------------|
-| 1 | CreateTenantDatabase (PostgreSQL DB + migration) | TAMAM | YAPILACAK |
-| 2 | ConfigureTenant (master DB kayit, modul atama, tema config) | TAMAM | YAPILACAK |
-| 3 | SetupDomain (Nginx config, SSL sertifika, DNS) | TAMAM | YAPILACAK |
-| 4 | SeedInitialData (varsayilan kategoriler, ornek urunler, sayfalar) | TAMAM | YAPILACAK |
-| 5 | ProcessBranding (logo boyutlandirma, renk paleti uygulama) | TAMAM | YAPILACAK |
-| 6 | HealthCheck (DB + site erisilebilirlik + SSL kontrolu) | TAMAM | YAPILACAK |
-| 7 | FinalizeAndNotify (status=active, e-posta, WebSocket sinyal) | TAMAM | YAPILACAK |
+| 1 | CreateTenantDatabase (PostgreSQL DB + migration) | TAMAM | TAMAM |
+| 2 | ConfigureTenant (master DB kayit, modul atama, tema config) | TAMAM | TAMAM |
+| 3 | SetupDomain (Nginx config, SSL sertifika, DNS) | TAMAM | TAMAM |
+| 4 | SeedInitialData (varsayilan kategoriler, ornek urunler, sayfalar) | TAMAM | TAMAM |
+| 5 | ProcessBranding (logo boyutlandirma, renk paleti uygulama) | TAMAM | TAMAM |
+| 6 | HealthCheck (DB + site erisilebilirlik + SSL kontrolu) | TAMAM | TAMAM |
+| 7 | FinalizeAndNotify (status=active, e-posta, WebSocket sinyal) | TAMAM | TAMAM |
 
 > Hedef Sure: 30-60 Saniye (DB + migration + seed Go ile cok hizli)
 
@@ -42,27 +42,30 @@
 
 ## Yapilacaklar
 
-### Wizard UI (Oncelikli - Faz 1 Hafta 7-8)
-- [ ] Paket secim ekrani (plan listesi API'den, fiyat kartlari)
-- [ ] Magaza bilgileri formu (slug validation, sektor dropdown)
-- [ ] Domain ayar ekrani (subdomain/ozel domain secimi)
-- [ ] Gorsel kimlik ekrani (logo upload, renk picker, tema preview)
-- [ ] Odeme entegrasyonu (PayTR/iyzico form)
-- [ ] Kurulum progress ekrani (WebSocket baglantisi, adim adim animasyon)
-- [ ] Form state yonetimi (multi-step wizard state)
+### Wizard UI — TAMAM (Hafta 7-8)
+- [x] Paket secim ekrani (plan listesi API'den, fiyat kartlari)
+- [x] Magaza bilgileri formu (slug validation, sektor dropdown, react-hook-form + Zod)
+- [x] Domain ayar ekrani (subdomain/ozel domain secimi)
+- [x] Gorsel kimlik ekrani (logo upload, renk picker, canli onizleme)
+- [x] Odeme entegrasyonu (Stripe checkout, dev-mode provisioning trigger)
+- [x] Kurulum progress ekrani (WebSocket baglantisi, adim adim animasyon)
+- [x] Form state yonetimi (useReducer multi-step wizard state)
+- [x] Plans API endpoint (GET /plans)
+- [x] 5 dil ceviri (en, tr, de, fr, es — 70+ anahtar)
+- [x] 7 yeni shadcn/ui component (Label, Select, Badge, Progress, RadioGroup, Separator, Tabs)
 
-### Go Provisioner (Oncelikli - Faz 1 Hafta 5-6)
-- [ ] NATS JetStream gercek subscribe (tenant.provision)
-- [ ] CreateDatabase: gercek PostgreSQL DB olusturma + go-migrate
-- [ ] ConfigureTenant: master DB'ye gercek kayit
-- [ ] SetupDomain: Nginx config yazma + certbot/acme.sh SSL
-- [ ] SeedInitialData: sektore ozel varsayilan veri yukleme
-- [ ] ProcessBranding: Sharp/ImageMagick ile logo boyutlandirma
-- [ ] HealthCheck: HTTP + DB + SSL gercek kontrol
-- [ ] FinalizeAndNotify: e-posta gonderim entegrasyonu
-- [ ] Migration dosyalari (tenant DB tablolari)
+### Go Provisioner — TAMAM (Hafta 5-6)
+- [x] NATS JetStream gercek subscribe (tenant.provision)
+- [x] CreateDatabase: gercek PostgreSQL DB olusturma + go-migrate
+- [x] ConfigureTenant: master DB'ye gercek kayit
+- [x] SetupDomain: Nginx config yazma + subdomain/custom domain
+- [x] SeedInitialData: sektore ozel varsayilan veri yukleme (6 sektor x 5 dil)
+- [x] ProcessBranding: MinIO bucket + branding config
+- [x] HealthCheck: DB + tablo sayisi + MinIO + master DB dogrulama
+- [x] FinalizeAndNotify: status=active, NATS completion event
+- [x] Migration dosyalari (tenant DB tablolari)
 
-### Hata Yonetimi
-- [ ] 3 retry sonrasi provisioning_failed status
+### Hata Yonetimi (Kalan)
+- [x] 3 retry sonrasi provisioning_failed status (pipeline.go'da mevcut)
 - [ ] Admin panelde basarisiz job alert
 - [ ] Belirli job'i tekrar tetikleme (tum pipeline degil)

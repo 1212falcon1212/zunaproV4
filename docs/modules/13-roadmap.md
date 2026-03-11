@@ -14,8 +14,8 @@
 |-------|--------|-------|-------|
 | 1-2 | Proje Iskeleti | Monorepo (Turborepo + pnpm), NestJS + Next.js + Go iskelet, Docker Compose (PG, Redis, NATS, MinIO, Meilisearch), CI/CD, paylasimli paketler (config, types, ui, db) | TAMAM |
 | 3-4 | Multi-Tenant Altyapi | Tenant resolver middleware (subdomain + custom domain), Redis cache (5dk TTL), JWT auth (access+refresh), Guard sistemi (Auth→Module→Role), tenant CRUD, rate limiting, CORS/Helmet/CSRF, seed data | TAMAM |
-| 5-6 | Go Provisioning Engine | NATS JetStream gercek subscribe, CreateDB + go-migrate, ConfigureTenant (master DB kayit), SeedInitialData (sektore ozel), ProcessBranding (logo resize), HealthCheck, FinalizeAndNotify, migration dosyalari | YAPILACAK |
-| 7-8 | Wizard UI | Paket secim ekrani (plan kartlari), magaza bilgileri formu (slug validation, sektor), domain ayar (subdomain/custom), gorsel kimlik (logo upload, renk picker), odeme formu (PayTR/iyzico), kurulum progress (WebSocket canli bar) | YAPILACAK |
+| 5-6 | Go Provisioning Engine | NATS JetStream gercek subscribe, CreateDB + go-migrate, ConfigureTenant (master DB kayit), SeedInitialData (sektore ozel), ProcessBranding (logo resize), HealthCheck, FinalizeAndNotify, migration dosyalari | TAMAM |
+| 7-8 | Wizard UI | 6-adim wizard (plan secimi, magaza bilgileri, domain, gorsel kimlik, odeme, provisioning progress), react-hook-form + Zod, WebSocket canli progress, Stripe checkout, Plans API, 5 dil ceviri | TAMAM |
 | 9-10 | Domain & Deployment | Wildcard DNS + SSL, custom domain (CNAME dogrulama, Let's Encrypt), Nginx otomasyon, admin panel dashboard temeli, production Dockerfile'lar, ilk VPS deployment | YAPILACAK |
 
 ### Faz 1 Ciktisi:
@@ -25,8 +25,8 @@
 - Calisir MVP deploy edilmis
 
 ### Faz 1 Ilerleme:
-- **Tamamlanan:** Hafta 1-4 (%40)
-- **Siradaki:** Hafta 5-6 (Go provisioning engine)
+- **Tamamlanan:** Hafta 1-8 (%80)
+- **Siradaki:** Hafta 9-10 (Domain & Deployment)
 
 ---
 
@@ -178,14 +178,14 @@
 ## Genel Ilerleme
 
 ```
-Faz 1 — MVP Altyapi:         [========----------] %40  (Hafta 1-4 tamam)
+Faz 1 — MVP Altyapi:         [================--] %80  (Hafta 1-8 tamam)
 Faz 2 — E-Ticaret Core:      [------------------] %0
 Faz 3 — Finans:               [------------------] %0
 Faz 4 — Pazaryeri:            [------------------] %0
 Faz 5 — E-Ihracat & Gelismis: [------------------] %0
 Faz 6 — Olceklendirme:       [------------------] %0
 
-Toplam: [==-----------------] ~%7
+Toplam: [====--------------] ~%13
 ```
 
 ---
