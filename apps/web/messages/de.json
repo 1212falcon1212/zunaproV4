@@ -1,0 +1,28 @@
+{
+  "common": {
+    "appName": "ZunaPro",
+    "getStarted": "Loslegen",
+    "learnMore": "Mehr erfahren",
+    "pricing": "Preise",
+    "login": "Anmelden",
+    "signup": "Registrieren"
+  },
+  "landing": {
+    "hero": {
+      "title": "Starten Sie Ihren Online-Shop in Minuten",
+      "subtitle": "ZunaPro macht es einfach, Ihr E-Commerce-Geschäft zu erstellen, zu verwalten und zu erweitern.",
+      "cta": "Kostenlos testen"
+    }
+  },
+  "wizard": {
+    "title": "Richten Sie Ihren Shop ein",
+    "steps": {
+      "package": "Paket wählen",
+      "storeInfo": "Shop-Informationen",
+      "domain": "Domain-Einrichtung",
+      "visual": "Visuelle Identität",
+      "payment": "Zahlung",
+      "setup": "Einrichtung"
+    }
+  }
+}

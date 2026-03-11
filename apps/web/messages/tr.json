@@ -1,0 +1,28 @@
+{
+  "common": {
+    "appName": "ZunaPro",
+    "getStarted": "Başlayın",
+    "learnMore": "Daha Fazla",
+    "pricing": "Fiyatlandırma",
+    "login": "Giriş Yap",
+    "signup": "Kayıt Ol"
+  },
+  "landing": {
+    "hero": {
+      "title": "Online Mağazanızı Dakikalar İçinde Açın",
+      "subtitle": "ZunaPro ile e-ticaret işinizi kolayca oluşturun, yönetin ve büyütün.",
+      "cta": "Ücretsiz Denemeye Başla"
+    }
+  },
+  "wizard": {
+    "title": "Mağazanızı Kurun",
+    "steps": {
+      "package": "Paket Seçimi",
+      "storeInfo": "Mağaza Bilgileri",
+      "domain": "Alan Adı Ayarları",
+      "visual": "Görsel Kimlik",
+      "payment": "Ödeme",
+      "setup": "Kurulum"
+    }
+  }
+}

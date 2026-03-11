@@ -1,0 +1,41 @@
+{
+  "name": "@zunapro/types",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "default": "./src/index.ts"
+    },
+    "./tenant": {
+      "types": "./src/tenant.ts",
+      "default": "./src/tenant.ts"
+    },
+    "./auth": {
+      "types": "./src/auth.ts",
+      "default": "./src/auth.ts"
+    },
+    "./plan": {
+      "types": "./src/plan.ts",
+      "default": "./src/plan.ts"
+    },
+    "./module": {
+      "types": "./src/module.ts",
+      "default": "./src/module.ts"
+    },
+    "./provisioning": {
+      "types": "./src/provisioning.ts",
+      "default": "./src/provisioning.ts"
+    },
+    "./payment": {
+      "types": "./src/payment.ts",
+      "default": "./src/payment.ts"
+    }
+  },
+  "devDependencies": {
+    "typescript": "^5.7.0"
+  }
+}

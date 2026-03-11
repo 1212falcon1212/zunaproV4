@@ -1,0 +1,20 @@
+{
+  "name": "zunapro",
+  "version": "0.1.0",
+  "private": true,
+  "packageManager": "pnpm@9.15.4",
+  "scripts": {
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "lint": "turbo run lint",
+    "typecheck": "turbo run typecheck",
+    "test": "turbo run test",
+    "db:generate": "pnpm --filter @zunapro/db generate",
+    "db:push": "pnpm --filter @zunapro/db push",
+    "db:migrate": "pnpm --filter @zunapro/db migrate",
+    "db:studio": "pnpm --filter @zunapro/db studio"
+  },
+  "devDependencies": {
+    "turbo": "^2.4.4"
+  }
+}

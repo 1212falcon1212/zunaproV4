@@ -1,0 +1,136 @@
+// Master database schema — platform_master
+// Stores tenants, plans, modules, users, payments
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_MASTER_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../node_modules/.prisma/master-client"
+}
+
+model Tenant {
+  id        String   @id @default(uuid())
+  slug      String   @unique
+  name      String
+  status    String   @default("pending") // TenantStatus
+  planId    String   @map("plan_id")
+  config    Json     @default("{}") // TenantConfig as JSONB
+  domain    String?  @unique
+  sslStatus String?  @map("ssl_status")
+  dnsVerified Boolean @default(false) @map("dns_verified")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  plan            Plan              @relation(fields: [planId], references: [id])
+  users           User[]
+  payments        Payment[]
+  tenantModules   TenantModule[]
+  provisioningLogs ProvisioningLog[]
+  customDomains   CustomDomain[]
+
+  @@map("tenants")
+}
+
+model Plan {
+  id          String   @id @default(uuid())
+  name        String
+  slug        String   @unique
+  price       Decimal  @db.Decimal(10, 2)
+  currency    String   @default("USD")
+  features    Json     @default("{}") // PlanFeatures as JSONB
+  moduleSlugs String[] @map("module_slugs")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  tenants  Tenant[]
+  payments Payment[]
+
+  @@map("plans")
+}
+
+model Module {
+  id          String @id @default(uuid())
+  name        String
+  slug        String @unique
+  description String @default("")
+
+  tenantModules TenantModule[]
+
+  @@map("modules")
+}
+
+model TenantModule {
+  id        String  @id @default(uuid())
+  tenantId  String  @map("tenant_id")
+  moduleSlug String @map("module_slug")
+  isActive  Boolean @default(true) @map("is_active")
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  module Module @relation(fields: [moduleSlug], references: [slug])
+
+  @@unique([tenantId, moduleSlug])
+  @@map("tenant_modules")
+}
+
+model User {
+  id           String   @id @default(uuid())
+  email        String
+  passwordHash String   @map("password_hash")
+  tenantId     String   @map("tenant_id")
+  role         String   @default("owner") // UserRole
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@unique([email, tenantId])
+  @@map("users")
+}
+
+model Payment {
+  id         String   @id @default(uuid())
+  tenantId   String   @map("tenant_id")
+  planId     String   @map("plan_id")
+  provider   String   // PaymentProvider
+  status     String   @default("pending") // PaymentStatus
+  amount     Decimal  @db.Decimal(10, 2)
+  currency   String   @default("USD")
+  externalId String?  @map("external_id")
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  plan   Plan   @relation(fields: [planId], references: [id])
+
+  @@map("payments")
+}
+
+model ProvisioningLog {
+  id          String    @id @default(uuid())
+  tenantId    String    @map("tenant_id")
+  jobName     String    @map("job_name") // ProvisioningJobName
+  status      String    @default("pending") // ProvisioningJobStatus
+  attempt     Int       @default(0)
+  error       String?
+  startedAt   DateTime? @map("started_at")
+  completedAt DateTime? @map("completed_at")
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@map("provisioning_logs")
+}
+
+model CustomDomain {
+  id          String   @id @default(uuid())
+  tenantId    String   @map("tenant_id")
+  domain      String   @unique
+  sslStatus   String?  @map("ssl_status")
+  dnsVerified Boolean  @default(false) @map("dns_verified")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@map("custom_domains")
+}
