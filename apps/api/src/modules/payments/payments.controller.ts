@@ -19,7 +19,8 @@ export class PaymentsController {
 
   @Post('stripe-webhook')
   stripeWebhook(@Req() req: RawBodyRequest<Request>, @Headers('stripe-signature') signature: string) {
-    return this.paymentsService.handleStripeWebhook(req, signature);
+    const payload = req.rawBody ?? Buffer.from('');
+    return this.paymentsService.handleStripeWebhook(payload, signature);
   }
 
   @Post('paytr-callback')

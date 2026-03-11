@@ -6,6 +6,7 @@ import { TenantsModule } from './modules/tenants/tenants.module';
 import { PaymentsModule } from './modules/payments/payments.module';
 import { ProvisioningModule } from './modules/provisioning/provisioning.module';
 import { HealthModule } from './modules/health/health.module';
+import { PlansModule } from './modules/plans/plans.module';
 import { RedisModule } from './common/redis';
 import { TenantResolverMiddleware } from './common/middleware/tenant-resolver.middleware';
 import { TenantCacheInvalidationService } from './common/middleware/tenant-invalidation.service';
@@ -25,6 +26,7 @@ import { validateConfig } from './config/config.schema';
     PaymentsModule,
     ProvisioningModule,
     HealthModule,
+    PlansModule,
   ],
   providers: [
     TenantCacheInvalidationService,

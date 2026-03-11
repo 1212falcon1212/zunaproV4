@@ -105,9 +105,9 @@ export class TenantsService {
           defaultCurrency: dto.defaultCurrency,
           timezone: dto.timezone || 'Europe/Istanbul',
           theme: {
-            primary: '#2563eb',
-            secondary: '#475569',
-            accent: '#f59e0b',
+            primary: dto.branding?.primaryColor ?? '#2563eb',
+            secondary: dto.branding?.secondaryColor ?? '#475569',
+            accent: dto.branding?.accentColor ?? '#f59e0b',
             background: '#ffffff',
           },
         },

@@ -6,7 +6,20 @@ import {
   MaxLength,
   Matches,
   ArrayMinSize,
+  ValidateNested,
 } from 'class-validator';
+import { Type } from 'class-transformer';
+
+class BrandingDto {
+  @IsString()
+  primaryColor!: string;
+
+  @IsString()
+  secondaryColor!: string;
+
+  @IsString()
+  accentColor!: string;
+}
 
 export class CreateTenantDto {
   @IsString()
@@ -52,4 +65,9 @@ export class CreateTenantDto {
   @IsString()
   @IsOptional()
   domain?: string;
+
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => BrandingDto)
+  branding?: BrandingDto;
 }
