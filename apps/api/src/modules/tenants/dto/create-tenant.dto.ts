@@ -1,4 +1,12 @@
-import { IsString, IsOptional, IsEnum, MinLength, MaxLength, Matches } from 'class-validator';
+import {
+  IsString,
+  IsOptional,
+  IsArray,
+  MinLength,
+  MaxLength,
+  Matches,
+  ArrayMinSize,
+} from 'class-validator';
 
 export class CreateTenantDto {
   @IsString()
@@ -9,15 +17,37 @@ export class CreateTenantDto {
   @IsString()
   @MinLength(3)
   @MaxLength(50)
-  @Matches(/^[a-z0-9-]+$/, { message: 'Slug must contain only lowercase letters, numbers, and hyphens' })
+  @Matches(/^[a-z0-9-]+$/, {
+    message:
+      'Slug must contain only lowercase letters, numbers, and hyphens',
+  })
   slug!: string;
 
   @IsString()
   planId!: string;
 
   @IsString()
-  @IsEnum(['mobilya', 'teknoloji', 'giyim', 'kozmetik', 'gida', 'ev-yasam'])
   sector!: string;
+
+  @IsArray()
+  @ArrayMinSize(1)
+  @IsString({ each: true })
+  locales!: string[];
+
+  @IsString()
+  defaultLocale!: string;
+
+  @IsArray()
+  @ArrayMinSize(1)
+  @IsString({ each: true })
+  currencies!: string[];
+
+  @IsString()
+  defaultCurrency!: string;
+
+  @IsString()
+  @IsOptional()
+  timezone?: string;
 
   @IsString()
   @IsOptional()

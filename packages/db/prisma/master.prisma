@@ -39,7 +39,7 @@ model Plan {
   name        String
   slug        String   @unique
   price       Decimal  @db.Decimal(10, 2)
-  currency    String   @default("USD")
+  currency    String   @default("TRY")
   features    Json     @default("{}") // PlanFeatures as JSONB
   moduleSlugs String[] @map("module_slugs")
   createdAt   DateTime @default(now()) @map("created_at")

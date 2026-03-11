@@ -40,6 +40,14 @@ func (m *MinioClient) CreateBucket(ctx context.Context, name string) error {
 	return nil
 }
 
+func (m *MinioClient) BucketExists(ctx context.Context, name string) (bool, error) {
+	exists, err := m.client.BucketExists(ctx, name)
+	if err != nil {
+		return false, fmt.Errorf("checking bucket %s: %w", name, err)
+	}
+	return exists, nil
+}
+
 func (m *MinioClient) Upload(ctx context.Context, bucket, object string, reader io.Reader, size int64, contentType string) error {
 	_, err := m.client.PutObject(ctx, bucket, object, reader, size, minio.PutObjectOptions{
 		ContentType: contentType,

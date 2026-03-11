@@ -24,5 +24,22 @@
       "payment": "Pago",
       "setup": "Instalación"
     }
+  },
+  "storefront": {
+    "welcome": "Bienvenido a nuestra tienda",
+    "heroTitle": "Descubre nuestros productos",
+    "heroSubtitle": "Explora nuestra ultima coleccion y encuentra lo que necesitas.",
+    "productDetail": "Pagina de detalle del producto",
+    "categoryListing": "Listado de categorias",
+    "staticPage": "Pagina de contenido",
+    "addToCart": "Anadir al carrito",
+    "viewDetails": "Ver detalles",
+    "categories": "Categorias",
+    "search": "Buscar productos...",
+    "cart": "Carrito",
+    "checkout": "Pagar",
+    "noProducts": "No se encontraron productos",
+    "currency": "Moneda",
+    "language": "Idioma"
   }
 }

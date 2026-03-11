@@ -18,8 +18,10 @@ export interface ThemeConfig {
 export interface TenantConfig {
   sector: string;
   theme: ThemeConfig;
-  locale: string;
-  currency: string;
+  locales: string[];
+  defaultLocale: string;
+  currencies: string[];
+  defaultCurrency: string;
   timezone: string;
 }
 

@@ -24,5 +24,22 @@
       "payment": "Ödeme",
       "setup": "Kurulum"
     }
+  },
+  "storefront": {
+    "welcome": "Magazamiza hosgeldiniz",
+    "heroTitle": "Urunlerimizi Kesfedin",
+    "heroSubtitle": "En yeni koleksiyonumuza goz atin ve ihtiyaciniz olani bulun.",
+    "productDetail": "Urun detay sayfasi",
+    "categoryListing": "Kategori listeleme sayfasi",
+    "staticPage": "Icerik sayfasi",
+    "addToCart": "Sepete Ekle",
+    "viewDetails": "Detaylari Gor",
+    "categories": "Kategoriler",
+    "search": "Urun ara...",
+    "cart": "Sepet",
+    "checkout": "Odeme",
+    "noProducts": "Urun bulunamadi",
+    "currency": "Para Birimi",
+    "language": "Dil"
   }
 }

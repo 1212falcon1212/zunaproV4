@@ -1,5 +1,6 @@
 // Tenant database schema — tenant_{slug}
 // Each tenant gets their own database with this schema
+// Multi-language fields use Json (JSONB) with structure: {"en": "...", "tr": "...", "de": "..."}
 
 datasource db {
   provider = "postgresql"
@@ -13,15 +14,17 @@ generator client {
 
 model Product {
   id             String   @id @default(uuid())
-  name           String
+  name           Json     // {"en": "Blue T-Shirt", "tr": "Mavi Tisort"}
   slug           String   @unique
-  description    String?  @db.Text
+  description    Json?    // {"en": "...", "tr": "..."}
   price          Decimal  @db.Decimal(10, 2)
   compareAtPrice Decimal? @map("compare_at_price") @db.Decimal(10, 2)
   sku            String?
   stock          Int      @default(0)
   images         Json     @default("[]") // string[] as JSONB
+  variants       Json     @default("[]") // ProductVariant[] as JSONB
   categoryId     String?  @map("category_id")
+  seoMeta        Json?    @map("seo_meta") // {"en": {title, description}, "tr": {title, description}}
   status         String   @default("draft") // 'draft' | 'active' | 'archived'
   createdAt      DateTime @default(now()) @map("created_at")
   updatedAt      DateTime @updatedAt @map("updated_at")
@@ -33,10 +36,12 @@ model Product {
 
 model Category {
   id        String  @id @default(uuid())
-  name      String
+  name      Json    // {"en": "Furniture", "tr": "Mobilya"}
   slug      String  @unique
+  image     String?
   parentId  String? @map("parent_id")
   sortOrder Int     @default(0) @map("sort_order")
+  seoMeta   Json?   @map("seo_meta") // {"en": {title, description}, "tr": {title, description}}
 
   parent   Category?  @relation("CategoryTree", fields: [parentId], references: [id])
   children Category[] @relation("CategoryTree")
@@ -51,9 +56,12 @@ model Order {
   customerId      String?  @map("customer_id")
   status          String   @default("pending") // 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled'
   totalAmount     Decimal  @db.Decimal(10, 2) @map("total_amount")
-  currency        String   @default("USD")
+  currency        String   @default("TRY")
+  exchangeRate    Decimal? @db.Decimal(10, 6) @map("exchange_rate") // rate at time of order
   items           Json     @default("[]") // OrderItem[] as JSONB
   shippingAddress Json?    @map("shipping_address") // Address as JSONB
+  billingAddress  Json?    @map("billing_address") // Address as JSONB
+  locale          String   @default("tr") // locale used when order was placed
   createdAt       DateTime @default(now()) @map("created_at")
   updatedAt       DateTime @updatedAt @map("updated_at")
 
@@ -68,6 +76,7 @@ model Customer {
   firstName String   @map("first_name")
   lastName  String   @map("last_name")
   phone     String?
+  locale    String   @default("tr") // customer preferred locale
   addresses Json     @default("[]") // Address[] as JSONB
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
@@ -79,10 +88,12 @@ model Customer {
 
 model Page {
   id          String   @id @default(uuid())
-  title       String
+  title       Json     // {"en": "About Us", "tr": "Hakkimizda"}
   slug        String   @unique
-  content     String?  @db.Text
+  content     Json?    // {"en": "<p>...</p>", "tr": "<p>...</p>"}
+  template    String   @default("default") // 'default' | 'contact' | 'faq'
   isPublished Boolean  @default(false) @map("is_published")
+  seoMeta     Json?    @map("seo_meta") // {"en": {title, description}, "tr": {title, description}}
   sortOrder   Int      @default(0) @map("sort_order")
   createdAt   DateTime @default(now()) @map("created_at")
   updatedAt   DateTime @updatedAt @map("updated_at")
@@ -105,7 +116,7 @@ model Media {
   url       String
   mimeType  String   @map("mime_type")
   size      Int
-  alt       String?
+  alt       Json?    // {"en": "Product image", "tr": "Urun gorseli"}
   createdAt DateTime @default(now()) @map("created_at")
 
   @@map("media")

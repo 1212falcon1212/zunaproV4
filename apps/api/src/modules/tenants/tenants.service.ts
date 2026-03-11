@@ -97,7 +97,20 @@ export class TenantsService {
         name: dto.name,
         slug: dto.slug,
         planId: dto.planId,
-        config: { sector: dto.sector },
+        config: {
+          sector: dto.sector,
+          locales: dto.locales,
+          defaultLocale: dto.defaultLocale,
+          currencies: dto.currencies,
+          defaultCurrency: dto.defaultCurrency,
+          timezone: dto.timezone || 'Europe/Istanbul',
+          theme: {
+            primary: '#2563eb',
+            secondary: '#475569',
+            accent: '#f59e0b',
+            background: '#ffffff',
+          },
+        },
         domain: dto.domain,
         status: 'pending',
         tenantModules: {

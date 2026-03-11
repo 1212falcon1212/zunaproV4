@@ -24,5 +24,22 @@
       "payment": "Zahlung",
       "setup": "Einrichtung"
     }
+  },
+  "storefront": {
+    "welcome": "Willkommen in unserem Shop",
+    "heroTitle": "Entdecken Sie unsere Produkte",
+    "heroSubtitle": "Durchsuchen Sie unsere neueste Kollektion und finden Sie, was Sie brauchen.",
+    "productDetail": "Produktdetailseite",
+    "categoryListing": "Kategorieliste",
+    "staticPage": "Inhaltsseite",
+    "addToCart": "In den Warenkorb",
+    "viewDetails": "Details ansehen",
+    "categories": "Kategorien",
+    "search": "Produkte suchen...",
+    "cart": "Warenkorb",
+    "checkout": "Zur Kasse",
+    "noProducts": "Keine Produkte gefunden",
+    "currency": "Wahrung",
+    "language": "Sprache"
   }
 }

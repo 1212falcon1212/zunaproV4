@@ -9,6 +9,13 @@ import { Request, Response, NextFunction } from 'express';
 import { RedisService } from '../redis/redis.service';
 import { masterPrisma } from '@zunapro/db';
 
+export interface TenantLocaleConfig {
+  locales: string[];
+  defaultLocale: string;
+  currencies: string[];
+  defaultCurrency: string;
+}
+
 export interface TenantContext {
   id: string;
   slug: string;
@@ -16,6 +23,7 @@ export interface TenantContext {
   config: Record<string, unknown>;
   planId: string;
   status: string;
+  localeConfig: TenantLocaleConfig;
 }
 
 declare global {
@@ -23,11 +31,19 @@ declare global {
   namespace Express {
     interface Request {
       tenant?: TenantContext;
+      locale?: string;
     }
   }
 }
 
 const TENANT_CACHE_TTL = 300; // 5 minutes
+
+const DEFAULT_LOCALE_CONFIG: TenantLocaleConfig = {
+  locales: ['tr', 'en'],
+  defaultLocale: 'tr',
+  currencies: ['TRY'],
+  defaultCurrency: 'TRY',
+};
 
 @Injectable()
 export class TenantResolverMiddleware implements NestMiddleware {
@@ -81,8 +97,33 @@ export class TenantResolverMiddleware implements NestMiddleware {
       );
     }
 
+    // Resolve request locale from Accept-Language header
+    req.locale = this.resolveLocale(req, tenant.localeConfig);
     req.tenant = tenant;
     next();
+  }
+
+  private resolveLocale(
+    req: Request,
+    localeConfig: TenantLocaleConfig,
+  ): string {
+    // 1. Check explicit query param: ?locale=en
+    const queryLocale = req.query.locale as string | undefined;
+    if (queryLocale && localeConfig.locales.includes(queryLocale)) {
+      return queryLocale;
+    }
+
+    // 2. Check Accept-Language header
+    const acceptLang = req.headers['accept-language'];
+    if (acceptLang) {
+      const preferred = acceptLang.split(',')[0]?.split('-')[0]?.trim();
+      if (preferred && localeConfig.locales.includes(preferred)) {
+        return preferred;
+      }
+    }
+
+    // 3. Fall back to tenant default
+    return localeConfig.defaultLocale;
   }
 
   private extractSubdomain(host: string): string | null {
@@ -172,15 +213,36 @@ export class TenantResolverMiddleware implements NestMiddleware {
         return null;
       }
 
+      const config = tenant.config as Record<string, unknown>;
       const dbUrlTemplate =
         process.env.DATABASE_TENANT_URL_TEMPLATE || '';
+
+      // Extract locale config from tenant config
+      const localeConfig: TenantLocaleConfig = {
+        locales: Array.isArray(config.locales)
+          ? (config.locales as string[])
+          : DEFAULT_LOCALE_CONFIG.locales,
+        defaultLocale:
+          typeof config.defaultLocale === 'string'
+            ? config.defaultLocale
+            : DEFAULT_LOCALE_CONFIG.defaultLocale,
+        currencies: Array.isArray(config.currencies)
+          ? (config.currencies as string[])
+          : DEFAULT_LOCALE_CONFIG.currencies,
+        defaultCurrency:
+          typeof config.defaultCurrency === 'string'
+            ? config.defaultCurrency
+            : DEFAULT_LOCALE_CONFIG.defaultCurrency,
+      };
+
       const tenantContext: TenantContext = {
         id: tenant.id,
         slug: tenant.slug,
         dbUrl: dbUrlTemplate.replace('{slug}', tenant.slug),
-        config: tenant.config as Record<string, unknown>,
+        config,
         planId: tenant.planId,
         status: tenant.status,
+        localeConfig,
       };
 
       // Cache in Redis

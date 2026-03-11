@@ -46,10 +46,10 @@ func NewPipeline(db *database.PostgresClient, nc *nats.Conn, minio *storage.Mini
 	p.jobs = []Job{
 		NewCreateDatabase(db, cfg),
 		NewConfigureTenant(db),
-		NewSetupDomain(),
+		NewSetupDomain(db),
 		NewSeedData(cfg),
-		NewProcessBranding(minio),
-		NewHealthCheck(db, cfg),
+		NewProcessBranding(minio, cfg),
+		NewHealthCheck(db, minio, cfg),
 		NewFinalize(db, nc),
 	}
 

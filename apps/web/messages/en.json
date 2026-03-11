@@ -24,5 +24,22 @@
       "payment": "Payment",
       "setup": "Setup"
     }
+  },
+  "storefront": {
+    "welcome": "Welcome to our store",
+    "heroTitle": "Discover Our Products",
+    "heroSubtitle": "Browse our latest collection and find what you need.",
+    "productDetail": "Product detail page",
+    "categoryListing": "Category listing page",
+    "staticPage": "Content page",
+    "addToCart": "Add to Cart",
+    "viewDetails": "View Details",
+    "categories": "Categories",
+    "search": "Search products...",
+    "cart": "Cart",
+    "checkout": "Checkout",
+    "noProducts": "No products found",
+    "currency": "Currency",
+    "language": "Language"
   }
 }
