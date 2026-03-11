@@ -6,7 +6,10 @@
     "paths": {
       "@/*": ["./src/*"]
     },
-    "rootDir": "./src"
+    "rootDir": "./src",
+    "composite": false,
+    "declaration": false,
+    "declarationMap": false
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist", "test"]

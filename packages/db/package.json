@@ -23,6 +23,7 @@
     "db:generate": "prisma generate --schema=prisma/master.prisma && prisma generate --schema=prisma/tenant.prisma",
     "db:push": "prisma db push --schema=prisma/master.prisma",
     "db:migrate": "prisma migrate deploy --schema=prisma/master.prisma",
+    "db:seed": "npx tsx prisma/seed.ts",
     "db:studio": "prisma studio --schema=prisma/master.prisma",
     "typecheck": "tsc --noEmit",
     "generate": "prisma generate --schema=prisma/master.prisma && prisma generate --schema=prisma/tenant.prisma"
@@ -34,6 +35,7 @@
     "@zunapro/config": "workspace:*",
     "@types/node": "^20.0.0",
     "prisma": "^6.2.0",
+    "tsx": "^4.0.0",
     "typescript": "^5.7.0"
   }
 }

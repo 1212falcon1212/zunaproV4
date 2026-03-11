@@ -1,24 +1,27 @@
-import { Injectable, CanActivate, ExecutionContext, ForbiddenException } from '@nestjs/common';
+import { Injectable, CanActivate, ExecutionContext, ForbiddenException, SetMetadata } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 
 export const ROLES_KEY = 'roles';
-export const RequireRoles = (...roles: string[]) =>
-  (target: object, key?: string, descriptor?: PropertyDescriptor): PropertyDescriptor | void => {
-    Reflect.defineMetadata(ROLES_KEY, roles, descriptor?.value || target);
-    return descriptor || undefined;
-  };
+export const RequireRoles = (...roles: string[]) => SetMetadata(ROLES_KEY, roles);
 
 @Injectable()
 export class RoleGuard implements CanActivate {
   constructor(private readonly reflector: Reflector) {}
 
   canActivate(context: ExecutionContext): boolean {
-    const requiredRoles = this.reflector.get<string[]>(ROLES_KEY, context.getHandler());
+    const requiredRoles = this.reflector.getAllAndOverride<string[]>(ROLES_KEY, [
+      context.getHandler(),
+      context.getClass(),
+    ]);
+
     if (!requiredRoles || requiredRoles.length === 0) return true;
 
     const request = context.switchToHttp().getRequest();
-    const user = request.user as { role?: string } | undefined;
-    if (!user?.role) return false;
+    const user = request.user;
+
+    if (!user?.role) {
+      throw new ForbiddenException('No role information available');
+    }
 
     if (!requiredRoles.includes(user.role)) {
       throw new ForbiddenException('Insufficient role permissions');
