@@ -64,9 +64,9 @@ export function StepPlan({ selectedPlanId, onSelect }: StepPlanProps) {
                 <ul className="space-y-2 text-sm">
                   <li>{t("features.products", { count: features.maxProducts as number })}</li>
                   <li>{t("features.storage", { size: features.maxStorage as number })}</li>
-                  {features.customDomain && <li>{t("features.customDomain")}</li>}
-                  {features.apiAccess && <li>{t("features.apiAccess")}</li>}
-                  {features.prioritySupport && <li>{t("features.prioritySupport")}</li>}
+                  {Boolean(features.customDomain) && <li>{t("features.customDomain")}</li>}
+                  {Boolean(features.apiAccess) && <li>{t("features.apiAccess")}</li>}
+                  {Boolean(features.prioritySupport) && <li>{t("features.prioritySupport")}</li>}
                 </ul>
               </CardContent>
               <CardFooter>
