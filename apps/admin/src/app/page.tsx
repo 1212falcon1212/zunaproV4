@@ -1,26 +1,46 @@
-export default function DashboardPage() {
+import { Card, CardContent, CardHeader, CardTitle } from "@zunapro/ui";
+import { fetchDashboardStats } from "@/lib/api";
+
+export default async function DashboardPage() {
+  let stats = {
+    totalTenants: 0,
+    activeTenants: 0,
+    provisioningTenants: 0,
+    failedTenants: 0,
+    totalPlans: 0,
+  };
+
+  try {
+    stats = await fetchDashboardStats();
+  } catch {
+    // Dashboard should still render even if API is down
+  }
+
+  const cards = [
+    { title: "Total Tenants", value: stats.totalTenants },
+    { title: "Active", value: stats.activeTenants },
+    { title: "Provisioning", value: stats.provisioningTenants },
+    { title: "Failed", value: stats.failedTenants },
+    { title: "Plans", value: stats.totalPlans },
+  ];
+
   return (
-    <div className="min-h-screen bg-gray-50">
-      <header className="border-b bg-white px-6 py-4">
-        <h1 className="text-xl font-bold">ZunaPro Admin</h1>
-      </header>
-      <main className="p-6">
-        <h2 className="text-2xl font-semibold mb-4">Dashboard</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="rounded-lg border bg-white p-6">
-            <h3 className="text-sm font-medium text-gray-500">Total Tenants</h3>
-            <p className="mt-2 text-3xl font-bold">0</p>
-          </div>
-          <div className="rounded-lg border bg-white p-6">
-            <h3 className="text-sm font-medium text-gray-500">Active Tenants</h3>
-            <p className="mt-2 text-3xl font-bold">0</p>
-          </div>
-          <div className="rounded-lg border bg-white p-6">
-            <h3 className="text-sm font-medium text-gray-500">Revenue (MRR)</h3>
-            <p className="mt-2 text-3xl font-bold">$0</p>
-          </div>
-        </div>
-      </main>
+    <div>
+      <h1 className="mb-6 text-3xl font-bold">Dashboard</h1>
+      <div className="grid gap-4 md:grid-cols-3 lg:grid-cols-5">
+        {cards.map((card) => (
+          <Card key={card.title}>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-medium text-muted-foreground">
+                {card.title}
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-3xl font-bold">{card.value}</div>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
     </div>
   );
 }
