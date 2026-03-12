@@ -33,13 +33,26 @@
 ## Faz 2 — E-Ticaret Core (Hafta 11-20)
 
 > Modul 1: E-Ticaret — Urun, siparis, odeme, kargo, musteri, tema
+> 3 Alt Proje olarak yurutuluyor:
+
+### Alt Proje 1: Urun & Kategori Yonetimi (Hafta 11-13)
 
 | Hafta | Kapsam | Detay | Durum |
 |-------|--------|-------|-------|
 | 11-12 | Urun Yonetimi | Product CRUD (varyant, stok, gorsel, JSONB variants, SKU), Category CRUD (parent/child, sort_order, seo_meta), MinIO gorsel yukleme, bulk import/export (CSV/Excel) | YAPILACAK |
 | 13 | Arama Sistemi | Meilisearch entegrasyonu, tenant izolasyonlu index, typo-tolerant arama, faceted search (fiyat araligi, kategori, marka), otomatik index sync | YAPILACAK |
+
+### Alt Proje 2: Siparis & Odeme Akisi (Hafta 14-17)
+
+| Hafta | Kapsam | Detay | Durum |
+|-------|--------|-------|-------|
 | 14-15 | Siparis & Odeme | Sepet (cart) sistemi, checkout akisi (adres, kargo secimi, odeme), siparis status akisi (pending→confirmed→shipped→delivered), PayTR entegrasyonu, iyzico entegrasyonu, Stripe entegrasyonu, fatura olusturma | YAPILACAK |
 | 16-17 | Kargo & Musteri | Yurtici Kargo API, Aras Kargo API, MNG Kargo API, otomatik kargo fiyat hesaplama, kargo takip, musteri CRUD, adres yonetimi, siparis gecmisi, musteri segmentasyonu | YAPILACAK |
+
+### Alt Proje 3: Storefront & Tema Sistemi (Hafta 18-20)
+
+| Hafta | Kapsam | Detay | Durum |
+|-------|--------|-------|-------|
 | 18 | Storefront UI | Tenant storefront sayfalari (ana sayfa, kategori, urun detay, sepet, checkout), responsive tasarim, SEO meta tags, Open Graph | YAPILACAK |
 | 19 | Tema Altyapisi | packages/themes/ base class, CSS custom properties (tenant config'den), Google Fonts, tema preview, renk/font/layout ozellestirme | YAPILACAK |
 | 20 | Ilk 2 Tema | Mobilya temasi (oda navigasyonu, 3D goruntuleme, malzeme filtresi), Teknoloji temasi (ozellik tablosu, marka filtresi, benchmark) | YAPILACAK |
