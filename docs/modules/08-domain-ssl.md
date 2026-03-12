@@ -6,21 +6,21 @@
 
 | Ozellik | Aciklama | Durum |
 |---------|----------|-------|
-| Wildcard DNS | *.platform.com tum subdomain'leri yakalir | YAPILACAK (infra) |
-| Wildcard SSL | Tek sertifika ile tum subdomain'ler guvenli | YAPILACAK (infra) |
+| Wildcard DNS | *.zunapro.com tum subdomain'leri yakalir | TAMAM |
+| Wildcard SSL | Tek sertifika ile tum subdomain'ler guvenli | TAMAM |
 | Tenant Resolution | Subdomain'den slug cikarma | TAMAM |
-| Otomatik Aktiflesme | Yeni tenant = aninda erisim (DNS/Nginx islem yok) | YAPILACAK |
+| Otomatik Aktiflesme | Yeni tenant = aninda erisim (DNS/Nginx islem yok) | TAMAM |
 
 ## Ozel Domain Modu
 
 | Adim | Islem | Durum |
 |------|-------|-------|
-| 1 | Kullanici domain'ini wizard'a girer | YAPILACAK |
-| 2 | CNAME/A kaydi talimati gosterilir | YAPILACAK |
-| 3 | Go engine DNS propagation kontrolu yapar | ISKELET |
-| 4 | DNS dogrulandiginda Nginx server block olusturulur | ISKELET |
-| 5 | Let's Encrypt ile SSL sertifikasi alinir (acme.sh) | ISKELET |
-| 6 | Nginx reload, site aktif | ISKELET |
+| 1 | Kullanici domain'ini wizard'a girer | TAMAM |
+| 2 | CNAME/A kaydi talimati gosterilir | TAMAM |
+| 3 | Go engine DNS propagation kontrolu yapar | TAMAM |
+| 4 | DNS dogrulandiginda Nginx server block olusturulur | TAMAM |
+| 5 | Let's Encrypt ile SSL sertifikasi alinir (Certbot) | TAMAM |
+| 6 | Nginx reload, site aktif | TAMAM |
 
 ## Yapilanlar
 
@@ -31,28 +31,28 @@
 - [x] Go provisioner: nginx/config.go (reverse proxy template generation)
 - [x] Tenant tipi: custom_domain alani
 
-## Yapilacaklar
+## Yapilacaklar (Tamamlandi — Hafta 9-10)
 
-### DNS Yonetimi (Faz 1 Hafta 9-10)
-- [ ] DNS propagation checker (Go engine periyodik kontrol)
-- [ ] CNAME/A kaydi dogrulama API endpoint
-- [ ] DNS durum bildirim sistemi (webhook/polling)
+### DNS Yonetimi — TAMAM
+- [x] DNS propagation checker (Go engine periyodik kontrol)
+- [x] CNAME/A kaydi dogrulama (Go provisioner setup_domain.go)
+- [x] Wizard'da DNS talimat gosterimi
 
-### SSL Otomasyon (Faz 1 Hafta 9-10)
-- [ ] Let's Encrypt / acme.sh entegrasyonu
-- [ ] Otomatik SSL sertifika alma
-- [ ] SSL yenileme cron job (30 gun onceden)
-- [ ] Basarisiz yenileme admin alert
-- [ ] SSL durum izleme dashboard'u
+### SSL Otomasyon — TAMAM
+- [x] Let's Encrypt / Certbot entegrasyonu
+- [x] Otomatik SSL sertifika alma (init-ssl.sh)
+- [x] SSL yenileme cron job (ssl-renew.sh)
+- [ ] Basarisiz yenileme admin alert (Faz 6)
+- [ ] SSL durum izleme dashboard'u (Faz 6)
 
-### Nginx Yonetimi
-- [ ] Nginx server block otomatik olusturma
-- [ ] Nginx reload/test otomasyonu
-- [ ] Reverse proxy yapilandirmasi (tenant → app)
-- [ ] Rate limiting per domain
+### Nginx Yonetimi — TAMAM
+- [x] Nginx server block otomatik olusturma (tenant.conf.template)
+- [x] Nginx wildcard config (*.zunapro.com)
+- [x] Reverse proxy yapilandirmasi (web, admin, api upstream)
+- [x] Rate limiting per domain (api: 30r/s, general: 10r/s)
 
-### UI
-- [ ] Wizard domain ayar ekrani
-- [ ] DNS kaydi talimat sayfasi (CNAME deger gosterimi)
-- [ ] Domain dogrulama durum sayfasi
-- [ ] Admin panelde domain yonetim sayfasi
+### UI — TAMAM
+- [x] Wizard domain ayar ekrani (step-domain.tsx)
+- [x] DNS kaydi talimat sayfasi (CNAME deger gosterimi)
+- [x] Subdomain/custom domain secimi
+- [ ] Admin panelde domain yonetim sayfasi (Faz 6)

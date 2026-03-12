@@ -16,7 +16,7 @@
 | 3-4 | Multi-Tenant Altyapi | Tenant resolver middleware (subdomain + custom domain), Redis cache (5dk TTL), JWT auth (access+refresh), Guard sistemi (Auth→Module→Role), tenant CRUD, rate limiting, CORS/Helmet/CSRF, seed data | TAMAM |
 | 5-6 | Go Provisioning Engine | NATS JetStream gercek subscribe, CreateDB + go-migrate, ConfigureTenant (master DB kayit), SeedInitialData (sektore ozel), ProcessBranding (logo resize), HealthCheck, FinalizeAndNotify, migration dosyalari | TAMAM |
 | 7-8 | Wizard UI | 6-adim wizard (plan secimi, magaza bilgileri, domain, gorsel kimlik, odeme, provisioning progress), react-hook-form + Zod, WebSocket canli progress, Stripe checkout, Plans API, 5 dil ceviri | TAMAM |
-| 9-10 | Domain & Deployment | Wildcard DNS + SSL, custom domain (CNAME dogrulama, Let's Encrypt), Nginx otomasyon, admin panel dashboard temeli, production Dockerfile'lar, ilk VPS deployment | YAPILACAK |
+| 9-10 | Domain & Deployment | Wildcard DNS + SSL, custom domain (CNAME dogrulama, Let's Encrypt), Nginx otomasyon, admin panel dashboard temeli, production Dockerfile'lar, ilk VPS deployment | TAMAM |
 
 ### Faz 1 Ciktisi:
 - Kullanici wizard ile site kurabiliyor
@@ -25,8 +25,8 @@
 - Calisir MVP deploy edilmis
 
 ### Faz 1 Ilerleme:
-- **Tamamlanan:** Hafta 1-8 (%80)
-- **Siradaki:** Hafta 9-10 (Domain & Deployment)
+- **Tamamlanan:** Hafta 1-10 (%100)
+- **Siradaki:** Faz 2 — E-Ticaret Core (Hafta 11-20)
 
 ---
 
@@ -178,14 +178,14 @@
 ## Genel Ilerleme
 
 ```
-Faz 1 — MVP Altyapi:         [================--] %80  (Hafta 1-8 tamam)
+Faz 1 — MVP Altyapi:         [==================] %100 (Hafta 1-10 tamam)
 Faz 2 — E-Ticaret Core:      [------------------] %0
 Faz 3 — Finans:               [------------------] %0
 Faz 4 — Pazaryeri:            [------------------] %0
 Faz 5 — E-Ihracat & Gelismis: [------------------] %0
 Faz 6 — Olceklendirme:       [------------------] %0
 
-Toplam: [====--------------] ~%13
+Toplam: [====--------------] ~%17
 ```
 
 ---
