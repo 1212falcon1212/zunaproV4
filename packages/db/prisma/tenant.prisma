@@ -54,13 +54,23 @@ model Order {
   id              String   @id @default(uuid())
   orderNumber     String   @unique @map("order_number")
   customerId      String?  @map("customer_id")
-  status          String   @default("pending") // 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled'
+  status          String   @default("pending") // 'pending' | 'confirmed' | 'processing' | 'shipped' | 'delivered' | 'cancelled' | 'refunded'
   totalAmount     Decimal  @db.Decimal(10, 2) @map("total_amount")
+  subtotalAmount  Decimal  @default(0) @db.Decimal(10, 2) @map("subtotal_amount")
+  taxAmount       Decimal  @default(0) @db.Decimal(10, 2) @map("tax_amount")
+  discountAmount  Decimal  @default(0) @db.Decimal(10, 2) @map("discount_amount")
+  shippingCost    Decimal  @default(0) @db.Decimal(10, 2) @map("shipping_cost")
   currency        String   @default("TRY")
   exchangeRate    Decimal? @db.Decimal(10, 6) @map("exchange_rate") // rate at time of order
   items           Json     @default("[]") // OrderItem[] as JSONB
   shippingAddress Json?    @map("shipping_address") // Address as JSONB
   billingAddress  Json?    @map("billing_address") // Address as JSONB
+  paymentMethod   String?  @map("payment_method") // stripe, iyzico, bank_transfer
+  paymentStatus   String   @default("pending") @map("payment_status") // pending, paid, failed, refunded
+  paymentRef      String?  @map("payment_ref") // gateway reference ID
+  trackingNumber  String?  @map("tracking_number")
+  shippingMethod  String?  @map("shipping_method") // yurtici, aras, mng
+  notes           String?
   locale          String   @default("tr") // locale used when order was placed
   createdAt       DateTime @default(now()) @map("created_at")
   updatedAt       DateTime @updatedAt @map("updated_at")
@@ -71,15 +81,18 @@ model Order {
 }
 
 model Customer {
-  id        String   @id @default(uuid())
-  email     String   @unique
-  firstName String   @map("first_name")
-  lastName  String   @map("last_name")
-  phone     String?
-  locale    String   @default("tr") // customer preferred locale
-  addresses Json     @default("[]") // Address[] as JSONB
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+  id           String    @id @default(uuid())
+  email        String    @unique
+  firstName    String    @map("first_name")
+  lastName     String    @map("last_name")
+  phone        String?
+  passwordHash String?   @map("password_hash")
+  isGuest      Boolean   @default(false) @map("is_guest")
+  lastLoginAt  DateTime? @map("last_login_at")
+  locale       String    @default("tr") // customer preferred locale
+  addresses    Json      @default("[]") // Address[] as JSONB
+  createdAt    DateTime  @default(now()) @map("created_at")
+  updatedAt    DateTime  @updatedAt @map("updated_at")
 
   orders Order[]
 
@@ -90,7 +103,7 @@ model Page {
   id          String   @id @default(uuid())
   title       Json     // {"en": "About Us", "tr": "Hakkimizda"}
   slug        String   @unique
-  content     Json?    // {"en": "<p>...</p>", "tr": "<p>...</p>"}
+  content     Json?    // PageContent format: { version: 1, blocks: Block[] }
   template    String   @default("default") // 'default' | 'contact' | 'faq'
   isPublished Boolean  @default(false) @map("is_published")
   seoMeta     Json?    @map("seo_meta") // {"en": {title, description}, "tr": {title, description}}
@@ -108,6 +121,15 @@ model Setting {
   group String @default("general")
 
   @@map("settings")
+}
+
+model GlobalSection {
+  id        String   @id @default(uuid())
+  type      String   @unique // 'header' | 'footer'
+  content   Json     // Block tree (PageContent format)
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("global_sections")
 }
 
 model Media {
