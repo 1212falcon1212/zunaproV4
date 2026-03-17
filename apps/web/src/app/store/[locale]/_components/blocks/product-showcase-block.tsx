@@ -1,28 +1,32 @@
+'use client';
+
+import { useEffect, useState } from 'react';
 import type { Block } from '@zunapro/types';
-import { serverFetch } from '@/lib/server-store-api';
 import { ProductCard } from '../product-card';
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
 
 interface ProductShowcaseProps {
   block: Block;
   locale: string;
 }
 
-interface ProductsResponse {
-  data: Array<{
-    id: string;
-    name: Record<string, string>;
-    slug: string;
-    price: string | number;
-    compareAtPrice?: string | number | null;
-    images: string[];
-    status: string;
-  }>;
-}
+type Product = {
+  id: string;
+  name: Record<string, string>;
+  slug: string;
+  price: string | number;
+  compareAtPrice?: string | number | null;
+  images: string[];
+  status: string;
+};
 
-export async function ProductShowcaseBlock({
+export function ProductShowcaseBlock({
   block,
   locale,
 }: ProductShowcaseProps) {
+  const [products, setProducts] = useState<Product[]>([]);
+
   const props = block.props as {
     title?: Record<string, string>;
     limit?: number;
@@ -35,20 +39,17 @@ export async function ProductShowcaseBlock({
   const limit = props.limit || 4;
   const columns = props.columns || 4;
 
-  let queryParams = `?limit=${limit}&status=active`;
-  if (props.categoryId) {
-    queryParams += `&categoryId=${props.categoryId}`;
-  }
+  useEffect(() => {
+    let queryParams = `?limit=${limit}&status=active`;
+    if (props.categoryId) {
+      queryParams += `&categoryId=${props.categoryId}`;
+    }
 
-  let products: ProductsResponse['data'] = [];
-  try {
-    const res = await serverFetch<ProductsResponse>(
-      `/storefront/products${queryParams}`,
-    );
-    products = res.data;
-  } catch {
-    return null;
-  }
+    fetch(`${API_URL}/storefront/products${queryParams}`)
+      .then((r) => (r.ok ? r.json() : { data: [] }))
+      .then((res: { data: Product[] }) => setProducts(res.data || []))
+      .catch(() => setProducts([]));
+  }, []);
 
   if (products.length === 0) return null;
 

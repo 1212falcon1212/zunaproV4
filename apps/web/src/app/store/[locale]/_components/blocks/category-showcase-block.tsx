@@ -1,6 +1,10 @@
+'use client';
+
 import Link from 'next/link';
+import { useEffect, useState } from 'react';
 import type { Block } from '@zunapro/types';
-import { serverFetch } from '@/lib/server-store-api';
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
 
 interface CategoryShowcaseProps {
   block: Block;
@@ -14,10 +18,12 @@ interface Category {
   image?: string | null;
 }
 
-export async function CategoryShowcaseBlock({
+export function CategoryShowcaseBlock({
   block,
   locale,
 }: CategoryShowcaseProps) {
+  const [categories, setCategories] = useState<Category[]>([]);
+
   const props = block.props as {
     title?: Record<string, string>;
     limit?: number;
@@ -28,18 +34,21 @@ export async function CategoryShowcaseBlock({
   const title = props.title?.[locale] ?? props.title?.en ?? '';
   const columns = props.columns || 4;
 
-  let categories: Category[] = [];
-  try {
-    categories = await serverFetch<Category[]>('/storefront/categories');
-    if (props.categoryIds && props.categoryIds.length > 0) {
-      categories = categories.filter((c) => props.categoryIds!.includes(c.id));
-    }
-    if (props.limit) {
-      categories = categories.slice(0, props.limit);
-    }
-  } catch {
-    return null;
-  }
+  useEffect(() => {
+    fetch(`${API_URL}/storefront/categories`)
+      .then((r) => (r.ok ? r.json() : []))
+      .then((data: Category[]) => {
+        let filtered = data;
+        if (props.categoryIds && props.categoryIds.length > 0) {
+          filtered = filtered.filter((c) => props.categoryIds!.includes(c.id));
+        }
+        if (props.limit) {
+          filtered = filtered.slice(0, props.limit);
+        }
+        setCategories(filtered);
+      })
+      .catch(() => setCategories([]));
+  }, []);
 
   if (categories.length === 0) return null;
 
