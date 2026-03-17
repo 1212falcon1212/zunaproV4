@@ -19,6 +19,8 @@ async function bootstrap() {
       if (!origin) return callback(null, true);
       // Allow zunapro.com subdomains
       if (/\.zunapro\.com$/.test(origin)) return callback(null, true);
+      // Allow IP-based access (test/dev servers)
+      if (/^https?:\/\/\d+\.\d+\.\d+\.\d+(:\d+)?$/.test(origin)) return callback(null, true);
       // Allow explicitly listed origins
       if (allowedOrigins.includes(origin)) return callback(null, true);
       callback(new Error('Not allowed by CORS'));
