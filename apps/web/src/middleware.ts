@@ -35,7 +35,8 @@ export default function middleware(request: NextRequest) {
   } else if (
     !PLATFORM_DOMAINS.includes(hostname) &&
     hostname !== 'localhost' &&
-    hostname !== '127.0.0.1'
+    hostname !== '127.0.0.1' &&
+    !/^\d+\.\d+\.\d+\.\d+$/.test(hostname)
   ) {
     // Custom domain → treat as tenant
     tenantSlug = hostname; // Will be resolved to actual slug by API
