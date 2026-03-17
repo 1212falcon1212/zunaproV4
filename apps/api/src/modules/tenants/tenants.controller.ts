@@ -7,16 +7,22 @@ import {
   Body,
   Param,
   Query,
+  Headers,
   ParseIntPipe,
   DefaultValuePipe,
+  UnauthorizedException,
 } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
 import { TenantsService } from './tenants.service';
 import { CreateTenantDto } from './dto/create-tenant.dto';
 import { UpdateTenantDto } from './dto/update-tenant.dto';
 
 @Controller('tenants')
 export class TenantsController {
-  constructor(private readonly tenantsService: TenantsService) {}
+  constructor(
+    private readonly tenantsService: TenantsService,
+    private readonly jwtService: JwtService,
+  ) {}
 
   @Get()
   findAll(
@@ -37,8 +43,27 @@ export class TenantsController {
   }
 
   @Post()
-  create(@Body() dto: CreateTenantDto) {
-    return this.tenantsService.create(dto);
+  create(@Body() dto: CreateTenantDto, @Headers('authorization') authHeader?: string) {
+    let userId: string | undefined;
+    if (authHeader) {
+      try {
+        const token = authHeader.replace('Bearer ', '');
+        const payload = this.jwtService.verify(token);
+        userId = payload.userId as string;
+      } catch {
+        // Token expired/invalid — try decode without verification to get userId
+        try {
+          const token = authHeader.replace('Bearer ', '');
+          const payload = this.jwtService.decode(token) as Record<string, unknown> | null;
+          if (payload?.userId) {
+            userId = payload.userId as string;
+          }
+        } catch {
+          // Ignore — proceed without userId
+        }
+      }
+    }
+    return this.tenantsService.create(dto, userId);
   }
 
   @Patch(':id')

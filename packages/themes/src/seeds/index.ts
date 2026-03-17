@@ -1,4 +1,4 @@
-import type { SectorSeedData, SeedPage, SeedSetting } from './types';
+import type { SectorSeedData, SeedPage, SeedSetting, SeedCustomer, SeedOrder } from './types';
 import type { PageContent } from '@zunapro/types';
 import { genelSeedData } from './genel';
 import { mobilyaSeedData } from './mobilya';
@@ -7,9 +7,9 @@ import { giyimSeedData } from './giyim';
 import { kozmetikSeedData } from './kozmetik';
 import { gidaSeedData } from './gida';
 import { evYasamSeedData } from './ev-yasam';
-import { commonPages, commonSettings, defaultHeader, defaultFooter } from './common';
+import { commonPages, additionalCommonPages, commonSettings, commonCustomers, commonOrders, defaultHeader, defaultFooter } from './common';
 
-export type { SectorSeedData, SeedProduct, SeedCategory, SeedPage, SeedSetting, SeedSettingValue } from './types';
+export type { SectorSeedData, SeedProduct, SeedCategory, SeedPage, SeedSetting, SeedSettingValue, SeedCustomer, SeedOrder } from './types';
 
 const SECTOR_MAP: Record<string, SectorSeedData> = {
   genel: genelSeedData,
@@ -28,12 +28,16 @@ export function getSeedData(sector: string): SectorSeedData {
 export function getCommonSeedData(): {
   pages: SeedPage[];
   settings: SeedSetting[];
+  customers: SeedCustomer[];
+  orders: SeedOrder[];
   header: PageContent;
   footer: PageContent;
 } {
   return {
-    pages: commonPages,
+    pages: [...commonPages, ...additionalCommonPages],
     settings: commonSettings,
+    customers: commonCustomers,
+    orders: commonOrders,
     header: defaultHeader,
     footer: defaultFooter,
   };

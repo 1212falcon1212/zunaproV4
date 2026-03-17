@@ -29,6 +29,34 @@ export interface SeedPage {
   seoMeta: Record<string, string>;
 }
 
+export interface SeedCustomer {
+  email: string;
+  firstName: string;
+  lastName: string;
+  phone?: string;
+  locale: string;
+  addresses: {
+    firstName: string;
+    lastName: string;
+    address1: string;
+    city: string;
+    postalCode: string;
+    country: string;
+    phone?: string;
+  }[];
+}
+
+export interface SeedOrder {
+  status: 'pending' | 'confirmed' | 'processing' | 'shipped' | 'delivered';
+  paymentStatus: 'pending' | 'paid';
+  paymentMethod: string;
+  locale: string;
+  currency: string;
+  customerIndex: number;
+  productSlugs: string[];
+  quantities: number[];
+}
+
 export type SeedSettingValue = string | number | boolean | string[] | Record<string, string>;
 
 export interface SeedSetting {
@@ -44,4 +72,6 @@ export interface SectorSeedData {
   header: PageContent;
   footer: PageContent;
   settings: SeedSetting[];
+  customers?: SeedCustomer[];
+  orders?: SeedOrder[];
 }

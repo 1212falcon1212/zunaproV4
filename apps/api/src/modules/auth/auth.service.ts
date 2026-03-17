@@ -53,12 +53,16 @@ export class AuthService {
       include: { tenantModules: { where: { isActive: true } } },
     });
 
+    const isPlatformTenant = tenantId === '00000000-0000-0000-0000-000000000000';
+    const moduleSlugs = tenant?.tenantModules.map((m) => m.moduleSlug) || [];
     const tokens = this.generateTokens({
       userId: user.id,
       tenantId,
       planId: tenant?.planId || '',
       role: user.role,
-      activeModules: tenant?.tenantModules.map((m) => m.moduleSlug) || [],
+      activeModules: isPlatformTenant || moduleSlugs.length === 0
+        ? ['ecommerce']
+        : moduleSlugs,
     });
 
     this.logger.log(`User registered: ${dto.email} for tenant ${tenantId}`);
@@ -93,16 +97,25 @@ export class AuthService {
       include: { tenantModules: { where: { isActive: true } } },
     });
 
-    if (!tenant || tenant.status !== 'active') {
+    if (!tenant) {
+      throw new UnauthorizedException('Tenant not found');
+    }
+
+    // Allow login for active tenants and platform tenant (standalone users)
+    const isPlatformTenant = tenant.id === '00000000-0000-0000-0000-000000000000';
+    if (!isPlatformTenant && tenant.status !== 'active') {
       throw new UnauthorizedException('Tenant is not active');
     }
 
+    const loginModuleSlugs = tenant.tenantModules.map((m) => m.moduleSlug);
     const tokens = this.generateTokens({
       userId: user.id,
       tenantId: user.tenantId,
       planId: tenant.planId,
       role: user.role,
-      activeModules: tenant.tenantModules.map((m) => m.moduleSlug),
+      activeModules: isPlatformTenant || loginModuleSlugs.length === 0
+        ? ['ecommerce']
+        : loginModuleSlugs,
     });
 
     this.logger.log(`User logged in: ${dto.email}`);
@@ -137,12 +150,15 @@ export class AuthService {
         throw new UnauthorizedException('Tenant is not active');
       }
 
+      const refreshModuleSlugs = tenant.tenantModules.map((m) => m.moduleSlug);
       const tokens = this.generateTokens({
         userId: user.id,
         tenantId: user.tenantId,
         planId: tenant.planId,
         role: user.role,
-        activeModules: tenant.tenantModules.map((m) => m.moduleSlug),
+        activeModules: refreshModuleSlugs.length > 0
+          ? refreshModuleSlugs
+          : ['ecommerce'],
       });
 
       return tokens;

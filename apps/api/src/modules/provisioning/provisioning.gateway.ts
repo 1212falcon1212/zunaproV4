@@ -20,7 +20,7 @@ export class ProvisioningGateway {
     return { event: 'subscribed', data: { tenantId } };
   }
 
-  emitProgress(tenantId: string, progress: { jobName: string; status: string; step: number; totalSteps: number; message: string }) {
+  emitProgress(tenantId: string, progress: Record<string, unknown>) {
     this.server.to(`provisioning:${tenantId}`).emit('provisioning_progress', progress);
   }
 }

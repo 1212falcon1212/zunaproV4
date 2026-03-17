@@ -1,4 +1,4 @@
-import type { SeedPage, SeedSetting } from './types';
+import type { SeedPage, SeedSetting, SeedCustomer, SeedOrder } from './types';
 import type { PageContent } from '@zunapro/types';
 
 // ---------------------------------------------------------------------------
@@ -347,6 +347,346 @@ export const defaultFooter: PageContent = {
     },
   ],
 };
+
+// ---------------------------------------------------------------------------
+// Additional Common Pages — Shop, About, Contact, FAQ, Categories
+// ---------------------------------------------------------------------------
+
+export const additionalCommonPages: SeedPage[] = [
+  {
+    slug: 'shop',
+    title: {
+      en: 'All Products',
+      tr: 'Tum Urunler',
+      de: 'Alle Produkte',
+      fr: 'Tous les produits',
+      es: 'Todos los productos',
+    },
+    content: {
+      version: 1,
+      blocks: [
+        {
+          id: 'seed_shop_heading',
+          type: 'text',
+          props: {
+            tag: 'h1',
+            content: {
+              en: 'All Products',
+              tr: 'Tum Urunler',
+              de: 'Alle Produkte',
+              fr: 'Tous les produits',
+              es: 'Todos los productos',
+            },
+          },
+          style: { textAlign: 'center', padding: '2rem 0 1rem' },
+        },
+        {
+          id: 'seed_shop_listing',
+          type: 'product-listing',
+          props: { limit: 24, columns: 4 },
+        },
+      ],
+    },
+    isPublished: true,
+    seoMeta: {
+      en: 'Shop all products — Browse our complete collection.',
+      tr: 'Tum urunlere gozatin — Koleksiyonumuzu kesfedin.',
+      de: 'Alle Produkte kaufen — Durchsuchen Sie unsere Kollektion.',
+      fr: 'Acheter tous les produits — Parcourez notre collection.',
+      es: 'Comprar todos los productos — Explore nuestra coleccion.',
+    },
+  },
+  {
+    slug: 'about',
+    title: {
+      en: 'About Us',
+      tr: 'Hakkimizda',
+      de: 'Uber uns',
+      fr: 'A propos',
+      es: 'Sobre nosotros',
+    },
+    content: {
+      version: 1,
+      blocks: [
+        {
+          id: 'seed_about_heading',
+          type: 'text',
+          props: {
+            tag: 'h1',
+            content: {
+              en: 'About Us',
+              tr: 'Hakkimizda',
+              de: 'Uber uns',
+              fr: 'A propos de nous',
+              es: 'Sobre nosotros',
+            },
+          },
+          style: { textAlign: 'center', padding: '2rem 0 1rem' },
+        },
+        {
+          id: 'seed_about_text',
+          type: 'text',
+          props: {
+            tag: 'div',
+            content: {
+              en: '<p>We are a passionate team dedicated to bringing you the best products at competitive prices. Our mission is to make online shopping simple, enjoyable, and reliable. With a curated selection of quality items and outstanding customer service, we strive to exceed your expectations with every purchase.</p><p>Founded with the belief that everyone deserves access to great products, we work directly with trusted suppliers to ensure authenticity and quality. Whether you are shopping for yourself or looking for the perfect gift, we are here to help you find exactly what you need.</p>',
+              tr: '<p>Sizlere en iyi urunleri rekabetci fiyatlarla sunmaya kendini adayan tutkulu bir ekibiz. Misyonumuz online alisverisi basit, keyifli ve guvenilir kilmaktir. Ozenle secilmis kaliteli urunler ve ustun musteri hizmetiyle, her alisverisinizde beklentilerinizi asmaya calismaktayiz.</p><p>Herkesin kaliteli urunlere erismesi gerektigi inanciya kurulan sirketimiz, orijinallik ve kaliteyi garantilemek icin guvenilir tedarikcilerle dogrudan calismaktadir. Kendiniz icin alisveris yapin veya mukemmel bir hediye arayin, ihtiyaciniz olani bulmaniz icin buradayiz.</p>',
+              de: '<p>Wir sind ein leidenschaftliches Team, das sich darauf spezialisiert hat, Ihnen die besten Produkte zu wettbewerbsfaehigen Preisen anzubieten. Unsere Mission ist es, Online-Shopping einfach, angenehm und zuverlaessig zu gestalten. Mit einer kuratierten Auswahl an Qualitaetsprodukten und hervorragendem Kundenservice streben wir danach, Ihre Erwartungen bei jedem Einkauf zu uebertreffen.</p><p>Gegruendet mit der Ueberzeugung, dass jeder Zugang zu grossartigen Produkten verdient, arbeiten wir direkt mit vertrauenswuerdigen Lieferanten zusammen, um Authentizitaet und Qualitaet zu gewaehrleisten.</p>',
+              fr: '<p>Nous sommes une equipe passionnee dediee a vous offrir les meilleurs produits a des prix competitifs. Notre mission est de rendre le shopping en ligne simple, agreable et fiable. Avec une selection soignee d\'articles de qualite et un service client exceptionnel, nous nous efforcons de depasser vos attentes a chaque achat.</p><p>Fondes avec la conviction que chacun merite l\'acces a d\'excellents produits, nous travaillons directement avec des fournisseurs de confiance pour garantir l\'authenticite et la qualite.</p>',
+              es: '<p>Somos un equipo apasionado dedicado a ofrecerle los mejores productos a precios competitivos. Nuestra mision es hacer que las compras en linea sean simples, agradables y confiables. Con una seleccion cuidadosa de articulos de calidad y un servicio al cliente excepcional, nos esforzamos por superar sus expectativas con cada compra.</p><p>Fundados con la creencia de que todos merecen acceso a excelentes productos, trabajamos directamente con proveedores de confianza para garantizar autenticidad y calidad.</p>',
+            },
+          },
+        },
+      ],
+    },
+    isPublished: true,
+    seoMeta: {
+      en: 'About Us — Learn about our story, mission, and values.',
+      tr: 'Hakkimizda — Hikayemizi, misyonumuzu ve degerlerimizi ogrenin.',
+      de: 'Uber uns — Erfahren Sie mehr uber unsere Geschichte und Werte.',
+      fr: 'A propos — Decouvrez notre histoire, mission et valeurs.',
+      es: 'Sobre nosotros — Conozca nuestra historia, mision y valores.',
+    },
+  },
+  {
+    slug: 'contact',
+    title: {
+      en: 'Contact Us',
+      tr: 'Iletisim',
+      de: 'Kontakt',
+      fr: 'Contact',
+      es: 'Contacto',
+    },
+    content: {
+      version: 1,
+      blocks: [
+        {
+          id: 'seed_contact_heading',
+          type: 'text',
+          props: {
+            tag: 'h1',
+            content: {
+              en: 'Contact Us',
+              tr: 'Bize Ulasin',
+              de: 'Kontaktieren Sie uns',
+              fr: 'Contactez-nous',
+              es: 'Contactenos',
+            },
+          },
+          style: { textAlign: 'center', padding: '2rem 0 1rem' },
+        },
+        {
+          id: 'seed_contact_text',
+          type: 'text',
+          props: {
+            tag: 'div',
+            content: {
+              en: '<p>We would love to hear from you! Whether you have a question about our products, need help with an order, or just want to say hello, our team is here for you.</p><p><strong>Email:</strong> info@example.com</p><p><strong>Phone:</strong> +1 (555) 000-0000</p><p><strong>Hours:</strong> Monday - Friday, 9:00 AM - 6:00 PM</p><p><strong>Address:</strong> 123 Commerce Street, Suite 100, New York, NY 10001</p>',
+              tr: '<p>Sizden haber almak isteriz! Urunlerimiz hakkinda bir sorunuz varsa, siparislerinizle ilgili yardima ihtiyaciniz varsa veya sadece merhaba demek istiyorsaniz, ekibimiz sizin icin burada.</p><p><strong>E-posta:</strong> info@example.com</p><p><strong>Telefon:</strong> +1 (555) 000-0000</p><p><strong>Calisma Saatleri:</strong> Pazartesi - Cuma, 09:00 - 18:00</p><p><strong>Adres:</strong> 123 Ticaret Caddesi, No: 100, Istanbul, 34000</p>',
+              de: '<p>Wir freuen uns von Ihnen zu hoeren! Ob Sie eine Frage zu unseren Produkten haben, Hilfe bei einer Bestellung benoetigen oder einfach Hallo sagen moechten — unser Team ist fuer Sie da.</p><p><strong>E-Mail:</strong> info@example.com</p><p><strong>Telefon:</strong> +1 (555) 000-0000</p><p><strong>Oeffnungszeiten:</strong> Montag - Freitag, 9:00 - 18:00 Uhr</p><p><strong>Adresse:</strong> Handelsstrasse 123, 10115 Berlin</p>',
+              fr: '<p>Nous serions ravis d\'avoir de vos nouvelles ! Que vous ayez une question sur nos produits, besoin d\'aide avec une commande ou que vous vouliez simplement dire bonjour, notre equipe est la pour vous.</p><p><strong>Email :</strong> info@example.com</p><p><strong>Telephone :</strong> +1 (555) 000-0000</p><p><strong>Horaires :</strong> Lundi - Vendredi, 9h00 - 18h00</p><p><strong>Adresse :</strong> 123 Rue du Commerce, 75001 Paris</p>',
+              es: '<p>Nos encantaria saber de usted. Ya sea que tenga una pregunta sobre nuestros productos, necesite ayuda con un pedido o simplemente quiera saludar, nuestro equipo esta aqui para usted.</p><p><strong>Correo:</strong> info@example.com</p><p><strong>Telefono:</strong> +1 (555) 000-0000</p><p><strong>Horario:</strong> Lunes - Viernes, 9:00 - 18:00</p><p><strong>Direccion:</strong> Calle Comercio 123, 28001 Madrid</p>',
+            },
+          },
+        },
+      ],
+    },
+    isPublished: true,
+    seoMeta: {
+      en: 'Contact Us — Get in touch with our team.',
+      tr: 'Iletisim — Ekibimizle iletisime gecin.',
+      de: 'Kontakt — Nehmen Sie Kontakt mit unserem Team auf.',
+      fr: 'Contact — Contactez notre equipe.',
+      es: 'Contacto — Pongase en contacto con nuestro equipo.',
+    },
+  },
+  {
+    slug: 'faq',
+    title: {
+      en: 'Frequently Asked Questions',
+      tr: 'Sikca Sorulan Sorular',
+      de: 'Haeufig gestellte Fragen',
+      fr: 'Questions frequentes',
+      es: 'Preguntas frecuentes',
+    },
+    content: {
+      version: 1,
+      blocks: [
+        {
+          id: 'seed_faq_heading',
+          type: 'text',
+          props: {
+            tag: 'h1',
+            content: {
+              en: 'Frequently Asked Questions',
+              tr: 'Sikca Sorulan Sorular',
+              de: 'Haeufig gestellte Fragen',
+              fr: 'Questions frequentes',
+              es: 'Preguntas frecuentes',
+            },
+          },
+          style: { textAlign: 'center', padding: '2rem 0 1rem' },
+        },
+        {
+          id: 'seed_faq_accordion',
+          type: 'accordion',
+          props: {
+            items: [
+              {
+                title: { en: 'How do I place an order?', tr: 'Nasil siparis verebilirim?', de: 'Wie gebe ich eine Bestellung auf?', fr: 'Comment passer une commande ?', es: 'Como hago un pedido?' },
+                content: { en: 'Simply browse our products, add items to your cart, and proceed to checkout. You can pay with credit card, bank transfer, or other available methods.', tr: 'Urunlerimize gozatin, sepetinize ekleyin ve odeme sayfasina ilerleyin. Kredi karti, banka havalesi veya diger mevcut yontemlerle odeme yapabilirsiniz.', de: 'Durchsuchen Sie unsere Produkte, legen Sie Artikel in Ihren Warenkorb und gehen Sie zur Kasse. Sie koennen mit Kreditkarte, Bankueberweisung oder anderen verfuegbaren Methoden bezahlen.', fr: 'Parcourez nos produits, ajoutez des articles a votre panier et passez a la caisse. Vous pouvez payer par carte de credit, virement bancaire ou d\'autres methodes disponibles.', es: 'Simplemente explore nuestros productos, agregue articulos a su carrito y proceda al pago. Puede pagar con tarjeta de credito, transferencia bancaria u otros metodos disponibles.' },
+              },
+              {
+                title: { en: 'What is your return policy?', tr: 'Iade politikaniz nedir?', de: 'Was ist Ihre Rueckgaberichtlinie?', fr: 'Quelle est votre politique de retour ?', es: 'Cual es su politica de devolucion?' },
+                content: { en: 'We accept returns within 14 days of delivery. Items must be unused and in their original packaging. Contact our support team to initiate a return.', tr: '14 gun icinde iade kabul ediyoruz. Urunler kullanilmamis ve orijinal ambalajinda olmalidir. Iade baslatmak icin destek ekibimizle iletisime gecin.', de: 'Wir akzeptieren Ruecksendungen innerhalb von 14 Tagen nach Lieferung. Artikel muessen unbenutzt und in der Originalverpackung sein. Kontaktieren Sie unser Support-Team.', fr: 'Nous acceptons les retours dans les 14 jours suivant la livraison. Les articles doivent etre inutilises et dans leur emballage d\'origine. Contactez notre equipe d\'assistance.', es: 'Aceptamos devoluciones dentro de los 14 dias posteriores a la entrega. Los articulos deben estar sin usar y en su empaque original. Contacte a nuestro equipo de soporte.' },
+              },
+              {
+                title: { en: 'How long does shipping take?', tr: 'Kargo ne kadar surer?', de: 'Wie lange dauert der Versand?', fr: 'Combien de temps prend la livraison ?', es: 'Cuanto tarda el envio?' },
+                content: { en: 'Standard shipping takes 3-5 business days. Express shipping is available for 1-2 business days. International orders may take 7-14 days depending on the destination.', tr: 'Standart kargo 3-5 is gunu surer. Hizli kargo 1-2 is gunu icin mevcuttur. Uluslararasi siparisler hedefe bagli olarak 7-14 gun surebilir.', de: 'Der Standardversand dauert 3-5 Werktage. Expressversand ist in 1-2 Werktagen verfuegbar. Internationale Bestellungen koennen je nach Zielort 7-14 Tage dauern.', fr: 'La livraison standard prend 3 a 5 jours ouvrables. La livraison express est disponible en 1 a 2 jours ouvrables. Les commandes internationales peuvent prendre 7 a 14 jours.', es: 'El envio estandar toma 3-5 dias habiles. El envio express esta disponible en 1-2 dias habiles. Los pedidos internacionales pueden tardar 7-14 dias segun el destino.' },
+              },
+              {
+                title: { en: 'Do you offer international shipping?', tr: 'Uluslararasi kargo yapiyor musunuz?', de: 'Bieten Sie internationalen Versand an?', fr: 'Proposez-vous la livraison internationale ?', es: 'Ofrecen envio internacional?' },
+                content: { en: 'Yes, we ship to most countries worldwide. Shipping costs and delivery times vary by destination. You can see the exact cost at checkout.', tr: 'Evet, dunya genelinde cogu ulkeye kargo yapiyoruz. Kargo ucretleri ve teslimat sureleri hedefe gore degisir. Tam maliyeti odeme sayfasinda gorebilirsiniz.', de: 'Ja, wir versenden in die meisten Laender weltweit. Versandkosten und Lieferzeiten variieren je nach Zielort. Die genauen Kosten sehen Sie an der Kasse.', fr: 'Oui, nous expedions dans la plupart des pays du monde. Les frais de livraison et les delais varient selon la destination. Vous pouvez voir le cout exact lors du paiement.', es: 'Si, realizamos envios a la mayoria de los paises del mundo. Los costos de envio y los tiempos de entrega varian segun el destino. Puede ver el costo exacto al pagar.' },
+              },
+              {
+                title: { en: 'How can I track my order?', tr: 'Siparisimi nasil takip edebilirim?', de: 'Wie kann ich meine Bestellung verfolgen?', fr: 'Comment suivre ma commande ?', es: 'Como puedo rastrear mi pedido?' },
+                content: { en: 'Once your order is shipped, you will receive a tracking number via email. You can use this number to track your package on our website or the carrier\'s website.', tr: 'Siparisiz kargoya verildiginde, e-posta ile bir takip numarasi alacaksiniz. Bu numarayi web sitemizde veya kargo sirketinin web sitesinde kullanabilirsiniz.', de: 'Sobald Ihre Bestellung versandt wurde, erhalten Sie eine Sendungsverfolgungsnummer per E-Mail. Mit dieser Nummer koennen Sie Ihr Paket auf unserer Website oder der Website des Spediteurs verfolgen.', fr: 'Une fois votre commande expediee, vous recevrez un numero de suivi par email. Vous pouvez utiliser ce numero pour suivre votre colis sur notre site ou sur le site du transporteur.', es: 'Una vez que se envie su pedido, recibira un numero de seguimiento por correo electronico. Puede usar este numero para rastrear su paquete en nuestro sitio web o en el sitio del transportista.' },
+              },
+            ],
+          },
+        },
+      ],
+    },
+    isPublished: true,
+    seoMeta: {
+      en: 'FAQ — Answers to frequently asked questions about our store.',
+      tr: 'SSS — Magazamiz hakkinda sikca sorulan sorularin cevaplari.',
+      de: 'FAQ — Antworten auf haeufig gestellte Fragen zu unserem Shop.',
+      fr: 'FAQ — Reponses aux questions frequentes sur notre boutique.',
+      es: 'FAQ — Respuestas a preguntas frecuentes sobre nuestra tienda.',
+    },
+  },
+  {
+    slug: 'categories',
+    title: {
+      en: 'All Categories',
+      tr: 'Tum Kategoriler',
+      de: 'Alle Kategorien',
+      fr: 'Toutes les categories',
+      es: 'Todas las categorias',
+    },
+    content: {
+      version: 1,
+      blocks: [
+        {
+          id: 'seed_categories_heading',
+          type: 'text',
+          props: {
+            tag: 'h1',
+            content: {
+              en: 'All Categories',
+              tr: 'Tum Kategoriler',
+              de: 'Alle Kategorien',
+              fr: 'Toutes les categories',
+              es: 'Todas las categorias',
+            },
+          },
+          style: { textAlign: 'center', padding: '2rem 0 1rem' },
+        },
+        {
+          id: 'seed_categories_listing',
+          type: 'category-listing',
+          props: { columns: 3 },
+        },
+      ],
+    },
+    isPublished: true,
+    seoMeta: {
+      en: 'Categories — Browse all product categories.',
+      tr: 'Kategoriler — Tum urun kategorilerine gozatin.',
+      de: 'Kategorien — Durchsuchen Sie alle Produktkategorien.',
+      fr: 'Categories — Parcourez toutes les categories de produits.',
+      es: 'Categorias — Explore todas las categorias de productos.',
+    },
+  },
+];
+
+// ---------------------------------------------------------------------------
+// Common Customers
+// ---------------------------------------------------------------------------
+
+export const commonCustomers: SeedCustomer[] = [
+  {
+    email: 'sarah.johnson@example.com',
+    firstName: 'Sarah',
+    lastName: 'Johnson',
+    phone: '+1-555-0101',
+    locale: 'en',
+    addresses: [{
+      firstName: 'Sarah', lastName: 'Johnson',
+      address1: '742 Evergreen Terrace', city: 'Springfield', postalCode: '62704', country: 'US', phone: '+1-555-0101',
+    }],
+  },
+  {
+    email: 'mehmet.yilmaz@example.com',
+    firstName: 'Mehmet',
+    lastName: 'Yilmaz',
+    phone: '+90-532-555-0102',
+    locale: 'tr',
+    addresses: [{
+      firstName: 'Mehmet', lastName: 'Yilmaz',
+      address1: 'Istiklal Caddesi No: 45', city: 'Istanbul', postalCode: '34430', country: 'TR', phone: '+90-532-555-0102',
+    }],
+  },
+  {
+    email: 'anna.mueller@example.com',
+    firstName: 'Anna',
+    lastName: 'Mueller',
+    phone: '+49-170-555-0103',
+    locale: 'de',
+    addresses: [{
+      firstName: 'Anna', lastName: 'Mueller',
+      address1: 'Friedrichstrasse 123', city: 'Berlin', postalCode: '10117', country: 'DE', phone: '+49-170-555-0103',
+    }],
+  },
+  {
+    email: 'marie.dubois@example.com',
+    firstName: 'Marie',
+    lastName: 'Dubois',
+    phone: '+33-6-55-01-04',
+    locale: 'fr',
+    addresses: [{
+      firstName: 'Marie', lastName: 'Dubois',
+      address1: '15 Rue de Rivoli', city: 'Paris', postalCode: '75001', country: 'FR', phone: '+33-6-55-01-04',
+    }],
+  },
+  {
+    email: 'carlos.garcia@example.com',
+    firstName: 'Carlos',
+    lastName: 'Garcia',
+    phone: '+34-655-010-105',
+    locale: 'es',
+    addresses: [{
+      firstName: 'Carlos', lastName: 'Garcia',
+      address1: 'Gran Via 28', city: 'Madrid', postalCode: '28013', country: 'ES', phone: '+34-655-010-105',
+    }],
+  },
+];
+
+// ---------------------------------------------------------------------------
+// Common Orders — productSlugs left empty; seeder auto-assigns from available products
+// ---------------------------------------------------------------------------
+
+export const commonOrders: SeedOrder[] = [
+  { status: 'pending', paymentStatus: 'pending', paymentMethod: 'credit_card', locale: 'en', currency: 'USD', customerIndex: 0, productSlugs: [], quantities: [] },
+  { status: 'pending', paymentStatus: 'pending', paymentMethod: 'bank_transfer', locale: 'tr', currency: 'TRY', customerIndex: 1, productSlugs: [], quantities: [] },
+  { status: 'confirmed', paymentStatus: 'paid', paymentMethod: 'credit_card', locale: 'de', currency: 'EUR', customerIndex: 2, productSlugs: [], quantities: [] },
+  { status: 'confirmed', paymentStatus: 'paid', paymentMethod: 'credit_card', locale: 'fr', currency: 'EUR', customerIndex: 3, productSlugs: [], quantities: [] },
+  { status: 'processing', paymentStatus: 'paid', paymentMethod: 'credit_card', locale: 'es', currency: 'EUR', customerIndex: 4, productSlugs: [], quantities: [] },
+  { status: 'shipped', paymentStatus: 'paid', paymentMethod: 'credit_card', locale: 'en', currency: 'USD', customerIndex: 0, productSlugs: [], quantities: [] },
+  { status: 'shipped', paymentStatus: 'paid', paymentMethod: 'bank_transfer', locale: 'tr', currency: 'TRY', customerIndex: 1, productSlugs: [], quantities: [] },
+  { status: 'delivered', paymentStatus: 'paid', paymentMethod: 'credit_card', locale: 'de', currency: 'EUR', customerIndex: 2, productSlugs: [], quantities: [] },
+];
 
 // ---------------------------------------------------------------------------
 // Common Settings

@@ -22,7 +22,7 @@ export default function WizardPage() {
   const canProceed = useCallback((): boolean => {
     switch (state.step) {
       case 0: return !!state.planId;
-      case 1: return !!state.storeInfo;
+      case 1: return true; // Form handles its own validation via zod on submit
       case 2: return true;
       case 3: return true;
       case 4: return !!state.storeInfo && !!state.planId;

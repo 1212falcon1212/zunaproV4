@@ -120,3 +120,6 @@ docker compose down
 - API route yapısı: `apps/api/src/modules/`
 - Tema yapısı: `packages/themes/`
 - Go provisioner: `services/provisioner/`
+
+
+Her adımda ve fazda task oluşturmak zorunludur. 

@@ -1,6 +1,6 @@
-import { PrismaClient } from "../node_modules/.prisma/tenant-client/index.js";
+import { PrismaClient } from "../node_modules/.prisma/tenant-client/index";
 
-export type { PrismaClient as TenantPrismaClient } from "../node_modules/.prisma/tenant-client/index.js";
+export type { PrismaClient as TenantPrismaClient } from "../node_modules/.prisma/tenant-client/index";
 
 interface TenantConnection {
   client: PrismaClient;

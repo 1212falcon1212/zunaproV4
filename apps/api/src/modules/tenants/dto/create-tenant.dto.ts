@@ -1,5 +1,6 @@
 import {
   IsString,
+  IsEmail,
   IsOptional,
   IsArray,
   MinLength,
@@ -57,6 +58,14 @@ export class CreateTenantDto {
 
   @IsString()
   defaultCurrency!: string;
+
+  @IsEmail()
+  @IsOptional()
+  email?: string;
+
+  @IsString()
+  @IsOptional()
+  phone?: string;
 
   @IsString()
   @IsOptional()

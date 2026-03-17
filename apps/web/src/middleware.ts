@@ -42,6 +42,51 @@ export default function middleware(request: NextRequest) {
     isCustomDomain = true;
   }
 
+  // --- Path-based store preview: /_store/[slug]/[locale]/... ---
+  if (!tenantSlug && pathname.startsWith('/_store/')) {
+    const storeSegments = pathname.replace('/_store/', '').split('/').filter(Boolean);
+    const slug = storeSegments[0];
+    if (slug) {
+      const storeLocale = LOCALES.includes(storeSegments[1] || '') ? storeSegments[1] : DEFAULT_LOCALE;
+      const rest = LOCALES.includes(storeSegments[1] || '')
+        ? '/' + storeSegments.slice(2).join('/')
+        : '/' + storeSegments.slice(1).join('/');
+
+      const url = request.nextUrl.clone();
+      url.pathname = `/store/${storeLocale}${rest === '/' ? '' : rest}`;
+
+      const response = NextResponse.rewrite(url);
+      response.headers.set('x-tenant-slug', slug);
+      response.headers.set('x-tenant-locale', storeLocale);
+      response.headers.set('x-tenant-custom-domain', 'false');
+      // Set cookie so subsequent /store/... navigations know the tenant
+      response.cookies.set('__store_preview_slug', slug, { path: '/', maxAge: 60 * 60 * 24 });
+      return response;
+    }
+  }
+
+  // --- Local dev: handle direct /store/[locale]/... navigation ---
+  // When user navigates via client-side links from a /_store preview session,
+  // links point to /store/[locale]/... which would 404 without tenant context.
+  if (
+    !tenantSlug &&
+    (hostname === 'localhost' || hostname === '127.0.0.1') &&
+    pathname.startsWith('/store/')
+  ) {
+    const previewSlug = request.cookies.get('__store_preview_slug')?.value;
+    if (previewSlug) {
+      // Extract locale from /store/[locale]/...
+      const storePathSegments = pathname.replace('/store/', '').split('/').filter(Boolean);
+      const storeLocale = LOCALES.includes(storePathSegments[0] || '') ? storePathSegments[0] : DEFAULT_LOCALE;
+
+      const response = NextResponse.next();
+      response.headers.set('x-tenant-slug', previewSlug);
+      response.headers.set('x-tenant-locale', storeLocale);
+      response.headers.set('x-tenant-custom-domain', 'false');
+      return response;
+    }
+  }
+
   // --- Platform routes (no tenant) ---
   if (!tenantSlug) {
     return intlMiddleware(request);
@@ -91,7 +136,9 @@ export const config = {
     // Platform locale routes
     '/',
     '/(en|tr|de|fr|es)/:path*',
+    // Store preview path
+    '/_store/:path*',
     // Storefront routes (catch-all for tenant subdomains/custom domains)
-    '/((?!_next|api|favicon.ico|.*\\..*).*)',
+    '/((?!_next|api|favicon.ico|theme-preview|.*\\..*).*)',
   ],
 };

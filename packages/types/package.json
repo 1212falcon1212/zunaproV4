@@ -2,40 +2,47 @@
   "name": "@zunapro/types",
   "version": "0.0.0",
   "private": true,
-  "type": "module",
-  "main": "./src/index.ts",
+  "main": "./dist/index.js",
   "types": "./src/index.ts",
   "exports": {
     ".": {
       "types": "./src/index.ts",
+      "require": "./dist/index.js",
       "default": "./src/index.ts"
     },
     "./tenant": {
       "types": "./src/tenant.ts",
+      "require": "./dist/tenant.js",
       "default": "./src/tenant.ts"
     },
     "./auth": {
       "types": "./src/auth.ts",
+      "require": "./dist/auth.js",
       "default": "./src/auth.ts"
     },
     "./plan": {
       "types": "./src/plan.ts",
+      "require": "./dist/plan.js",
       "default": "./src/plan.ts"
     },
     "./module": {
       "types": "./src/module.ts",
+      "require": "./dist/module.js",
       "default": "./src/module.ts"
     },
     "./provisioning": {
       "types": "./src/provisioning.ts",
+      "require": "./dist/provisioning.js",
       "default": "./src/provisioning.ts"
     },
     "./payment": {
       "types": "./src/payment.ts",
+      "require": "./dist/payment.js",
       "default": "./src/payment.ts"
     }
   },
   "scripts": {
+    "build": "tsc -p tsconfig.build.json",
     "typecheck": "tsc --noEmit"
   },
   "devDependencies": {

@@ -5,6 +5,6 @@ import { TenantSeederService } from './tenant-seeder.service';
 
 @Module({
   providers: [ProvisioningGateway, ProvisioningService, TenantSeederService],
-  exports: [ProvisioningService],
+  exports: [ProvisioningService, TenantSeederService],
 })
 export class ProvisioningModule {}

@@ -7,6 +7,18 @@ import { PaymentsModule } from './modules/payments/payments.module';
 import { ProvisioningModule } from './modules/provisioning/provisioning.module';
 import { HealthModule } from './modules/health/health.module';
 import { PlansModule } from './modules/plans/plans.module';
+import { CategoriesModule } from './modules/categories/categories.module';
+import { ProductsModule } from './modules/products/products.module';
+import { MediaModule } from './modules/media/media.module';
+import { SearchModule } from './modules/search/search.module';
+import { CartModule } from './modules/cart/cart.module';
+import { StorefrontModule } from './modules/storefront/storefront.module';
+import { OrdersModule } from './modules/orders/orders.module';
+import { CustomersModule } from './modules/customers/customers.module';
+import { ShippingModule } from './modules/shipping/shipping.module';
+import { InvoicesModule } from './modules/invoices/invoices.module';
+import { SettingsModule } from './modules/settings/settings.module';
+import { PageBuilderModule } from './modules/page-builder/page-builder.module';
 import { RedisModule } from './common/redis';
 import { TenantResolverMiddleware } from './common/middleware/tenant-resolver.middleware';
 import { TenantCacheInvalidationService } from './common/middleware/tenant-invalidation.service';
@@ -27,6 +39,18 @@ import { validateConfig } from './config/config.schema';
     ProvisioningModule,
     HealthModule,
     PlansModule,
+    CategoriesModule,
+    ProductsModule,
+    MediaModule,
+    SearchModule,
+    CartModule,
+    StorefrontModule,
+    OrdersModule,
+    CustomersModule,
+    ShippingModule,
+    InvoicesModule,
+    SettingsModule,
+    PageBuilderModule,
   ],
   providers: [
     TenantCacheInvalidationService,

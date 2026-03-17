@@ -1,4 +1,4 @@
-import { PrismaClient } from "../node_modules/.prisma/master-client/index.js";
+import { PrismaClient } from "../node_modules/.prisma/master-client/index";
 
 const globalForPrisma = globalThis as unknown as {
   masterPrisma: PrismaClient | undefined;
@@ -18,4 +18,4 @@ if (process.env.NODE_ENV !== "production") {
   globalForPrisma.masterPrisma = masterPrisma;
 }
 
-export type { PrismaClient as MasterPrismaClient } from "../node_modules/.prisma/master-client/index.js";
+export type { PrismaClient as MasterPrismaClient } from "../node_modules/.prisma/master-client/index";

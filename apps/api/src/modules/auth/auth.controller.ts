@@ -25,11 +25,10 @@ export class AuthController {
   async register(@Body() dto: RegisterDto, @Req() req: Request) {
     const reqAny = req as unknown as Record<string, unknown>;
     const tenant = reqAny.tenant as { id: string } | undefined;
-    const tenantId = tenant?.id || (req.body as { tenantId?: string }).tenantId;
-
-    if (!tenantId || typeof tenantId !== 'string') {
-      return { message: 'Tenant context required for registration' };
-    }
+    const tenantId =
+      tenant?.id ||
+      (req.body as { tenantId?: string }).tenantId ||
+      '00000000-0000-0000-0000-000000000000'; // Platform tenant for standalone registrations
 
     return this.authService.register(dto, tenantId);
   }

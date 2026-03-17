@@ -1,6 +1,14 @@
-export type { ThemeManifest, ThemeSector, ThemeSectionConfig, ThemeConfig } from './types.js';
+export type { ThemeManifest, ThemeBundle, ThemeCategory, ThemeSector, ThemeSectionConfig, ThemeConfig } from './types.js';
 export { BASE_THEME_CONFIG, generateCssVariables, getGoogleFontsUrl } from './base/index.js';
-export { registerTheme, getThemeById, getAllThemes, getThemeBySector } from './registry.js';
+export {
+  registerTheme,
+  registerThemeBundle,
+  getThemeById,
+  getThemeBundleById,
+  getAllThemes,
+  getAllThemeBundles,
+  getThemeBySector,
+} from './registry.js';
 
 // Seed data exports
 export { getSeedData, getCommonSeedData } from './seeds/index.js';
@@ -11,4 +19,6 @@ export type {
   SeedPage,
   SeedSetting,
   SeedSettingValue,
+  SeedCustomer,
+  SeedOrder,
 } from './seeds/index.js';

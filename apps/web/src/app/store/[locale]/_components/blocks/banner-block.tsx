@@ -28,21 +28,26 @@ export function BannerBlock({ block, locale }: BannerProps) {
   const subtitle = props.subtitle?.[locale] ?? props.subtitle?.en ?? '';
   const buttonText = props.buttonText?.[locale] ?? props.buttonText?.en ?? '';
 
+  const hasImage = !!props.backgroundImage;
+  const bgColor = hasImage
+    ? 'transparent'
+    : props.backgroundColor || block.style?.backgroundColor || 'var(--color-primary)';
+  const txtColor =
+    props.textColor || block.style?.textColor || 'white';
+
   return (
     <section
       className="relative overflow-hidden"
       style={{
-        backgroundColor: props.backgroundColor || 'var(--color-primary)',
-        backgroundImage: props.backgroundImage
-          ? `url(${props.backgroundImage})`
-          : undefined,
+        backgroundColor: bgColor,
+        backgroundImage: hasImage ? `url(${props.backgroundImage})` : undefined,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         minHeight: props.height || '200px',
-        color: props.textColor || 'white',
+        color: txtColor,
       }}
     >
-      {props.backgroundImage && (
+      {hasImage && (
         <div className="absolute inset-0 bg-black/30" />
       )}
       <div className="relative mx-auto flex max-w-7xl items-center justify-between px-4 py-12 sm:px-6 lg:px-8">

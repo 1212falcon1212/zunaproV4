@@ -32,6 +32,7 @@ declare global {
     interface Request {
       tenant?: TenantContext;
       locale?: string;
+      customer?: import('@zunapro/types').StorefrontJwtPayload;
     }
   }
 }
@@ -54,11 +55,24 @@ export class TenantResolverMiddleware implements NestMiddleware {
   async use(req: Request, _res: Response, next: NextFunction): Promise<void> {
     const host = req.headers.host || '';
 
-    // Try subdomain first, then custom domain
+    // Try subdomain first, then custom domain, then x-tenant-slug header
     let slug = this.extractSubdomain(host);
 
     if (!slug) {
       slug = await this.resolveCustomDomain(host);
+    }
+
+    if (!slug) {
+      // Fallback: check x-tenant-slug header (used by panel on localhost)
+      const headerSlug = req.headers['x-tenant-slug'] as string | undefined;
+      if (headerSlug) {
+        slug = headerSlug;
+      }
+    }
+
+    if (!slug) {
+      // Last resort: extract tenantId from JWT and resolve slug
+      slug = await this.resolveFromJwt(req);
     }
 
     if (!slug) {
@@ -144,6 +158,44 @@ export class TenantResolverMiddleware implements NestMiddleware {
     // localhost development: no subdomain extraction
     if (hostname === 'localhost' || hostname === '127.0.0.1') {
       return null;
+    }
+
+    return null;
+  }
+
+  private async resolveFromJwt(req: Request): Promise<string | null> {
+    const auth = req.headers.authorization;
+    if (!auth?.startsWith('Bearer ')) return null;
+
+    try {
+      const token = auth.slice(7);
+      const payloadB64 = token.split('.')[1];
+      if (!payloadB64) return null;
+
+      const payload = JSON.parse(Buffer.from(payloadB64, 'base64url').toString());
+      const tenantId = payload.tenantId as string | undefined;
+      if (!tenantId) return null;
+
+      // Skip platform tenant
+      if (tenantId === '00000000-0000-0000-0000-000000000000') return null;
+
+      // Check cache first
+      const cacheKey = `tenant-id:${tenantId}`;
+      const cached = await this.redis.get(cacheKey);
+      if (cached) return cached;
+
+      // Query master DB
+      const tenant = await masterPrisma.tenant.findUnique({
+        where: { id: tenantId },
+        select: { slug: true },
+      });
+
+      if (tenant) {
+        await this.redis.set(cacheKey, tenant.slug, TENANT_CACHE_TTL);
+        return tenant.slug;
+      }
+    } catch {
+      // JWT parse failure is not critical — fall through
     }
 
     return null;

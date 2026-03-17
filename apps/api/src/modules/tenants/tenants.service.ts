@@ -4,6 +4,8 @@ import {
   NotFoundException,
   ConflictException,
 } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
+import { ConfigService } from '@nestjs/config';
 import { masterPrisma } from '@zunapro/db';
 import { CreateTenantDto } from './dto/create-tenant.dto';
 import { UpdateTenantDto } from './dto/update-tenant.dto';
@@ -12,10 +14,15 @@ import { TenantCacheInvalidationService } from '../../common/middleware/tenant-i
 @Injectable()
 export class TenantsService {
   private readonly logger = new Logger(TenantsService.name);
+  private readonly refreshSecret: string;
 
   constructor(
     private readonly cacheInvalidation: TenantCacheInvalidationService,
-  ) {}
+    private readonly jwtService: JwtService,
+    private readonly configService: ConfigService,
+  ) {
+    this.refreshSecret = this.configService.get<string>('JWT_REFRESH_SECRET', '');
+  }
 
   async findAll(page = 1, limit = 20) {
     const skip = (page - 1) * limit;
@@ -75,7 +82,7 @@ export class TenantsService {
     return { available: !existing, slug };
   }
 
-  async create(dto: CreateTenantDto) {
+  async create(dto: CreateTenantDto, userId?: string) {
     const existing = await masterPrisma.tenant.findUnique({
       where: { slug: dto.slug },
     });
@@ -112,9 +119,12 @@ export class TenantsService {
           },
         },
         domain: dto.domain,
-        status: 'pending',
+        status: 'active',
         tenantModules: {
-          create: plan.moduleSlugs.map((moduleSlug) => ({
+          create: (plan.moduleSlugs.length > 0
+            ? plan.moduleSlugs
+            : ['ecommerce']
+          ).map((moduleSlug) => ({
             moduleSlug,
             isActive: true,
           })),
@@ -127,6 +137,33 @@ export class TenantsService {
     });
 
     this.logger.log(`Tenant created: ${tenant.slug} (${tenant.id})`);
+
+    // If userId provided, reassign user to new tenant and return new tokens
+    if (userId) {
+      await masterPrisma.user.update({
+        where: { id: userId },
+        data: { tenantId: tenant.id },
+      });
+
+      const user = await masterPrisma.user.findUnique({ where: { id: userId } });
+      const activeModules = tenant.tenantModules.map((m) => m.moduleSlug);
+
+      const accessToken = this.jwtService.sign({
+        userId,
+        tenantId: tenant.id,
+        planId: tenant.planId,
+        role: user?.role || 'owner',
+        activeModules: activeModules.length > 0 ? activeModules : ['ecommerce'],
+      }, { expiresIn: '15m' });
+
+      const refreshToken = this.jwtService.sign(
+        { userId, tenantId: tenant.id },
+        { secret: this.refreshSecret, expiresIn: '7d' },
+      );
+
+      return { ...tenant, accessToken, refreshToken };
+    }
+
     return tenant;
   }
 

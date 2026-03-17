@@ -11,8 +11,19 @@ export interface ThemeConfig {
   secondary: string;
   accent: string;
   background: string;
+  foreground?: string;
+  muted?: string;
+  border?: string;
+  fonts?: { heading: string; body: string };
+  borderRadius?: 'none' | 'sm' | 'md' | 'lg' | 'xl';
+  layout?: {
+    headerStyle: 'standard' | 'centered' | 'minimal';
+    productGridColumns: 2 | 3 | 4;
+    footerColumns: number;
+  };
   logoUrl?: string;
   faviconUrl?: string;
+  customCss?: string;
 }
 
 export interface TenantConfig {

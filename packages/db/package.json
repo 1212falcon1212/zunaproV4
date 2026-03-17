@@ -2,24 +2,30 @@
   "name": "@zunapro/db",
   "version": "0.0.0",
   "private": true,
-  "type": "module",
-  "main": "./src/index.ts",
+  "main": "./dist/index.js",
   "types": "./src/index.ts",
   "exports": {
     ".": {
       "types": "./src/index.ts",
-      "default": "./src/index.ts"
+      "import": "./src/index.ts",
+      "require": "./dist/index.js",
+      "default": "./dist/index.js"
     },
     "./master": {
       "types": "./src/master-client.ts",
-      "default": "./src/master-client.ts"
+      "import": "./src/master-client.ts",
+      "require": "./dist/master-client.js",
+      "default": "./dist/master-client.js"
     },
     "./tenant": {
       "types": "./src/tenant-client.ts",
-      "default": "./src/tenant-client.ts"
+      "import": "./src/tenant-client.ts",
+      "require": "./dist/tenant-client.js",
+      "default": "./dist/tenant-client.js"
     }
   },
   "scripts": {
+    "build": "tsc -p tsconfig.build.json",
     "db:generate": "prisma generate --schema=prisma/master.prisma && prisma generate --schema=prisma/tenant.prisma",
     "db:push": "prisma db push --schema=prisma/master.prisma",
     "db:migrate": "prisma migrate deploy --schema=prisma/master.prisma",

@@ -7,6 +7,8 @@ import {
   type SeedCategory,
   type SeedPage,
   type SeedSetting,
+  type SeedCustomer,
+  type SeedOrder,
 } from '@zunapro/themes';
 import type { PageContent } from '@zunapro/types';
 
@@ -39,7 +41,7 @@ export class TenantSeederService {
       );
 
       // 2. Products
-      await this.seedProducts(client, seedData.products, categoryMap);
+      const productMap = await this.seedProducts(client, seedData.products, categoryMap);
       this.logger.log(
         `Seeded ${seedData.products.length} products (tenant: ${slug})`,
       );
@@ -67,9 +69,47 @@ export class TenantSeederService {
       this.logger.log(
         `Seeded ${allSettings.length} settings (tenant: ${slug})`,
       );
+
+      // 6. Customers
+      const allCustomers = seedData.customers ?? commonData.customers;
+      const customerMap = await this.seedCustomers(client, allCustomers);
+      this.logger.log(`Seeded ${allCustomers.length} customers (tenant: ${slug})`);
+
+      // 7. Orders
+      const allOrders = seedData.orders ?? commonData.orders;
+      await this.seedOrders(client, allOrders, customerMap, productMap);
+      this.logger.log(`Seeded ${allOrders.length} orders (tenant: ${slug})`);
+
+      // 8. Media (from product/category images)
+      await this.seedMedia(client, seedData.products, seedData.categories);
+      this.logger.log(`Seeded media records (tenant: ${slug})`);
     });
 
     this.logger.log(`Tenant seed complete: ${slug} (sector: ${sector})`);
+  }
+
+  async reseedTenant(
+    slug: string,
+    sector: string,
+    branding: BrandingConfig,
+  ): Promise<void> {
+    const prisma = getTenantClient(slug);
+
+    await prisma.$transaction(async (tx) => {
+      const client = tx as unknown as TenantPrismaClient;
+      // Delete in dependency order
+      await client.order.deleteMany();
+      await client.customer.deleteMany();
+      await client.product.deleteMany();
+      await client.category.deleteMany();
+      await client.media.deleteMany();
+      await client.page.deleteMany();
+      await client.setting.deleteMany();
+      await client.globalSection.deleteMany();
+    });
+
+    this.logger.log(`Cleared existing data for reseed (tenant: ${slug})`);
+    await this.seedTenant(slug, sector, branding);
   }
 
   private async seedCategories(
@@ -99,11 +139,13 @@ export class TenantSeederService {
     tx: TenantPrismaClient,
     products: SeedProduct[],
     categoryMap: Map<string, string>,
-  ): Promise<void> {
+  ): Promise<Map<string, { id: string; price: number; name: Record<string, string>; sku: string; images: string[] }>> {
+    const map = new Map<string, { id: string; price: number; name: Record<string, string>; sku: string; images: string[] }>();
+
     for (const prod of products) {
       const categoryId = categoryMap.get(prod.categorySlug) ?? null;
 
-      await tx.product.upsert({
+      const created = await tx.product.upsert({
         where: { slug: prod.slug },
         create: {
           name: JSON.parse(JSON.stringify(prod.name)),
@@ -122,7 +164,16 @@ export class TenantSeederService {
         },
         update: {},
       });
+      map.set(prod.slug, {
+        id: created.id,
+        price: prod.price,
+        name: prod.name,
+        sku: prod.sku,
+        images: prod.images,
+      });
     }
+
+    return map;
   }
 
   private async seedPages(
@@ -184,6 +235,161 @@ export class TenantSeederService {
           group: setting.group,
         },
         update: {},
+      });
+    }
+  }
+
+  private async seedCustomers(
+    tx: TenantPrismaClient,
+    customers: SeedCustomer[],
+  ): Promise<Map<number, string>> {
+    const map = new Map<number, string>();
+
+    for (let i = 0; i < customers.length; i++) {
+      const c = customers[i];
+      const created = await tx.customer.upsert({
+        where: { email: c.email },
+        create: {
+          email: c.email,
+          firstName: c.firstName,
+          lastName: c.lastName,
+          phone: c.phone ?? null,
+          locale: c.locale,
+          isGuest: false,
+          addresses: JSON.parse(JSON.stringify(c.addresses)),
+        },
+        update: {},
+      });
+      map.set(i, created.id);
+    }
+
+    return map;
+  }
+
+  private async seedOrders(
+    tx: TenantPrismaClient,
+    orders: SeedOrder[],
+    customerMap: Map<number, string>,
+    productMap: Map<string, { id: string; price: number; name: Record<string, string>; sku: string; images: string[] }>,
+  ): Promise<void> {
+    const productEntries = Array.from(productMap.entries());
+    if (productEntries.length === 0) return;
+
+    const now = Date.now();
+
+    for (let i = 0; i < orders.length; i++) {
+      const o = orders[i];
+      const customerId = customerMap.get(o.customerIndex);
+      if (!customerId) continue;
+
+      // Resolve products: use explicit slugs or auto-assign from available products
+      const items: { productId: string; price: number; name: Record<string, string>; sku: string; quantity: number; images: string[] }[] = [];
+
+      if (o.productSlugs.length > 0) {
+        for (let j = 0; j < o.productSlugs.length; j++) {
+          const prod = productMap.get(o.productSlugs[j]);
+          if (prod) {
+            items.push({
+              productId: prod.id,
+              price: prod.price,
+              name: prod.name,
+              sku: prod.sku,
+              quantity: o.quantities[j] ?? 1,
+              images: prod.images,
+            });
+          }
+        }
+      }
+
+      // Auto-assign if no explicit slugs or none resolved
+      if (items.length === 0) {
+        const count = Math.min(1 + (i % 3), productEntries.length);
+        for (let j = 0; j < count; j++) {
+          const idx = (i + j) % productEntries.length;
+          const [, prod] = productEntries[idx];
+          items.push({
+            productId: prod.id,
+            price: prod.price,
+            name: prod.name,
+            sku: prod.sku,
+            quantity: 1 + (j % 2),
+            images: prod.images,
+          });
+        }
+      }
+
+      const subtotalAmount = items.reduce((sum, it) => sum + it.price * it.quantity, 0);
+      const shippingCost = 9.99;
+      const totalAmount = subtotalAmount + shippingCost;
+      const orderNumber = `ORD-${now}-${String(i + 1).padStart(3, '0')}`;
+
+      // Build items as JSON array matching the schema
+      const itemsJson = items.map((it) => ({
+        productId: it.productId,
+        name: it.name,
+        sku: it.sku,
+        price: it.price,
+        quantity: it.quantity,
+        total: it.price * it.quantity,
+        image: it.images[0] ?? null,
+      }));
+
+      await tx.order.create({
+        data: {
+          orderNumber,
+          customerId,
+          status: o.status,
+          paymentStatus: o.paymentStatus,
+          paymentMethod: o.paymentMethod,
+          locale: o.locale,
+          currency: o.currency,
+          subtotalAmount,
+          shippingCost,
+          totalAmount,
+          items: itemsJson,
+        },
+      });
+    }
+  }
+
+  private async seedMedia(
+    tx: TenantPrismaClient,
+    products: SeedProduct[],
+    categories: SeedCategory[],
+  ): Promise<void> {
+    const seenUrls = new Set<string>();
+
+    for (const prod of products) {
+      for (const url of prod.images) {
+        if (!url || seenUrls.has(url)) continue;
+        seenUrls.add(url);
+
+        const filename = url.split('/').pop() ?? 'image.jpg';
+        await tx.media.create({
+          data: {
+            url,
+            filename,
+            mimeType: 'image/jpeg',
+            size: 0,
+            alt: JSON.parse(JSON.stringify(prod.name)),
+          },
+        });
+      }
+    }
+
+    for (const cat of categories) {
+      if (!cat.image || seenUrls.has(cat.image)) continue;
+      seenUrls.add(cat.image);
+
+      const filename = cat.image.split('/').pop() ?? 'image.jpg';
+      await tx.media.create({
+        data: {
+          url: cat.image,
+          filename,
+          mimeType: 'image/jpeg',
+          size: 0,
+          alt: JSON.parse(JSON.stringify(cat.name)),
+        },
       });
     }
   }

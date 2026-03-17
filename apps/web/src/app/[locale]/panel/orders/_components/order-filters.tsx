@@ -1,0 +1,57 @@
+'use client';
+
+import { useTranslations } from 'next-intl';
+
+const statuses = [
+  'all',
+  'pending',
+  'confirmed',
+  'processing',
+  'shipped',
+  'delivered',
+  'cancelled',
+  'refunded',
+];
+
+interface OrderFiltersProps {
+  currentStatus: string;
+  search: string;
+  onStatusChange: (status: string) => void;
+  onSearchChange: (search: string) => void;
+}
+
+export function OrderFilters({
+  currentStatus,
+  search,
+  onStatusChange,
+  onSearchChange,
+}: OrderFiltersProps) {
+  const t = useTranslations('panel.orders');
+
+  return (
+    <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex flex-wrap gap-2">
+        {statuses.map((status) => (
+          <button
+            key={status}
+            onClick={() => onStatusChange(status)}
+            className={`rounded-lg px-3 py-1.5 text-sm font-medium transition-colors ${
+              currentStatus === status
+                ? 'bg-primary text-white'
+                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+            }`}
+          >
+            {t(`status.${status}`)}
+          </button>
+        ))}
+      </div>
+      <input
+        type="text"
+        value={search}
+        onChange={(e) => onSearchChange(e.target.value)}
+        placeholder={t('searchPlaceholder')}
+        className="rounded-lg border border-gray-200 px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+      />
+    </div>
+  );
+}

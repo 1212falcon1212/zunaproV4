@@ -30,10 +30,10 @@
 
 ---
 
-## Faz 2 — E-Ticaret Core (Hafta 11-20)
+## Faz 2 — E-Ticaret Core (Hafta 11-25)
 
-> Modul 1: E-Ticaret — Urun, siparis, odeme, kargo, musteri, tema
-> 3 Alt Proje olarak yurutuluyor:
+> Modul 1: E-Ticaret — Urun, siparis, odeme, kargo, musteri, tema, sayfa olusturucu
+> 4 Alt Proje olarak yurutuluyor:
 
 ### Alt Proje 1: Urun & Kategori Yonetimi (Hafta 11-13)
 
@@ -57,26 +57,38 @@
 | 19 | Tema Altyapisi | packages/themes/ base class, CSS custom properties (tenant config'den), Google Fonts, tema preview, renk/font/layout ozellestirme | YAPILACAK |
 | 20 | Ilk 2 Tema | Mobilya temasi (oda navigasyonu, 3D goruntuleme, malzeme filtresi), Teknoloji temasi (ozellik tablosu, marka filtresi, benchmark) | YAPILACAK |
 
+### Alt Proje 4: Sayfa Olusturucu — Page Builder Engine (Hafta 21-25)
+
+| Hafta | Kapsam | Detay | Durum |
+|-------|--------|-------|-------|
+| 21 | Veri Modeli & API | Block tree JSONB schema, Page CRUD API, GlobalSection modeli (header/footer), Zod validation, sayfa olusturma/silme/duzenleme endpoint'leri | YAPILACAK |
+| 22 | Storefront Renderer | Block renderer (recursive tree walker), 12+ blok tipi (hero, text, image, columns, banner, product-showcase, category-showcase, html, spacer, divider, button, accordion), homepage page-builder entegrasyonu | YAPILACAK |
+| 23 | Editor UI — Core | Drag-and-drop editor (@dnd-kit), blok katalogu, blok ayar paneli, stil editoru, undo/redo (Zustand), auto-save, TipTap rich text editor, cihaz onizleme | YAPILACAK |
+| 24 | Header/Footer Editor & Gelismis Bloklar | Header/footer gorsel editoru, navigation-menu, logo, search-bar, cart-icon, social-links, newsletter, media picker entegrasyonu, coklu dil tab editoru | YAPILACAK |
+| 25 | Sablonlar, Canli Onizleme & Polish | Sayfa sablonlari (Landing, About, Contact, FAQ), iframe canli onizleme, SEO meta editoru, blok kopyala/yapistir, cihaz bazli gorunurluk, Redis cache, testler | YAPILACAK |
+
 ### Faz 2 Ciktisi:
 - Tenant sahibi urun ekleyip satabilir
 - Musteri siparis verebilir, odeme yapabilir
 - Kargo entegrasyonu ile gonderim
 - 2 sektorel tema hazir
+- Drag-and-drop sayfa olusturucu ile sayfalar duzenlenebilir
+- Header ve footer gorsel olarak ozellestirilebilir
 
 ---
 
-## Faz 3 — Finans Modulu (Hafta 21-28)
+## Faz 3 — Finans Modulu (Hafta 29-36)
 
 > Modul 2: Finans — E-fatura, e-arsiv, gelir-gider, muhasebe raporlari
 
 | Hafta | Kapsam | Detay | Durum |
 |-------|--------|-------|-------|
-| 21-22 | E-Fatura Altyapisi | GIB (Gelir Idaresi Baskanligi) entegrasyonu, e-fatura olusturma/gonderme, e-arsiv fatura, UBL-TR XML format, fatura sablonlari (A4 PDF cikti) | YAPILACAK |
-| 23 | Fatura Otomasyonu | Siparis onayinda otomatik e-fatura/e-arsiv, iade faturasi, fatura numaralama serisi, fatura durumu takip (gonderildi/onaylandi/reddedildi) | YAPILACAK |
-| 24-25 | Gelir-Gider Yonetimi | Gelir kaydi (satis, diger gelirler), gider kaydi (kategorili: kargo, reklam, malzeme, personel), banka hesaplari tanimi, otomatik banka eslestirme (CSV import), KDV hesaplama (%1, %10, %20) | YAPILACAK |
-| 26 | Muhasebe Raporlari | Kar-zarar tablosu (aylik/yillik), KDV raporu (1-2 beyannamesine uygun), gelir-gider ozet, nakit akis raporu, vergi takvimi hatirlatmalari | YAPILACAK |
-| 27 | Cari Hesap | Tedarikci/musteri cari hesap takibi, vade takibi, bakiye raporu, otomatik hatirlatma e-postalari, cari hesap mutabakati | YAPILACAK |
-| 28 | Finans Dashboard | Aylik gelir grafigi, gider dagilimi (pasta grafik), kar trend'i, vadesi gelen odemeler widget'i, KDV ozeti, yillik karsilastirma | YAPILACAK |
+| 29-30 | E-Fatura Altyapisi | GIB (Gelir Idaresi Baskanligi) entegrasyonu, e-fatura olusturma/gonderme, e-arsiv fatura, UBL-TR XML format, fatura sablonlari (A4 PDF cikti) | YAPILACAK |
+| 31 | Fatura Otomasyonu | Siparis onayinda otomatik e-fatura/e-arsiv, iade faturasi, fatura numaralama serisi, fatura durumu takip (gonderildi/onaylandi/reddedildi) | YAPILACAK |
+| 32-33 | Gelir-Gider Yonetimi | Gelir kaydi (satis, diger gelirler), gider kaydi (kategorili: kargo, reklam, malzeme, personel), banka hesaplari tanimi, otomatik banka eslestirme (CSV import), KDV hesaplama (%1, %10, %20) | YAPILACAK |
+| 34 | Muhasebe Raporlari | Kar-zarar tablosu (aylik/yillik), KDV raporu (1-2 beyannamesine uygun), gelir-gider ozet, nakit akis raporu, vergi takvimi hatirlatmalari | YAPILACAK |
+| 35 | Cari Hesap | Tedarikci/musteri cari hesap takibi, vade takibi, bakiye raporu, otomatik hatirlatma e-postalari, cari hesap mutabakati | YAPILACAK |
+| 36 | Finans Dashboard | Aylik gelir grafigi, gider dagilimi (pasta grafik), kar trend'i, vadesi gelen odemeler widget'i, KDV ozeti, yillik karsilastirma | YAPILACAK |
 
 ### Faz 3 Ciktisi:
 - E-fatura/e-arsiv otomatik kesilir
@@ -152,9 +164,9 @@
 
 | Modul | Paket Erisimi | Faz | Hafta |
 |-------|---------------|-----|-------|
-| **E-Ticaret (Temel)** | Baslangic, Profesyonel, Kurumsal | Faz 2 | 11-20 |
-| **E-Ticaret (Gelismis)** | Profesyonel, Kurumsal | Faz 2 | 11-20 |
-| **Finans** | Profesyonel, Kurumsal | Faz 3 | 21-28 |
+| **E-Ticaret (Temel)** | Baslangic, Profesyonel, Kurumsal | Faz 2 | 11-25 |
+| **E-Ticaret (Gelismis)** | Profesyonel, Kurumsal | Faz 2 | 11-25 |
+| **Finans** | Profesyonel, Kurumsal | Faz 3 | 29-36 |
 | **Pazaryeri** | Kurumsal | Faz 4 | 29-36 |
 | **E-Ihracat** | Kurumsal (Enterprise ek modul) | Faz 5 | 37-44 |
 | **SEO & Pazarlama** | Profesyonel, Kurumsal | Faz 5 | 42 |
@@ -192,8 +204,8 @@
 
 ```
 Faz 1 — MVP Altyapi:         [==================] %100 (Hafta 1-10 tamam)
-Faz 2 — E-Ticaret Core:      [------------------] %0
-Faz 3 — Finans:               [------------------] %0
+Faz 2 — E-Ticaret Core:      [------------------] %0   (Hafta 11-25)
+Faz 3 — Finans:               [------------------] %0   (Hafta 29-36)
 Faz 4 — Pazaryeri:            [------------------] %0
 Faz 5 — E-Ihracat & Gelismis: [------------------] %0
 Faz 6 — Olceklendirme:       [------------------] %0
