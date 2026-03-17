@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Card, CardContent, CardFooter, CardHeader, CardTitle, Badge, Button } from "@zunapro/ui";
+import { Card, CardContent, CardHeader, CardTitle, Badge } from "@zunapro/ui";
 import { useTranslations } from "next-intl";
 import type { PlanData } from "../_lib/wizard-state";
 import { fetchPlans } from "../_lib/api";
@@ -13,14 +13,33 @@ interface StepPlanProps {
 
 export function StepPlan({ selectedPlanId, onSelect }: StepPlanProps) {
   const t = useTranslations("wizard");
-  const [plans, setPlans] = useState<PlanData[]>([]);
+  const [plan, setPlan] = useState<PlanData | null>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     fetchPlans()
-      .then(setPlans)
-      .catch((e) => setError(e.message))
+      .then((plans) => {
+        // Auto-select the first (Starter) plan
+        const selected = plans.find((p) => p.id === selectedPlanId) || plans[0];
+        if (selected) {
+          setPlan(selected);
+          onSelect(selected.id, selected);
+        }
+      })
+      .catch(() => {
+        // Fallback: create a default starter plan entry
+        const fallback: PlanData = {
+          id: '00000000-0000-0000-0000-000000000001',
+          name: 'Starter',
+          slug: 'starter',
+          price: 0,
+          currency: 'TRY',
+          moduleSlugs: ['ecommerce'],
+          features: { maxProducts: 100, maxStorage: 1 },
+        };
+        setPlan(fallback);
+        onSelect(fallback.id, fallback);
+      })
       .finally(() => setLoading(false));
   }, []);
 
@@ -32,52 +51,44 @@ export function StepPlan({ selectedPlanId, onSelect }: StepPlanProps) {
     );
   }
 
-  if (error) {
-    return <div className="py-10 text-center text-destructive">{error}</div>;
-  }
+  const features = (plan?.features ?? {}) as Record<string, unknown>;
 
   return (
     <div>
       <h2 className="mb-2 text-2xl font-bold">{t("planTitle")}</h2>
       <p className="mb-6 text-muted-foreground">{t("planDescription")}</p>
-      <div className="grid gap-6 md:grid-cols-3">
-        {plans.map((plan) => {
-          const isSelected = plan.id === selectedPlanId;
-          const features = plan.features as Record<string, unknown>;
-          return (
-            <Card
-              key={plan.id}
-              className={`cursor-pointer transition-all ${isSelected ? "border-primary ring-2 ring-primary" : "hover:border-primary/50"}`}
-              onClick={() => onSelect(plan.id, plan)}
-            >
-              <CardHeader>
-                <div className="flex items-center justify-between">
-                  <CardTitle>{plan.name}</CardTitle>
-                  {plan.slug === "profesyonel" && <Badge>{t("popular")}</Badge>}
-                </div>
-                <div className="mt-2">
-                  <span className="text-3xl font-bold">{plan.price}</span>
-                  <span className="text-muted-foreground"> {plan.currency}/{t("month")}</span>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <ul className="space-y-2 text-sm">
-                  <li>{t("features.products", { count: features.maxProducts as number })}</li>
-                  <li>{t("features.storage", { size: features.maxStorage as number })}</li>
-                  {Boolean(features.customDomain) && <li>{t("features.customDomain")}</li>}
-                  {Boolean(features.apiAccess) && <li>{t("features.apiAccess")}</li>}
-                  {Boolean(features.prioritySupport) && <li>{t("features.prioritySupport")}</li>}
-                </ul>
-              </CardContent>
-              <CardFooter>
-                <Button variant={isSelected ? "default" : "outline"} className="w-full">
-                  {isSelected ? t("selected") : t("select")}
-                </Button>
-              </CardFooter>
-            </Card>
-          );
-        })}
-      </div>
+
+      <Card className="mx-auto max-w-md border-primary ring-2 ring-primary">
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <CardTitle className="text-xl">{plan?.name ?? 'Starter'}</CardTitle>
+            <Badge variant="default">{t("currentPlan")}</Badge>
+          </div>
+          <div className="mt-2">
+            <span className="text-3xl font-bold">{plan?.price ?? 0}</span>
+            <span className="text-muted-foreground"> {plan?.currency ?? 'TRY'}/{t("month")}</span>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <ul className="space-y-2 text-sm">
+            <li className="flex items-center gap-2">
+              <svg className="h-4 w-4 text-green-500" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" /></svg>
+              {t("features.products", { count: (features.maxProducts as number) ?? 100 })}
+            </li>
+            <li className="flex items-center gap-2">
+              <svg className="h-4 w-4 text-green-500" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" /></svg>
+              {t("features.storage", { size: (features.maxStorage as number) ?? 1 })}
+            </li>
+            <li className="flex items-center gap-2">
+              <svg className="h-4 w-4 text-green-500" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" /></svg>
+              E-Commerce
+            </li>
+          </ul>
+          <p className="mt-4 text-xs text-muted-foreground">
+            {t("upgradeLater")}
+          </p>
+        </CardContent>
+      </Card>
     </div>
   );
 }

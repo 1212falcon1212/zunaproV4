@@ -45,6 +45,8 @@
     "month": "Mo",
     "select": "Auswahlen",
     "selected": "Ausgewahlt",
+    "currentPlan": "Aktueller Plan",
+    "upgradeLater": "Sie koennen Ihren Plan jederzeit in den Panel-Einstellungen upgraden.",
     "features": {
       "products": "Bis zu {count} Produkte",
       "storage": "{size}GB Speicher",

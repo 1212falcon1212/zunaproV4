@@ -45,6 +45,8 @@
     "month": "mois",
     "select": "Selectionner",
     "selected": "Selectionne",
+    "currentPlan": "Plan actuel",
+    "upgradeLater": "Vous pouvez mettre a niveau votre plan a tout moment depuis les parametres du panneau.",
     "features": {
       "products": "Jusqu'a {count} produits",
       "storage": "{size}Go de stockage",

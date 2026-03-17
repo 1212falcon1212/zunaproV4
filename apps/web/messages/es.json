@@ -45,6 +45,8 @@
     "month": "mes",
     "select": "Seleccionar",
     "selected": "Seleccionado",
+    "currentPlan": "Plan actual",
+    "upgradeLater": "Puede actualizar su plan en cualquier momento desde la configuracion del panel.",
     "features": {
       "products": "Hasta {count} productos",
       "storage": "{size}GB de almacenamiento",

@@ -45,6 +45,8 @@
     "month": "ay",
     "select": "Sec",
     "selected": "Secildi",
+    "currentPlan": "Guncel Paket",
+    "upgradeLater": "Paketinizi panel ayarlarindan istediginiz zaman yukseltebilirsiniz.",
     "features": {
       "products": "{count} urune kadar",
       "storage": "{size}GB depolama",
