@@ -515,7 +515,7 @@ export function PanelOnboarding() {
   const canProceed = useCallback((): boolean => {
     switch (state.step) {
       case 0:
-        return !!(state.storeName && state.storeSlug && state.customDomain && state.email && state.slugStatus !== 'taken' && state.slugStatus !== 'checking');
+        return !!(state.storeName && state.storeSlug && state.email && state.slugStatus !== 'taken' && state.slugStatus !== 'checking');
       case 1:
         return !!state.planId;
       case 2:

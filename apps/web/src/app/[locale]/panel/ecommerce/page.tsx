@@ -127,11 +127,9 @@ export default function EcommerceDashboardPage({
   }
 
   const getStoreUrl = () => {
-    if (!tenant) return 'https://demo.com';
-    if (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')) {
-      return `/_store/${tenant.slug}/tr`;
-    }
-    return tenant.domain ? `https://${tenant.domain}` : `/_store/${tenant.slug}/tr`;
+    if (!tenant) return '#';
+    // Always use /_store/ path for internal preview — works on localhost, IP, and production
+    return `/_store/${tenant.slug}/tr`;
   };
   const storeUrl = getStoreUrl();
 
