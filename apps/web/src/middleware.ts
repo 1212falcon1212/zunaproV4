@@ -66,12 +66,11 @@ export default function middleware(request: NextRequest) {
     }
   }
 
-  // --- Local dev: handle direct /store/[locale]/... navigation ---
+  // --- Handle direct /store/[locale]/... navigation from /_store preview ---
   // When user navigates via client-side links from a /_store preview session,
   // links point to /store/[locale]/... which would 404 without tenant context.
   if (
     !tenantSlug &&
-    (hostname === 'localhost' || hostname === '127.0.0.1') &&
     pathname.startsWith('/store/')
   ) {
     const previewSlug = request.cookies.get('__store_preview_slug')?.value;
