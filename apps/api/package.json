@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "nest start --watch --port 4000",
+    "dev": "lsof -ti:4000 | xargs kill -9 2>/dev/null; nest start --watch --port 4000",
     "build": "nest build",
     "start": "node dist/main",
     "start:prod": "node dist/main",

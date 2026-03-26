@@ -5,10 +5,12 @@ import { TenantsController } from './tenants.controller';
 import { TenantsService } from './tenants.service';
 import { TenantCacheInvalidationService } from '../../common/middleware/tenant-invalidation.service';
 import { RedisModule } from '../../common/redis';
+import { ProvisioningModule } from '../provisioning/provisioning.module';
 
 @Module({
   imports: [
     RedisModule,
+    ProvisioningModule,
     JwtModule.registerAsync({
       inject: [ConfigService],
       useFactory: (config: ConfigService) => ({

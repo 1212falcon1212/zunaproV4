@@ -4,6 +4,7 @@ import {
   IsString,
   IsNumber,
   IsInt,
+  IsBoolean,
   IsArray,
   IsIn,
   IsUUID,
@@ -64,4 +65,8 @@ export class CreateProductDto {
   @IsOptional()
   @IsIn(['draft', 'active', 'archived'])
   status?: string;
+
+  @IsOptional()
+  @IsBoolean()
+  isFeatured?: boolean;
 }

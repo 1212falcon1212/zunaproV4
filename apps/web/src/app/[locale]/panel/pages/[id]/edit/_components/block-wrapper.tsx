@@ -25,6 +25,9 @@ import {
   Layers,
   List,
   LayoutGrid,
+  Mail,
+  Megaphone,
+  Newspaper,
 } from 'lucide-react';
 
 const BLOCK_TYPE_LABELS: Record<string, string> = {
@@ -50,6 +53,10 @@ const BLOCK_TYPE_LABELS: Record<string, string> = {
   newsletter: 'Newsletter',
   'product-listing': 'Product Listing',
   'category-listing': 'Category Grid',
+  'banner-grid': 'Banner Grid',
+  'category-products': 'Category Row',
+  'promo-banners': 'Promo Banners',
+  'contact-form': 'Contact Form',
 };
 
 const BLOCK_TYPE_ICONS: Record<string, React.ReactNode> = {
@@ -68,6 +75,11 @@ const BLOCK_TYPE_ICONS: Record<string, React.ReactNode> = {
   accordion: <ChevronDown className="h-3 w-3" />,
   'product-listing': <List className="h-3 w-3" />,
   'category-listing': <LayoutGrid className="h-3 w-3" />,
+  'banner-grid': <LayoutGrid className="h-3 w-3" />,
+  'category-products': <ShoppingBag className="h-3 w-3" />,
+  'promo-banners': <Megaphone className="h-3 w-3" />,
+  'contact-form': <Mail className="h-3 w-3" />,
+  'blog-posts': <Newspaper className="h-3 w-3" />,
 };
 
 interface BlockWrapperProps {
@@ -428,6 +440,31 @@ function BlockPreview({ block }: { block: Block }) {
         </div>
       );
 
+    case 'banner-grid': {
+      const bgSlides = (props.slides as Array<{ title?: unknown; image?: string }>) ?? [];
+      const bgSideBanners = (props.sideBanners as Array<{ title?: unknown; image?: string }>) ?? [];
+      return (
+        <div className="p-4">
+          <div className="grid grid-cols-2 gap-2">
+            <div className="flex min-h-[100px] items-center justify-center rounded-md bg-gradient-to-br from-violet-500 to-indigo-600 text-white">
+              <span className="text-sm font-medium">{bgSlides.length > 0 ? getLocalizedText(bgSlides[0].title) : 'Main Slider'} ({bgSlides.length} slides)</span>
+            </div>
+            <div className="flex flex-col gap-2">
+              {bgSideBanners.length > 0 ? bgSideBanners.slice(0, 3).map((b, i) => (
+                <div key={i} className="flex min-h-[40px] items-center justify-center rounded-md bg-gradient-to-br from-pink-400 to-orange-400 text-white">
+                  <span className="text-xs font-medium">{getLocalizedText(b.title) || `Side Banner ${i + 1}`}</span>
+                </div>
+              )) : (
+                <div className="flex min-h-[40px] items-center justify-center rounded-md bg-slate-200 text-slate-500">
+                  <span className="text-xs">No side banners</span>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      );
+    }
+
     case 'accordion': {
       const items = (props.items as Array<{ title: unknown; content: unknown }>) ?? [];
       return (
@@ -526,6 +563,127 @@ function BlockPreview({ block }: { block: Block }) {
                 {(props.showProductCount as boolean) !== false && (
                   <span className="mt-1 text-[10px] text-slate-400">12 products</span>
                 )}
+              </div>
+            ))}
+          </div>
+        </div>
+      );
+
+    case 'category-products': {
+      const cpShowBanner = (props.showSideBanner as boolean) ?? true;
+      return (
+        <div className="p-6">
+          <div className="mb-3 flex items-center justify-between">
+            <h3 className="text-lg font-semibold text-slate-800">
+              {getLocalizedText(props.title) || 'Category Products'}
+            </h3>
+            <span className="text-xs text-violet-500">More Products &gt;</span>
+          </div>
+          <div className={cpShowBanner ? 'grid grid-cols-10 gap-3' : ''}>
+            {cpShowBanner && (
+              <div
+                className="col-span-3 flex min-h-[120px] items-center justify-center rounded-lg text-white"
+                style={{ backgroundColor: ((props.sideBanner as Record<string, unknown>)?.backgroundColor as string) || '#1a1a2e' }}
+              >
+                <span className="text-xs font-medium">Side Banner</span>
+              </div>
+            )}
+            <div className={`grid grid-cols-${cpShowBanner ? '2' : '4'} gap-3 ${cpShowBanner ? 'col-span-7' : ''}`}>
+              {Array.from({ length: Math.min((props.limit as number) || 4, 4) }).map((_, i) => (
+                <div
+                  key={i}
+                  className="flex flex-col items-center rounded-lg border border-slate-200 bg-slate-50 p-3"
+                >
+                  <div className="mb-2 h-12 w-12 rounded bg-slate-200" />
+                  <div className="h-2 w-14 rounded bg-slate-200" />
+                  <div className="mt-1 h-2 w-8 rounded bg-slate-100" />
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    case 'promo-banners': {
+      const pbBanners = (props.banners as Array<{ title?: unknown; backgroundColor?: string }>) ?? [];
+      return (
+        <div className="p-6">
+          <div className="grid grid-cols-3 gap-3">
+            {(pbBanners.length > 0 ? pbBanners.slice(0, 3) : [{ title: { en: 'Banner 1' }, backgroundColor: '#3b82f6' }]).map((b, i) => (
+              <div
+                key={i}
+                className="flex min-h-[80px] items-center justify-center rounded-lg text-white"
+                style={{ backgroundColor: b.backgroundColor || '#3b82f6' }}
+              >
+                <span className="text-xs font-medium">{getLocalizedText(b.title) || `Banner ${i + 1}`}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      );
+    }
+
+    case 'contact-form':
+      return (
+        <div className="p-6">
+          <h3 className="mb-3 text-center text-lg font-semibold text-slate-800">
+            {getLocalizedText(props.title) || 'Contact Us'}
+          </h3>
+          <div className={(props.layout as string) === 'stacked' ? '' : 'grid grid-cols-5 gap-4'}>
+            <div className={(props.layout as string) === 'stacked' ? '' : 'col-span-3'}>
+              <div className="space-y-2">
+                <div className="grid grid-cols-2 gap-2">
+                  <div className="h-8 rounded bg-slate-100 border border-slate-200" />
+                  <div className="h-8 rounded bg-slate-100 border border-slate-200" />
+                </div>
+                <div className="h-8 rounded bg-slate-100 border border-slate-200" />
+                <div className="h-20 rounded bg-slate-100 border border-slate-200" />
+                <div className="h-8 w-32 rounded bg-violet-500" />
+              </div>
+            </div>
+            {(props.showContactInfo as boolean) !== false && (
+              <div className={(props.layout as string) === 'stacked' ? 'mt-4' : 'col-span-2'}>
+                <div className="rounded-lg border border-slate-200 bg-slate-50 p-3">
+                  <span className="text-xs font-medium text-slate-600">Need Help?</span>
+                  <div className="mt-2 space-y-1">
+                    <div className="h-3 w-24 rounded bg-slate-200" />
+                    <div className="h-3 w-32 rounded bg-slate-200" />
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      );
+
+    case 'blog-posts':
+      return (
+        <div className="p-6">
+          <h3 className="mb-3 text-lg font-semibold text-slate-800">
+            {getLocalizedText(props.title) || 'Blog Posts'}
+          </h3>
+          <div
+            className="grid gap-3"
+            style={{
+              gridTemplateColumns: `repeat(${(props.columns as number) || 4}, 1fr)`,
+            }}
+          >
+            {Array.from({ length: Math.min((props.limit as number) || 4, 4) }).map((_, i) => (
+              <div
+                key={i}
+                className="flex flex-col rounded-lg border border-slate-200 bg-slate-50 overflow-hidden"
+              >
+                <div className="h-20 bg-gradient-to-br from-slate-200 to-slate-300" />
+                <div className="p-3 space-y-1.5">
+                  <div className="h-2 w-3/4 rounded bg-slate-200" />
+                  {(props.showExcerpt as boolean) !== false && (
+                    <div className="h-2 w-full rounded bg-slate-100" />
+                  )}
+                  {(props.showDate as boolean) !== false && (
+                    <div className="h-2 w-12 rounded bg-slate-100" />
+                  )}
+                </div>
               </div>
             ))}
           </div>

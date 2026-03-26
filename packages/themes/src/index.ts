@@ -21,4 +21,6 @@ export type {
   SeedSettingValue,
   SeedCustomer,
   SeedOrder,
+  SeedMenu,
+  SeedBlogPost,
 } from './seeds/index.js';

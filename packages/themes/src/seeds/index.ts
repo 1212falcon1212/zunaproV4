@@ -1,28 +1,12 @@
-import type { SectorSeedData, SeedPage, SeedSetting, SeedCustomer, SeedOrder } from './types';
+import type { SectorSeedData, SeedPage, SeedSetting, SeedCustomer, SeedOrder, SeedMenu } from './types';
 import type { PageContent } from '@zunapro/types';
 import { genelSeedData } from './genel';
-import { mobilyaSeedData } from './mobilya';
-import { teknolojiSeedData } from './teknoloji';
-import { giyimSeedData } from './giyim';
-import { kozmetikSeedData } from './kozmetik';
-import { gidaSeedData } from './gida';
-import { evYasamSeedData } from './ev-yasam';
-import { commonPages, additionalCommonPages, commonSettings, commonCustomers, commonOrders, defaultHeader, defaultFooter } from './common';
+import { commonPages, additionalCommonPages, commonSettings, commonCustomers, commonOrders, defaultHeader, defaultFooter, commonMenus } from './common';
 
-export type { SectorSeedData, SeedProduct, SeedCategory, SeedPage, SeedSetting, SeedSettingValue, SeedCustomer, SeedOrder } from './types';
+export type { SectorSeedData, SeedProduct, SeedCategory, SeedPage, SeedSetting, SeedSettingValue, SeedCustomer, SeedOrder, SeedMenu, SeedBlogPost } from './types';
 
-const SECTOR_MAP: Record<string, SectorSeedData> = {
-  genel: genelSeedData,
-  mobilya: mobilyaSeedData,
-  teknoloji: teknolojiSeedData,
-  giyim: giyimSeedData,
-  kozmetik: kozmetikSeedData,
-  gida: gidaSeedData,
-  'ev-yasam': evYasamSeedData,
-};
-
-export function getSeedData(sector: string): SectorSeedData {
-  return SECTOR_MAP[sector] ?? SECTOR_MAP.genel;
+export function getSeedData(_sector?: string): SectorSeedData {
+  return genelSeedData;
 }
 
 export function getCommonSeedData(): {
@@ -30,6 +14,7 @@ export function getCommonSeedData(): {
   settings: SeedSetting[];
   customers: SeedCustomer[];
   orders: SeedOrder[];
+  menus: SeedMenu[];
   header: PageContent;
   footer: PageContent;
 } {
@@ -38,6 +23,7 @@ export function getCommonSeedData(): {
     settings: commonSettings,
     customers: commonCustomers,
     orders: commonOrders,
+    menus: commonMenus,
     header: defaultHeader,
     footer: defaultFooter,
   };

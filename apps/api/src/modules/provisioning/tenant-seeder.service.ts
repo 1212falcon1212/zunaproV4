@@ -9,6 +9,8 @@ import {
   type SeedSetting,
   type SeedCustomer,
   type SeedOrder,
+  type SeedMenu,
+  type SeedBlogPost,
 } from '@zunapro/themes';
 import type { PageContent } from '@zunapro/types';
 
@@ -70,6 +72,18 @@ export class TenantSeederService {
         `Seeded ${allSettings.length} settings (tenant: ${slug})`,
       );
 
+      // 5.5. Menus
+      const allMenus = seedData.menus ?? commonData.menus ?? [];
+      await this.seedMenus(client, allMenus);
+      this.logger.log(`Seeded ${allMenus.length} menus (tenant: ${slug})`);
+
+      // 5.6. Blog Posts
+      const allBlogPosts = seedData.blogPosts ?? [];
+      if (allBlogPosts.length > 0) {
+        await this.seedBlogPosts(client, allBlogPosts);
+        this.logger.log(`Seeded ${allBlogPosts.length} blog posts (tenant: ${slug})`);
+      }
+
       // 6. Customers
       const allCustomers = seedData.customers ?? commonData.customers;
       const customerMap = await this.seedCustomers(client, allCustomers);
@@ -105,6 +119,8 @@ export class TenantSeederService {
       await client.media.deleteMany();
       await client.page.deleteMany();
       await client.setting.deleteMany();
+      await client.menu.deleteMany();
+      await client.blogPost.deleteMany();
       await client.globalSection.deleteMany();
     });
 
@@ -118,7 +134,9 @@ export class TenantSeederService {
   ): Promise<Map<string, string>> {
     const map = new Map<string, string>();
 
+    // First pass: create all categories without parents
     for (const cat of categories) {
+      if (cat.parentSlug) continue;
       const created = await tx.category.upsert({
         where: { slug: cat.slug },
         create: {
@@ -126,6 +144,26 @@ export class TenantSeederService {
           slug: cat.slug,
           image: cat.image ?? null,
           sortOrder: cat.sortOrder,
+          isFeatured: cat.isFeatured ?? false,
+        },
+        update: {},
+      });
+      map.set(cat.slug, created.id);
+    }
+
+    // Second pass: create child categories with parent reference
+    for (const cat of categories) {
+      if (!cat.parentSlug) continue;
+      const parentId = map.get(cat.parentSlug);
+      const created = await tx.category.upsert({
+        where: { slug: cat.slug },
+        create: {
+          name: JSON.parse(JSON.stringify(cat.name)),
+          slug: cat.slug,
+          image: cat.image ?? null,
+          sortOrder: cat.sortOrder,
+          isFeatured: cat.isFeatured ?? false,
+          parentId: parentId ?? null,
         },
         update: {},
       });
@@ -161,6 +199,7 @@ export class TenantSeederService {
             ? JSON.parse(JSON.stringify(prod.seoMeta))
             : null,
           status: prod.status,
+          isFeatured: prod.isFeatured ?? false,
         },
         update: {},
       });
@@ -233,6 +272,49 @@ export class TenantSeederService {
           key: setting.key,
           value: JSON.parse(JSON.stringify(setting.value)),
           group: setting.group,
+        },
+        update: {},
+      });
+    }
+  }
+
+  private async seedMenus(
+    tx: TenantPrismaClient,
+    menus: SeedMenu[],
+  ): Promise<void> {
+    for (const menu of menus) {
+      await tx.menu.upsert({
+        where: { slug: menu.slug },
+        create: {
+          name: JSON.parse(JSON.stringify(menu.name)),
+          slug: menu.slug,
+          location: menu.location,
+          items: JSON.parse(JSON.stringify(menu.items)),
+          isActive: menu.isActive ?? true,
+        },
+        update: {},
+      });
+    }
+  }
+
+  private async seedBlogPosts(
+    tx: TenantPrismaClient,
+    blogPosts: SeedBlogPost[],
+  ): Promise<void> {
+    for (const post of blogPosts) {
+      await tx.blogPost.upsert({
+        where: { slug: post.slug },
+        create: {
+          title: JSON.parse(JSON.stringify(post.title)),
+          slug: post.slug,
+          excerpt: JSON.parse(JSON.stringify(post.excerpt)),
+          content: JSON.parse(JSON.stringify(post.content)),
+          featuredImage: post.featuredImage ?? null,
+          author: post.author ?? null,
+          category: post.category ?? null,
+          tags: post.tags ? JSON.parse(JSON.stringify(post.tags)) : [],
+          status: post.status,
+          publishedAt: new Date(post.publishedAt),
         },
         update: {},
       });

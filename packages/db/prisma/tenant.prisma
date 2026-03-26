@@ -26,6 +26,7 @@ model Product {
   categoryId     String?  @map("category_id")
   seoMeta        Json?    @map("seo_meta") // {"en": {title, description}, "tr": {title, description}}
   status         String   @default("draft") // 'draft' | 'active' | 'archived'
+  isFeatured     Boolean  @default(false) @map("is_featured")
   createdAt      DateTime @default(now()) @map("created_at")
   updatedAt      DateTime @updatedAt @map("updated_at")
 
@@ -38,10 +39,12 @@ model Category {
   id        String  @id @default(uuid())
   name      Json    // {"en": "Furniture", "tr": "Mobilya"}
   slug      String  @unique
-  image     String?
-  parentId  String? @map("parent_id")
-  sortOrder Int     @default(0) @map("sort_order")
-  seoMeta   Json?   @map("seo_meta") // {"en": {title, description}, "tr": {title, description}}
+  image      String?
+  parentId   String?  @map("parent_id")
+  sortOrder  Int      @default(0) @map("sort_order")
+  isFeatured  Boolean  @default(false) @map("is_featured")
+  description Json?    // {"en": "<html>...", "tr": "<html>..."} SEO description
+  seoMeta     Json?    @map("seo_meta") // {"en": {title, description}, "tr": {title, description}}
 
   parent   Category?  @relation("CategoryTree", fields: [parentId], references: [id])
   children Category[] @relation("CategoryTree")
@@ -142,4 +145,37 @@ model Media {
   createdAt DateTime @default(now()) @map("created_at")
 
   @@map("media")
+}
+
+model Menu {
+  id        String   @id @default(uuid())
+  name      Json     // {"en": "Main Menu", "tr": "Ana Menu"}
+  slug      String   @unique
+  location  String   @default("header") // header | top-header | footer | mobile
+  items     Json     @default("[]") // MenuItem[] nested JSONB
+  isActive  Boolean  @default(true) @map("is_active")
+  sortOrder Int      @default(0) @map("sort_order")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("menus")
+}
+
+model BlogPost {
+  id            String    @id @default(uuid())
+  title         Json      // {"en": "...", "tr": "..."}
+  slug          String    @unique
+  excerpt       Json?     // {"en": "...", "tr": "..."}
+  content       Json?     // {"en": "<html>...", "tr": "<html>..."}
+  featuredImage String?   @map("featured_image")
+  author        String?
+  category      String?   // simple string tag like "Technology", "News"
+  tags          Json      @default("[]") // string[] as JSONB
+  status        String    @default("draft") // 'draft' | 'published'
+  publishedAt   DateTime? @map("published_at")
+  seoMeta       Json?     @map("seo_meta")
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+
+  @@map("blog_posts")
 }

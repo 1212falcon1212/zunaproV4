@@ -1,0 +1,11 @@
+{
+  "watch": [
+    "src",
+    "../../packages/themes/src",
+    "../../packages/types/src",
+    "../../packages/db/src"
+  ],
+  "ext": "ts,json",
+  "ignore": ["**/*.spec.ts", "**/*.test.ts", "dist"],
+  "exec": "nest start --port 4000"
+}

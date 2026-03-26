@@ -1,4 +1,4 @@
-import type { SeedPage, SeedSetting, SeedCustomer, SeedOrder } from './types';
+import type { SeedPage, SeedSetting, SeedCustomer, SeedOrder, SeedMenu } from './types';
 import type { PageContent } from '@zunapro/types';
 
 // ---------------------------------------------------------------------------
@@ -695,4 +695,252 @@ export const commonOrders: SeedOrder[] = [
 export const commonSettings: SeedSetting[] = [
   { key: 'contact_email', value: 'info@example.com', group: 'contact' },
   { key: 'contact_phone', value: '+1 (555) 000-0000', group: 'contact' },
+  {
+    key: 'store_info',
+    value: {
+      store_name: { en: 'My Store', tr: 'Magazam', de: 'Mein Shop', fr: 'Ma Boutique', es: 'Mi Tienda' },
+      store_phone: '+1 212-334-0212',
+      store_email: 'info@example.com',
+      locales: ['en', 'tr', 'de', 'fr', 'es'],
+      default_locale: 'en',
+      currencies: ['USD', 'EUR', 'TRY'],
+      default_currency: 'USD',
+      social_links: {
+        facebook: 'https://facebook.com',
+        twitter: 'https://twitter.com',
+        instagram: 'https://instagram.com',
+        youtube: 'https://youtube.com',
+      },
+      header_messages: [
+        {
+          icon: 'support',
+          title: { en: '24 Support', tr: '7/24 Destek', de: '24h Support', fr: 'Support 24h', es: 'Soporte 24h' },
+          subtitle: { en: '+1 212-334-0212', tr: '+1 212-334-0212', de: '+1 212-334-0212', fr: '+1 212-334-0212', es: '+1 212-334-0212' },
+        },
+        {
+          icon: 'shipping',
+          title: { en: 'Worldwide', tr: 'Dunya Geneli', de: 'Weltweit', fr: 'Mondial', es: 'Mundial' },
+          subtitle: { en: 'Free Shipping', tr: 'Ucretsiz Kargo', de: 'Kostenloser Versand', fr: 'Livraison gratuite', es: 'Envio gratuito' },
+        },
+      ],
+    },
+    group: 'store',
+  },
+];
+
+// ---------------------------------------------------------------------------
+// Common Menus — Header, Top Header, Footer
+// ---------------------------------------------------------------------------
+
+export const commonMenus: SeedMenu[] = [
+  {
+    name: {
+      en: 'Main Menu',
+      tr: 'Ana Menu',
+      de: 'Hauptmenue',
+      fr: 'Menu principal',
+      es: 'Menu principal',
+    },
+    slug: 'main-menu',
+    location: 'header',
+    items: [
+      {
+        id: 'menu-item-home',
+        label: {
+          en: 'Home',
+          tr: 'Ana Sayfa',
+          de: 'Startseite',
+          fr: 'Accueil',
+          es: 'Inicio',
+        },
+        type: 'page',
+        href: '/',
+      },
+      {
+        id: 'menu-item-shop',
+        label: {
+          en: 'Shop',
+          tr: 'Magazin',
+          de: 'Shop',
+          fr: 'Boutique',
+          es: 'Tienda',
+        },
+        type: 'page',
+        href: '/products',
+        children: [
+          {
+            id: 'menu-item-all-products',
+            label: {
+              en: 'All Products',
+              tr: 'Tum Urunler',
+              de: 'Alle Produkte',
+              fr: 'Tous les produits',
+              es: 'Todos los productos',
+            },
+            type: 'page',
+            href: '/products',
+          },
+          {
+            id: 'menu-item-categories',
+            label: {
+              en: 'Categories',
+              tr: 'Kategoriler',
+              de: 'Kategorien',
+              fr: 'Categories',
+              es: 'Categorias',
+            },
+            type: 'page',
+            href: '/categories',
+          },
+        ],
+      },
+      {
+        id: 'menu-item-about',
+        label: {
+          en: 'About',
+          tr: 'Hakkimizda',
+          de: 'Ueber uns',
+          fr: 'A propos',
+          es: 'Acerca de',
+        },
+        type: 'page',
+        href: '/pages/about',
+      },
+      {
+        id: 'menu-item-contact',
+        label: {
+          en: 'Contact',
+          tr: 'Iletisim',
+          de: 'Kontakt',
+          fr: 'Contact',
+          es: 'Contacto',
+        },
+        type: 'page',
+        href: '/pages/contact',
+      },
+    ],
+  },
+  {
+    name: {
+      en: 'Top Header Menu',
+      tr: 'Ust Baslik Menusu',
+      de: 'Oberes Kopfzeilenmenue',
+      fr: 'Menu en-tete superieur',
+      es: 'Menu de encabezado superior',
+    },
+    slug: 'top-header-menu',
+    location: 'top-header',
+    isActive: false,
+    items: [
+      {
+        id: 'menu-item-free-shipping',
+        label: {
+          en: 'Free Shipping on $500+',
+          tr: '$500 ve Uzeri Ucretsiz Kargo',
+          de: 'Kostenloser Versand ab 500$',
+          fr: 'Livraison gratuite des 500$',
+          es: 'Envio gratuito en pedidos de $500+',
+        },
+        type: 'custom',
+        href: '#',
+      },
+      {
+        id: 'menu-item-track-order',
+        label: {
+          en: 'Track Order',
+          tr: 'Siparis Takibi',
+          de: 'Bestellung verfolgen',
+          fr: 'Suivre la commande',
+          es: 'Rastrear pedido',
+        },
+        type: 'page',
+        href: '/pages/contact',
+      },
+      {
+        id: 'menu-item-help',
+        label: {
+          en: 'Help',
+          tr: 'Yardim',
+          de: 'Hilfe',
+          fr: 'Aide',
+          es: 'Ayuda',
+        },
+        type: 'page',
+        href: '/pages/contact',
+      },
+    ],
+  },
+  {
+    name: {
+      en: 'Footer Menu',
+      tr: 'Alt Bilgi Menusu',
+      de: 'Fusszeilenmenue',
+      fr: 'Menu pied de page',
+      es: 'Menu de pie de pagina',
+    },
+    slug: 'footer-menu',
+    location: 'footer',
+    items: [
+      {
+        id: 'menu-item-footer-home',
+        label: {
+          en: 'Home',
+          tr: 'Ana Sayfa',
+          de: 'Startseite',
+          fr: 'Accueil',
+          es: 'Inicio',
+        },
+        type: 'page',
+        href: '/',
+      },
+      {
+        id: 'menu-item-footer-shop',
+        label: {
+          en: 'Shop',
+          tr: 'Magazin',
+          de: 'Shop',
+          fr: 'Boutique',
+          es: 'Tienda',
+        },
+        type: 'page',
+        href: '/products',
+      },
+      {
+        id: 'menu-item-footer-about',
+        label: {
+          en: 'About',
+          tr: 'Hakkimizda',
+          de: 'Ueber uns',
+          fr: 'A propos',
+          es: 'Acerca de',
+        },
+        type: 'page',
+        href: '/pages/about',
+      },
+      {
+        id: 'menu-item-footer-contact',
+        label: {
+          en: 'Contact',
+          tr: 'Iletisim',
+          de: 'Kontakt',
+          fr: 'Contact',
+          es: 'Contacto',
+        },
+        type: 'page',
+        href: '/pages/contact',
+      },
+      {
+        id: 'menu-item-footer-faq',
+        label: {
+          en: 'FAQ',
+          tr: 'SSS',
+          de: 'FAQ',
+          fr: 'FAQ',
+          es: 'Preguntas frecuentes',
+        },
+        type: 'page',
+        href: '/pages/faq',
+      },
+    ],
+  },
 ];

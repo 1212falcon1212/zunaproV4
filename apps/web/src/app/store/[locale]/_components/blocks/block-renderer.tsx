@@ -20,6 +20,11 @@ import { SocialLinksBlock } from './social-links-block';
 import { NewsletterBlock } from './newsletter-block';
 import { ProductListingBlock } from './product-listing-block';
 import { CategoryListingBlock } from './category-listing-block';
+import { BannerGridBlock } from './banner-grid-block';
+import { CategoryProductsBlock } from './category-products-block';
+import { PromoBannersBlock } from './promo-banners-block';
+import { ContactFormBlock } from './contact-form-block';
+import { BlogPostsBlock } from './blog-posts-block';
 
 interface BlockRendererProps {
   blocks: Block[];
@@ -51,6 +56,11 @@ const BLOCK_COMPONENTS: Record<
   newsletter: NewsletterBlock,
   'product-listing': ProductListingBlock,
   'category-listing': CategoryListingBlock,
+  'banner-grid': BannerGridBlock,
+  'category-products': CategoryProductsBlock,
+  'promo-banners': PromoBannersBlock,
+  'contact-form': ContactFormBlock,
+  'blog-posts': BlogPostsBlock,
 };
 
 export function BlockRenderer({ blocks, locale }: BlockRendererProps) {

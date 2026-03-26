@@ -2,13 +2,13 @@ import { notFound } from 'next/navigation';
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages } from 'next-intl/server';
 import { routing } from '@/i18n/routing';
-import { serverFetch } from '@/lib/server-store-api';
+import { serverFetch, getTenantSlug } from '@/lib/server-store-api';
 import { themeConfigToCssVars, getGoogleFontsUrl, mergeThemeConfig } from '@/lib/theme-utils';
 import { StoreHeader } from './_components/store-header';
 import { StoreFooter } from './_components/store-footer';
 import { ThemePreviewListener } from './_components/theme-preview-listener';
-import { BlockRenderer } from './_components/blocks/block-renderer';
-import type { ThemeConfig, PageContent } from '@zunapro/types';
+import { TenantProvider } from './_components/tenant-context';
+import type { ThemeConfig } from '@zunapro/types';
 import '@/styles/globals.css';
 
 export default async function StoreLocaleLayout({
@@ -25,6 +25,7 @@ export default async function StoreLocaleLayout({
   }
 
   const messages = await getMessages();
+  const tenantSlug = await getTenantSlug();
 
   let themeConfig: ThemeConfig;
   try {
@@ -34,22 +35,23 @@ export default async function StoreLocaleLayout({
     themeConfig = mergeThemeConfig(null);
   }
 
-  // Load custom header/footer from GlobalSection
-  let customHeader: PageContent | null = null;
-  let customFooter: PageContent | null = null;
+  let storeInfo: Record<string, unknown> = {};
+  let categories: unknown[] = [];
+  let menuItems: unknown[] = [];
+  let footerMenuItems: unknown[] = [];
   try {
-    const [headerData, footerData] = await Promise.all([
-      serverFetch<PageContent>('/storefront/global-sections/header').catch(() => null),
-      serverFetch<PageContent>('/storefront/global-sections/footer').catch(() => null),
+    const [storeInfoData, categoriesData, menuData, footerMenuData] = await Promise.all([
+      serverFetch<Record<string, unknown>>('/storefront/settings/store-info').catch(() => ({})),
+      serverFetch<unknown[]>('/storefront/categories').catch(() => []),
+      serverFetch<{ items: unknown[] }>('/storefront/menus/header').catch(() => null),
+      serverFetch<{ items: unknown[] }>('/storefront/menus/footer').catch(() => null),
     ]);
-    if (headerData?.version === 1 && headerData.blocks?.length > 0) {
-      customHeader = headerData;
-    }
-    if (footerData?.version === 1 && footerData.blocks?.length > 0) {
-      customFooter = footerData;
-    }
+    storeInfo = storeInfoData;
+    categories = categoriesData;
+    menuItems = menuData?.items ?? [];
+    footerMenuItems = footerMenuData?.items ?? [];
   } catch {
-    // Fall back to default header/footer
+    // Fall back to defaults
   }
 
   const cssVars = themeConfigToCssVars(themeConfig);
@@ -72,28 +74,27 @@ export default async function StoreLocaleLayout({
         className="min-h-screen bg-[var(--color-background)] text-[var(--color-foreground)]"
         style={{ fontFamily: 'var(--font-body)' }}
       >
+        <TenantProvider slug={tenantSlug}>
         <NextIntlClientProvider messages={messages}>
-          {customHeader ? (
-            <header className="flex flex-wrap items-center gap-4 border-b border-[var(--color-border)] bg-[var(--color-background)] px-4 py-3 sm:px-6">
-              <BlockRenderer blocks={customHeader.blocks} locale={locale} />
-            </header>
-          ) : (
-            <StoreHeader
-              locale={locale}
-              logoUrl={themeConfig.logoUrl}
-              storeName="Store"
-            />
-          )}
+          <StoreHeader
+            locale={locale}
+            logoUrl={themeConfig.logoUrl}
+            storeName="Store"
+            storeInfo={storeInfo}
+            categories={categories as never[]}
+            menuItems={menuItems as never[]}
+          />
           <main className="min-h-[calc(100vh-4rem)]">{children}</main>
-          {customFooter ? (
-            <footer>
-              <BlockRenderer blocks={customFooter.blocks} locale={locale} />
-            </footer>
-          ) : (
-            <StoreFooter locale={locale} storeName="Store" />
-          )}
+          <StoreFooter
+            locale={locale}
+            storeName="Store"
+            storeInfo={storeInfo as never}
+            categories={categories as never[]}
+            footerMenuItems={footerMenuItems as never[]}
+          />
           <ThemePreviewListener />
         </NextIntlClientProvider>
+        </TenantProvider>
       </body>
     </html>
   );

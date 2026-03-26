@@ -1,4 +1,4 @@
-import { getAccessToken, clearTokens } from './auth';
+import { getAccessToken, getRefreshToken, clearTokens, setAccessToken } from './auth';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
 
@@ -14,11 +14,16 @@ async function panelFetch<T>(
 
   const token = getAccessToken();
   if (!token) {
-    clearTokens();
-    if (typeof window !== 'undefined') {
-      window.location.href = '/login';
+    // Try refresh before giving up
+    const refreshed = await tryRefreshToken();
+    if (!refreshed) {
+      clearTokens();
+      if (typeof window !== 'undefined') {
+        const locale = window.location.pathname.split('/')[1] || 'tr';
+        window.location.href = `/${locale}/auth/login`;
+      }
+      throw new Error('Not authenticated');
     }
-    throw new Error('Not authenticated');
   }
 
   let url = `${API_URL}${path}`;
@@ -44,12 +49,27 @@ async function panelFetch<T>(
     headers['Content-Type'] = 'application/json';
   }
 
-  const response = await fetch(url, { ...rest, headers });
+  let response = await fetch(url, { ...rest, headers });
+
+  if (response.status === 401) {
+    const refreshed = await tryRefreshToken();
+    if (refreshed) {
+      const retryToken = getAccessToken();
+      response = await fetch(url, {
+        ...rest,
+        headers: {
+          ...headers,
+          Authorization: `Bearer ${retryToken}`,
+        },
+      });
+    }
+  }
 
   if (response.status === 401) {
     clearTokens();
-    if (typeof window !== 'undefined') {
-      window.location.href = '/login';
+    if (typeof window !== 'undefined' && !window.location.pathname.includes('/auth/login')) {
+      const locale = window.location.pathname.split('/')[1] || 'tr';
+      window.location.href = `/${locale}/auth/login`;
     }
     throw new Error('Session expired');
   }
@@ -64,6 +84,30 @@ async function panelFetch<T>(
   if (response.status === 204) return undefined as T;
 
   return response.json();
+}
+
+async function tryRefreshToken(): Promise<boolean> {
+  try {
+    const refreshToken = getRefreshToken();
+    if (!refreshToken) return false;
+
+    const response = await fetch(`${API_URL}/auth/refresh`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ refreshToken }),
+      credentials: 'include',
+    });
+
+    if (!response.ok) return false;
+
+    const data = await response.json().catch(() => null);
+    if (!data?.accessToken) return false;
+
+    setAccessToken(data.accessToken);
+    return true;
+  } catch {
+    return false;
+  }
 }
 
 export const panelApi = {
@@ -81,6 +125,13 @@ export const panelApi = {
   patch<T>(path: string, body?: unknown) {
     return panelFetch<T>(path, {
       method: 'PATCH',
+      body: body ? JSON.stringify(body) : undefined,
+    });
+  },
+
+  put<T>(path: string, body?: unknown) {
+    return panelFetch<T>(path, {
+      method: 'PUT',
       body: body ? JSON.stringify(body) : undefined,
     });
   },

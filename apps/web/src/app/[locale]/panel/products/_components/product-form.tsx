@@ -20,9 +20,7 @@ import {
   TabsList,
   TabsTrigger,
   Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
+  Separator,
 } from '@zunapro/ui';
 import { panelApi } from '@/lib/panel-api';
 import { ImageUpload } from './image-upload';
@@ -30,19 +28,24 @@ import { VariantBuilder } from './variant-builder';
 
 const LOCALES = ['en', 'tr', 'de', 'fr', 'es'] as const;
 
+const localeString = z.string().optional().default('');
 const productSchema = z.object({
-  name: z.record(z.string(), z.string()).refine(
-    (val) => Object.values(val).some((v) => v.trim().length > 0),
-    { message: 'At least one language name is required' },
-  ),
-  description: z.record(z.string(), z.string()).optional(),
+  name: z.object({ en: localeString, tr: localeString, de: localeString, fr: localeString, es: localeString }),
+  description: z.object({ en: localeString, tr: localeString, de: localeString, fr: localeString, es: localeString }).optional(),
   price: z.coerce.number().min(0),
   compareAtPrice: z.coerce.number().min(0).optional().nullable(),
   sku: z.string().optional().nullable(),
   stock: z.coerce.number().int().min(0).default(0),
   categoryId: z.string().optional().nullable(),
   status: z.enum(['draft', 'active', 'archived']).default('draft'),
-  seoMeta: z.record(z.string(), z.unknown()).optional(),
+  isFeatured: z.boolean().default(false),
+  seoMeta: z.object({
+    en: z.object({ title: z.string().optional(), description: z.string().optional() }).optional(),
+    tr: z.object({ title: z.string().optional(), description: z.string().optional() }).optional(),
+    de: z.object({ title: z.string().optional(), description: z.string().optional() }).optional(),
+    fr: z.object({ title: z.string().optional(), description: z.string().optional() }).optional(),
+    es: z.object({ title: z.string().optional(), description: z.string().optional() }).optional(),
+  }).optional(),
 });
 
 type ProductFormData = z.infer<typeof productSchema>;
@@ -74,6 +77,8 @@ export function ProductForm({ locale, initialData }: ProductFormProps) {
     register,
     handleSubmit,
     control,
+    watch,
+    setValue,
     formState: { errors },
   } = useForm<ProductFormData>({
     resolver: zodResolver(productSchema) as never,
@@ -86,8 +91,11 @@ export function ProductForm({ locale, initialData }: ProductFormProps) {
       stock: initialData?.stock ?? 0,
       categoryId: initialData?.categoryId ?? null,
       status: initialData?.status ?? 'draft',
+      isFeatured: initialData?.isFeatured ?? false,
     },
   });
+
+  const isFeatured = watch('isFeatured');
 
   useEffect(() => {
     panelApi
@@ -112,6 +120,10 @@ export function ProductForm({ locale, initialData }: ProductFormProps) {
   };
 
   const onSubmit = async (data: ProductFormData) => {
+    if (!Object.values(data.name).some((v) => v.trim().length > 0)) {
+      setError('At least one language name is required');
+      return;
+    }
     setSubmitting(true);
     setError('');
     try {
@@ -135,107 +147,240 @@ export function ProductForm({ locale, initialData }: ProductFormProps) {
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+    <form onSubmit={handleSubmit(onSubmit)}>
       {error && (
-        <div className="rounded-lg bg-destructive/10 p-3 text-sm text-destructive">
+        <div className="mb-6 rounded-lg border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">
           {error}
         </div>
       )}
 
-      {/* Name & Description - Multi-language */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-base">{t('form.basicInfo')}</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <Tabs defaultValue="en">
-            <TabsList>
-              {LOCALES.map((loc) => (
-                <TabsTrigger key={loc} value={loc}>
-                  {loc.toUpperCase()}
-                </TabsTrigger>
-              ))}
-            </TabsList>
-            {LOCALES.map((loc) => (
-              <TabsContent key={loc} value={loc} className="space-y-4">
-                <div>
-                  <Label>{t('form.name')} ({loc.toUpperCase()})</Label>
-                  <Input
-                    {...register(`name.${loc}`)}
-                    placeholder={t('form.namePlaceholder')}
-                  />
-                </div>
-                <div>
-                  <Label>{t('form.description')} ({loc.toUpperCase()})</Label>
-                  <textarea
-                    {...register(`description.${loc}`)}
-                    rows={4}
-                    className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                    placeholder={t('form.descriptionPlaceholder')}
-                  />
-                </div>
-              </TabsContent>
-            ))}
-          </Tabs>
-          {errors.name && (
-            <p className="mt-1 text-sm text-destructive">{String(errors.name.message)}</p>
-          )}
-        </CardContent>
-      </Card>
-
-      {/* Pricing & Inventory */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-base">{t('form.pricing')}</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            <div>
-              <Label>{t('form.price')}</Label>
-              <Input
-                type="number"
-                step="0.01"
-                min="0"
-                {...register('price', { valueAsNumber: true })}
-              />
-              {errors.price && (
-                <p className="mt-1 text-xs text-destructive">{String(errors.price.message)}</p>
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
+        {/* Main Content — Left Column */}
+        <div className="space-y-6 lg:col-span-8">
+          {/* Product Information */}
+          <Card className="overflow-hidden border border-slate-200 shadow-sm">
+            <div className="border-b border-slate-200 bg-slate-50/50 px-6 py-4">
+              <h2 className="text-sm font-semibold text-slate-800">{t('form.basicInfo')}</h2>
+            </div>
+            <div className="p-6">
+              <Tabs defaultValue="en">
+                <TabsList className="mb-4 h-9 w-full justify-start rounded-lg bg-slate-100 p-1">
+                  {LOCALES.map((loc) => (
+                    <TabsTrigger key={loc} value={loc} className="rounded-md px-4 text-xs font-medium uppercase data-[state=active]:bg-white data-[state=active]:shadow-sm">
+                      {loc.toUpperCase()}
+                    </TabsTrigger>
+                  ))}
+                </TabsList>
+                {LOCALES.map((loc) => (
+                  <TabsContent key={loc} value={loc} className="space-y-4 pt-2">
+                    <div>
+                      <Label className="text-xs font-medium text-slate-500">
+                        {t('form.name')} ({loc.toUpperCase()})
+                      </Label>
+                      <Input
+                        {...register(`name.${loc}`)}
+                        placeholder={t('form.namePlaceholder')}
+                        className="mt-1.5"
+                      />
+                    </div>
+                    <div>
+                      <Label className="text-xs font-medium text-slate-500">
+                        {t('form.description')} ({loc.toUpperCase()})
+                      </Label>
+                      <textarea
+                        {...register(`description.${loc}`)}
+                        rows={5}
+                        className="mt-1.5 w-full rounded-lg border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700 outline-none transition-colors placeholder:text-slate-400 focus:border-violet-400 focus:ring-1 focus:ring-violet-400"
+                        placeholder={t('form.descriptionPlaceholder')}
+                      />
+                    </div>
+                  </TabsContent>
+                ))}
+              </Tabs>
+              {(errors.name?.message || errors.name?.root?.message) && (
+                <p className="mt-2 text-sm text-rose-600">
+                  {String(errors.name.message || errors.name.root?.message)}
+                </p>
               )}
             </div>
-            <div>
-              <Label>{t('form.compareAtPrice')}</Label>
-              <Input
-                type="number"
-                step="0.01"
-                min="0"
-                {...register('compareAtPrice', { valueAsNumber: true })}
-              />
-            </div>
-            <div>
-              <Label>{t('form.sku')}</Label>
-              <Input {...register('sku')} placeholder="SKU-001" />
-            </div>
-            <div>
-              <Label>{t('form.stock')}</Label>
-              <Input
-                type="number"
-                min="0"
-                {...register('stock', { valueAsNumber: true })}
-              />
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+          </Card>
 
-      {/* Category & Status */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-base">{t('form.organization')}</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid gap-4 sm:grid-cols-2">
-            <div>
-              <Label>{t('form.category')}</Label>
+          {/* Pricing & Inventory */}
+          <Card className="overflow-hidden border border-slate-200 shadow-sm">
+            <div className="border-b border-slate-200 bg-slate-50/50 px-6 py-4">
+              <h2 className="text-sm font-semibold text-slate-800">{t('form.pricing')}</h2>
+            </div>
+            <div className="p-6">
+              <div className="grid gap-5 sm:grid-cols-2">
+                <div>
+                  <Label className="text-xs font-medium text-slate-500">{t('form.price')}</Label>
+                  <div className="relative mt-1.5">
+                    <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-sm text-slate-400">
+                      $
+                    </span>
+                    <Input
+                      type="number"
+                      step="0.01"
+                      min="0"
+                      {...register('price', { valueAsNumber: true })}
+                      className="pl-7"
+                    />
+                  </div>
+                  {errors.price && (
+                    <p className="mt-1 text-xs text-rose-600">{String(errors.price.message)}</p>
+                  )}
+                </div>
+                <div>
+                  <Label className="text-xs font-medium text-slate-500">{t('form.compareAtPrice')}</Label>
+                  <div className="relative mt-1.5">
+                    <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-sm text-slate-400">
+                      $
+                    </span>
+                    <Input
+                      type="number"
+                      step="0.01"
+                      min="0"
+                      {...register('compareAtPrice', { valueAsNumber: true })}
+                      className="pl-7"
+                    />
+                  </div>
+                </div>
+                <div>
+                  <Label className="text-xs font-medium text-slate-500">{t('form.sku')}</Label>
+                  <Input
+                    {...register('sku')}
+                    placeholder="SKU-001"
+                    className="mt-1.5"
+                  />
+                </div>
+                <div>
+                  <Label className="text-xs font-medium text-slate-500">{t('form.stock')}</Label>
+                  <Input
+                    type="number"
+                    min="0"
+                    {...register('stock', { valueAsNumber: true })}
+                    className="mt-1.5"
+                  />
+                </div>
+              </div>
+            </div>
+          </Card>
+
+          {/* Images */}
+          <Card className="overflow-hidden border border-slate-200 shadow-sm">
+            <div className="border-b border-slate-200 bg-slate-50/50 px-6 py-4">
+              <h2 className="text-sm font-semibold text-slate-800">{t('form.images')}</h2>
+            </div>
+            <div className="p-6">
+              <ImageUpload images={images} onChange={setImages} />
+            </div>
+          </Card>
+
+          {/* Variants */}
+          <Card className="overflow-hidden border border-slate-200 shadow-sm">
+            <div className="border-b border-slate-200 bg-slate-50/50 px-6 py-4">
+              <h2 className="text-sm font-semibold text-slate-800">{t('variants.title')}</h2>
+            </div>
+            <div className="p-6">
+              <VariantBuilder variants={variants} onChange={setVariants} />
+            </div>
+          </Card>
+
+          {/* SEO */}
+          <Card className="overflow-hidden border border-slate-200 shadow-sm">
+            <div className="border-b border-slate-200 bg-slate-50/50 px-6 py-4">
+              <h2 className="text-sm font-semibold text-slate-800">{t('form.seo')}</h2>
+            </div>
+            <div className="p-6">
+              <Tabs defaultValue="en">
+                <TabsList className="mb-4 h-9 w-full justify-start rounded-lg bg-slate-100 p-1">
+                  {LOCALES.map((loc) => (
+                    <TabsTrigger key={loc} value={loc} className="rounded-md px-4 text-xs font-medium uppercase data-[state=active]:bg-white data-[state=active]:shadow-sm">
+                      {loc.toUpperCase()}
+                    </TabsTrigger>
+                  ))}
+                </TabsList>
+                {LOCALES.map((loc) => (
+                  <TabsContent key={loc} value={loc} className="space-y-4 pt-2">
+                    <div>
+                      <Label className="text-xs font-medium text-slate-500">
+                        {t('form.seoTitle')} ({loc.toUpperCase()})
+                      </Label>
+                      <Input
+                        {...register(`seoMeta.${loc}.title` as `seoMeta.${typeof loc}.title`)}
+                        placeholder={t('form.seoTitlePlaceholder')}
+                        className="mt-1.5"
+                      />
+                    </div>
+                    <div>
+                      <Label className="text-xs font-medium text-slate-500">
+                        {t('form.seoDescription')} ({loc.toUpperCase()})
+                      </Label>
+                      <textarea
+                        {...register(`seoMeta.${loc}.description` as `seoMeta.${typeof loc}.description`)}
+                        rows={2}
+                        className="mt-1.5 w-full rounded-lg border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700 outline-none transition-colors placeholder:text-slate-400 focus:border-violet-400 focus:ring-1 focus:ring-violet-400"
+                        placeholder={t('form.seoDescriptionPlaceholder')}
+                      />
+                    </div>
+                  </TabsContent>
+                ))}
+              </Tabs>
+            </div>
+          </Card>
+        </div>
+
+        {/* Sidebar — Right Column */}
+        <div className="space-y-6 lg:col-span-4">
+          {/* Status */}
+          <Card className="overflow-hidden border border-slate-200 shadow-sm">
+            <div className="border-b border-slate-200 bg-slate-50/50 px-6 py-4">
+              <h2 className="text-sm font-semibold text-slate-800">{t('form.status')}</h2>
+            </div>
+            <div className="p-6">
+              <Controller
+                name="status"
+                control={control}
+                render={({ field }) => (
+                  <Select value={field.value} onValueChange={field.onChange}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="draft">{t('status.draft')}</SelectItem>
+                      <SelectItem value="active">{t('status.active')}</SelectItem>
+                      <SelectItem value="archived">{t('status.archived')}</SelectItem>
+                    </SelectContent>
+                  </Select>
+                )}
+              />
+              <Separator className="my-4" />
+              <div className="flex flex-col gap-3">
+                <Button type="submit" className="w-full bg-violet-600 hover:bg-violet-700" disabled={submitting}>
+                  {submitting
+                    ? t('form.saving')
+                    : initialData?.id
+                      ? t('form.update')
+                      : t('form.create')}
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="w-full"
+                  onClick={() => router.push(`/${locale}/panel/products`)}
+                >
+                  {t('form.cancel')}
+                </Button>
+              </div>
+            </div>
+          </Card>
+
+          {/* Category */}
+          <Card className="overflow-hidden border border-slate-200 shadow-sm">
+            <div className="border-b border-slate-200 bg-slate-50/50 px-6 py-4">
+              <h2 className="text-sm font-semibold text-slate-800">{t('form.category')}</h2>
+            </div>
+            <div className="p-6">
               <Controller
                 name="categoryId"
                 control={control}
@@ -258,98 +403,35 @@ export function ProductForm({ locale, initialData }: ProductFormProps) {
                 )}
               />
             </div>
-            <div>
-              <Label>{t('form.status')}</Label>
-              <Controller
-                name="status"
-                control={control}
-                render={({ field }) => (
-                  <Select value={field.value} onValueChange={field.onChange}>
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="draft">{t('status.draft')}</SelectItem>
-                      <SelectItem value="active">{t('status.active')}</SelectItem>
-                    </SelectContent>
-                  </Select>
-                )}
-              />
+          </Card>
+
+          {/* Featured */}
+          <Card className="overflow-hidden border border-slate-200 shadow-sm">
+            <div className="border-b border-slate-200 bg-slate-50/50 px-6 py-4">
+              <h2 className="text-sm font-semibold text-slate-800">{t('form.featured')}</h2>
             </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Images */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-base">{t('form.images')}</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <ImageUpload images={images} onChange={setImages} />
-        </CardContent>
-      </Card>
-
-      {/* Variants */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-base">{t('variants.title')}</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <VariantBuilder variants={variants} onChange={setVariants} />
-        </CardContent>
-      </Card>
-
-      {/* SEO */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-base">{t('form.seo')}</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <Tabs defaultValue="en">
-            <TabsList>
-              {LOCALES.map((loc) => (
-                <TabsTrigger key={loc} value={loc}>
-                  {loc.toUpperCase()}
-                </TabsTrigger>
-              ))}
-            </TabsList>
-            {LOCALES.map((loc) => (
-              <TabsContent key={loc} value={loc} className="space-y-3">
-                <div>
-                  <Label>{t('form.seoTitle')} ({loc.toUpperCase()})</Label>
-                  <Input
-                    {...register(`seoMeta.${loc}.title` as `seoMeta.${string}`)}
-                    placeholder={t('form.seoTitlePlaceholder')}
-                  />
-                </div>
-                <div>
-                  <Label>{t('form.seoDescription')} ({loc.toUpperCase()})</Label>
-                  <textarea
-                    {...register(`seoMeta.${loc}.description` as `seoMeta.${string}`)}
-                    rows={2}
-                    className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                    placeholder={t('form.seoDescriptionPlaceholder')}
-                  />
-                </div>
-              </TabsContent>
-            ))}
-          </Tabs>
-        </CardContent>
-      </Card>
-
-      {/* Actions */}
-      <div className="flex justify-end gap-3">
-        <Button
-          type="button"
-          variant="outline"
-          onClick={() => router.push(`/${locale}/panel/products`)}
-        >
-          {t('form.cancel')}
-        </Button>
-        <Button type="submit" disabled={submitting}>
-          {submitting ? t('form.saving') : initialData?.id ? t('form.update') : t('form.create')}
-        </Button>
+            <div className="p-6">
+              <button
+                type="button"
+                role="switch"
+                aria-checked={isFeatured}
+                onClick={() => setValue('isFeatured', !isFeatured)}
+                className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out ${
+                  isFeatured ? 'bg-violet-600' : 'bg-slate-200'
+                }`}
+              >
+                <span
+                  className={`pointer-events-none inline-block h-5 w-5 rounded-full bg-white shadow-lg ring-0 transition-transform duration-200 ease-in-out ${
+                    isFeatured ? 'translate-x-5' : 'translate-x-0'
+                  }`}
+                />
+              </button>
+              <p className="mt-2 text-xs text-slate-400">
+                {t('form.featuredDescription')}
+              </p>
+            </div>
+          </Card>
+        </div>
       </div>
     </form>
   );

@@ -19,6 +19,9 @@ import { ShippingModule } from './modules/shipping/shipping.module';
 import { InvoicesModule } from './modules/invoices/invoices.module';
 import { SettingsModule } from './modules/settings/settings.module';
 import { PageBuilderModule } from './modules/page-builder/page-builder.module';
+import { MenusModule } from './modules/menus/menus.module';
+import { BlogModule } from './modules/blog/blog.module';
+import { MarketplaceModule } from './modules/marketplace/marketplace.module';
 import { RedisModule } from './common/redis';
 import { TenantResolverMiddleware } from './common/middleware/tenant-resolver.middleware';
 import { TenantCacheInvalidationService } from './common/middleware/tenant-invalidation.service';
@@ -51,6 +54,9 @@ import { validateConfig } from './config/config.schema';
     InvoicesModule,
     SettingsModule,
     PageBuilderModule,
+    MenusModule,
+    BlogModule,
+    MarketplaceModule,
   ],
   providers: [
     TenantCacheInvalidationService,

@@ -55,7 +55,7 @@ export default function StoreLoginPage() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4">
+    <div className="flex min-h-screen items-center justify-center bg-[var(--color-muted)] px-4">
       <div className="w-full max-w-md">
         <h1 className="mb-6 text-center text-2xl font-bold">{t('login')}</h1>
 
@@ -73,7 +73,7 @@ export default function StoreLoginPage() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="w-full rounded-lg border border-gray-200 px-3 py-2 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              className="w-full rounded-lg border border-[var(--color-border)] px-3 py-2 focus:border-[var(--color-primary)] focus:outline-none focus:ring-1 focus:ring-[var(--color-primary)]"
             />
           </div>
           <div>
@@ -85,37 +85,37 @@ export default function StoreLoginPage() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              className="w-full rounded-lg border border-gray-200 px-3 py-2 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              className="w-full rounded-lg border border-[var(--color-border)] px-3 py-2 focus:border-[var(--color-primary)] focus:outline-none focus:ring-1 focus:ring-[var(--color-primary)]"
             />
           </div>
           <button
             type="submit"
             disabled={loading}
-            className="w-full rounded-lg bg-blue-600 py-2.5 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50"
+            className="w-full rounded-lg bg-[var(--color-primary)] py-2.5 text-sm font-medium text-white hover:opacity-90 disabled:opacity-50"
           >
             {loading ? t('loggingIn') : t('login')}
           </button>
         </form>
 
         <div className="my-4 flex items-center gap-4">
-          <div className="h-px flex-1 bg-gray-200" />
-          <span className="text-sm text-gray-400">{t('or')}</span>
-          <div className="h-px flex-1 bg-gray-200" />
+          <div className="h-px flex-1 bg-[var(--color-border)]" />
+          <span className="text-sm text-[var(--color-secondary)]">{t('or')}</span>
+          <div className="h-px flex-1 bg-[var(--color-border)]" />
         </div>
 
         <button
           onClick={handleGuestCheckout}
           disabled={loading}
-          className="w-full rounded-lg border border-gray-200 py-2.5 text-sm font-medium hover:bg-gray-50 disabled:opacity-50"
+          className="w-full rounded-lg border border-[var(--color-border)] py-2.5 text-sm font-medium hover:bg-[var(--color-muted)] disabled:opacity-50"
         >
           {t('continueAsGuest')}
         </button>
 
-        <p className="mt-4 text-center text-sm text-gray-500">
+        <p className="mt-4 text-center text-sm text-[var(--color-secondary)]">
           {t('noAccount')}{' '}
           <Link
             href={`/store/${locale}/auth/register?redirect=${redirect}`}
-            className="text-blue-600 hover:underline"
+            className="text-[var(--color-primary)] hover:underline"
           >
             {t('register')}
           </Link>

@@ -4,6 +4,7 @@ import { connect, NatsConnection, StringCodec } from 'nats';
 import { ProvisioningGateway } from './provisioning.gateway';
 import { TenantSeederService } from './tenant-seeder.service';
 import { masterPrisma } from '@zunapro/db';
+import { RedisService } from '../../common/redis';
 
 interface ProvisionRequest {
   tenantId: string;
@@ -32,6 +33,7 @@ export class ProvisioningService implements OnModuleInit, OnModuleDestroy {
     private readonly configService: ConfigService,
     private readonly gateway: ProvisioningGateway,
     private readonly tenantSeeder: TenantSeederService,
+    private readonly redis: RedisService,
   ) {}
 
   async onModuleInit() {
@@ -245,6 +247,13 @@ export class ProvisioningService implements OnModuleInit, OnModuleDestroy {
           const tenantId = msg.subject.split('.').pop();
           if (tenantId) {
             this.gateway.emitProgress(tenantId, data);
+
+            // Invalidate tenant cache when provisioning completes
+            if (data.type === 'provisioning_complete' && data.slug) {
+              await this.redis.del(`tenant:${String(data.slug)}`);
+              this.logger.log(`Tenant cache invalidated: ${String(data.slug)}`);
+            }
+
             this.logger.debug(
               `Forwarded progress to WebSocket: ${String(data.jobName)} - ${String(data.status)}`,
             );

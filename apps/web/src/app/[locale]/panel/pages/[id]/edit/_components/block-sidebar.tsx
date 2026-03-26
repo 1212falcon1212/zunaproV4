@@ -21,6 +21,7 @@ import {
   Sparkles,
   List,
   LayoutGrid,
+  Mail,
 } from 'lucide-react';
 import { useState } from 'react';
 
@@ -56,6 +57,7 @@ const BLOCK_GROUPS: BlockGroup[] = [
       { type: 'button', label: 'Button', icon: <MousePointerClick className="h-5 w-5" /> },
       { type: 'html', label: 'HTML', icon: <Code2 className="h-5 w-5" /> },
       { type: 'accordion', label: 'Accordion', icon: <ChevronDown className="h-5 w-5" /> },
+      { type: 'contact-form', label: 'Contact Form', icon: <Mail className="h-5 w-5" /> },
     ],
   },
   {
@@ -66,6 +68,7 @@ const BLOCK_GROUPS: BlockGroup[] = [
       { type: 'category-showcase', label: 'Categories', icon: <Grid3X3 className="h-5 w-5" /> },
       { type: 'product-listing', label: 'Product Listing', icon: <List className="h-5 w-5" /> },
       { type: 'category-listing', label: 'Category Grid', icon: <LayoutGrid className="h-5 w-5" /> },
+      { type: 'category-products', label: 'Category Row', icon: <ShoppingBag className="h-5 w-5" /> },
     ],
   },
   {
@@ -74,6 +77,8 @@ const BLOCK_GROUPS: BlockGroup[] = [
     items: [
       { type: 'hero', label: 'Hero', icon: <Sparkles className="h-5 w-5" /> },
       { type: 'banner', label: 'Banner', icon: <Flag className="h-5 w-5" /> },
+      { type: 'banner-grid', label: 'Banner Grid', icon: <LayoutGrid className="h-5 w-5" /> },
+      { type: 'promo-banners', label: 'Promo Banners', icon: <Flag className="h-5 w-5" /> },
     ],
   },
 ];

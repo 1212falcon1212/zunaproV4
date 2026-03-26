@@ -1,24 +1,20 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { use, useEffect, useState } from 'react';
 import { getUserFromToken } from '@/lib/auth';
 import { PanelOnboarding } from './_components/panel-onboarding';
 import { PanelDashboard } from './_components/panel-dashboard';
 
 const PLATFORM_TENANT_ID = '00000000-0000-0000-0000-000000000000';
 
-export default function DashboardPage() {
+export default function DashboardPage({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = use(params);
   const [hasStore, setHasStore] = useState<boolean | null>(null);
 
   useEffect(() => {
     const user = getUserFromToken();
     if (!user) return;
-
-    if (user.tenantId === PLATFORM_TENANT_ID) {
-      setHasStore(false);
-    } else {
-      setHasStore(true);
-    }
+    setHasStore(user.tenantId !== PLATFORM_TENANT_ID);
   }, []);
 
   if (hasStore === null) {
@@ -33,5 +29,5 @@ export default function DashboardPage() {
     return <PanelOnboarding />;
   }
 
-  return <PanelDashboard />;
+  return <PanelDashboard locale={locale} />;
 }

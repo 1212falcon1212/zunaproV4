@@ -10,6 +10,7 @@ import { masterPrisma } from '@zunapro/db';
 import { CreateTenantDto } from './dto/create-tenant.dto';
 import { UpdateTenantDto } from './dto/update-tenant.dto';
 import { TenantCacheInvalidationService } from '../../common/middleware/tenant-invalidation.service';
+import { ProvisioningService } from '../provisioning/provisioning.service';
 
 @Injectable()
 export class TenantsService {
@@ -20,6 +21,7 @@ export class TenantsService {
     private readonly cacheInvalidation: TenantCacheInvalidationService,
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
+    private readonly provisioningService: ProvisioningService,
   ) {
     this.refreshSecret = this.configService.get<string>('JWT_REFRESH_SECRET', '');
   }
@@ -119,7 +121,7 @@ export class TenantsService {
           },
         },
         domain: dto.domain,
-        status: 'active',
+        status: 'pending',
         tenantModules: {
           create: (plan.moduleSlugs.length > 0
             ? plan.moduleSlugs
@@ -137,6 +139,11 @@ export class TenantsService {
     });
 
     this.logger.log(`Tenant created: ${tenant.slug} (${tenant.id})`);
+
+    // Trigger provisioning (Go engine via NATS or dev fallback)
+    this.provisioningService.triggerProvisioning(tenant.id).catch((err) => {
+      this.logger.error(`Provisioning trigger failed for ${tenant.slug}: ${err}`);
+    });
 
     // If userId provided, reassign user to new tenant and return new tokens
     if (userId) {

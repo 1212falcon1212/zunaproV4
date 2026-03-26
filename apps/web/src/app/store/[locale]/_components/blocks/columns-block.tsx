@@ -1,5 +1,5 @@
 import type { Block } from '@zunapro/types';
-import { BlockRenderer } from './block-renderer';
+import { RenderBlock } from './block-renderer';
 
 interface ColumnsProps {
   block: Block;
@@ -25,16 +25,12 @@ export function ColumnsBlock({ block, locale }: ColumnsProps) {
 
   return (
     <div
-      className={`mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 grid ${gridClass}`}
+      className={`grid ${gridClass}`}
       style={{ gap }}
     >
       {block.children?.map((child) => (
         <div key={child.id}>
-          {child.children ? (
-            <BlockRenderer blocks={child.children} locale={locale} />
-          ) : (
-            <BlockRenderer blocks={[child]} locale={locale} />
-          )}
+          <RenderBlock block={child} locale={locale} />
         </div>
       ))}
     </div>

@@ -7,6 +7,7 @@ import { ProductInfo } from './_components/product-info';
 import { AddToCartForm } from './_components/add-to-cart-form';
 import { RelatedProducts } from './_components/related-products';
 import { Breadcrumbs } from './_components/breadcrumbs';
+import { ShareButton } from './_components/share-button';
 import { buildProductJsonLd } from '@/lib/seo';
 
 interface Product {
@@ -104,15 +105,7 @@ export default async function ProductDetailPage({ params }: Props) {
             {/* Share */}
             <div className="mt-6 flex items-center gap-2 border-t border-[var(--color-border)] pt-6">
               <span className="text-sm text-[var(--color-secondary)]">{t('product.share')}:</span>
-              <button
-                className="rounded-full p-2 text-[var(--color-secondary)] hover:bg-[var(--color-muted)]"
-                onClick={() => {}}
-                aria-label="Share"
-              >
-                <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
-                </svg>
-              </button>
+              <ShareButton />
             </div>
           </div>
         </div>

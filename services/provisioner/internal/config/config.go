@@ -14,6 +14,7 @@ type Config struct {
 	MinioAccessKey         string
 	MinioSecretKey         string
 	MigrationsPath         string
+	APIBaseURL             string
 }
 
 func Load() (*Config, error) {
@@ -26,6 +27,7 @@ func Load() (*Config, error) {
 		MinioAccessKey:         getEnv("MINIO_ACCESS_KEY", ""),
 		MinioSecretKey:         getEnv("MINIO_SECRET_KEY", ""),
 		MigrationsPath:         getEnv("MIGRATIONS_PATH", "migrations"),
+		APIBaseURL:             getEnv("API_BASE_URL", "http://localhost:4000"),
 	}
 
 	if cfg.DatabaseMasterURL == "" {

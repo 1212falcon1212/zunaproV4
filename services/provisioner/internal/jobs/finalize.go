@@ -35,8 +35,8 @@ func (j *Finalize) Execute(ctx context.Context, req *ProvisionRequest) error {
 
 	// 2. Log provisioning completion
 	_, err = j.db.DB().ExecContext(ctx,
-		`INSERT INTO provisioning_logs (tenant_id, job_name, status, started_at, completed_at)
-		 VALUES ($1, 'pipeline_complete', 'completed', NOW(), NOW())`,
+		`INSERT INTO provisioning_logs (id, tenant_id, job_name, status, started_at, completed_at)
+		 VALUES (gen_random_uuid(), $1, 'pipeline_complete', 'completed', NOW(), NOW())`,
 		req.TenantID,
 	)
 	if err != nil {

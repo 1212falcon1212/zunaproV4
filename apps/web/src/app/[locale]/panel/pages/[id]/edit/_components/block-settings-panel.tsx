@@ -408,10 +408,28 @@ function ContentSettings({ block, onUpdate }: ContentSettingsProps) {
             value={block.props.title}
             onChange={updateLocalizedProp}
           />
+          <div className="flex items-center gap-2">
+            <input
+              type="checkbox"
+              checked={(block.props.featuredOnly as boolean) ?? false}
+              onChange={(e) => updateProp('featuredOnly', e.target.checked)}
+              className="rounded"
+            />
+            <Label className="text-xs">Featured products only</Label>
+          </div>
+          <div className="flex items-center gap-2">
+            <input
+              type="checkbox"
+              checked={(block.props.showViewAll as boolean) ?? true}
+              onChange={(e) => updateProp('showViewAll', e.target.checked)}
+              className="rounded"
+            />
+            <Label className="text-xs">Show &quot;View All&quot; button</Label>
+          </div>
           <FieldInput
             label="Product Limit"
-            value={String((block.props.limit as number) ?? 4)}
-            onChange={(v) => updateProp('limit', parseInt(v, 10) || 4)}
+            value={String((block.props.limit as number) ?? 10)}
+            onChange={(v) => updateProp('limit', parseInt(v, 10) || 10)}
             type="number"
           />
           <FieldInput
@@ -423,19 +441,24 @@ function ContentSettings({ block, onUpdate }: ContentSettingsProps) {
           <div>
             <Label className="text-xs">Columns</Label>
             <Select
-              value={String((block.props.columns as number) || 4)}
+              value={String((block.props.columns as number) || 5)}
               onValueChange={(v) => updateProp('columns', parseInt(v, 10))}
             >
               <SelectTrigger className="mt-1">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="2">2 Columns</SelectItem>
                 <SelectItem value="3">3 Columns</SelectItem>
                 <SelectItem value="4">4 Columns</SelectItem>
+                <SelectItem value="5">5 Columns</SelectItem>
               </SelectContent>
             </Select>
           </div>
+          <FieldInput
+            label="View All Link"
+            value={(block.props.viewAllLink as string) ?? '/products'}
+            onChange={(v) => updateProp('viewAllLink', v)}
+          />
         </div>
       );
 
@@ -448,28 +471,54 @@ function ContentSettings({ block, onUpdate }: ContentSettingsProps) {
             value={block.props.title}
             onChange={updateLocalizedProp}
           />
-          <FieldInput
-            label="Limit"
-            value={String((block.props.limit as number) ?? 6)}
-            onChange={(v) => updateProp('limit', parseInt(v, 10) || 6)}
-            type="number"
-          />
           <div>
-            <Label className="text-xs">Columns</Label>
+            <Label className="text-xs">Layout</Label>
             <Select
-              value={String((block.props.columns as number) || 3)}
-              onValueChange={(v) => updateProp('columns', parseInt(v, 10))}
+              value={(block.props.layout as string) || 'carousel'}
+              onValueChange={(v) => updateProp('layout', v)}
             >
               <SelectTrigger className="mt-1">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="2">2 Columns</SelectItem>
-                <SelectItem value="3">3 Columns</SelectItem>
-                <SelectItem value="4">4 Columns</SelectItem>
+                <SelectItem value="carousel">Carousel (circular icons)</SelectItem>
+                <SelectItem value="grid">Grid (cards)</SelectItem>
               </SelectContent>
             </Select>
           </div>
+          <div className="flex items-center gap-2">
+            <input
+              type="checkbox"
+              checked={(block.props.featuredOnly as boolean) ?? true}
+              onChange={(e) => updateProp('featuredOnly', e.target.checked)}
+              className="rounded"
+            />
+            <Label className="text-xs">Featured categories only</Label>
+          </div>
+          <FieldInput
+            label="Limit"
+            value={String((block.props.limit as number) ?? 10)}
+            onChange={(v) => updateProp('limit', parseInt(v, 10) || 10)}
+            type="number"
+          />
+          {(block.props.layout as string) === 'grid' && (
+            <div>
+              <Label className="text-xs">Columns</Label>
+              <Select
+                value={String((block.props.columns as number) || 3)}
+                onValueChange={(v) => updateProp('columns', parseInt(v, 10))}
+              >
+                <SelectTrigger className="mt-1">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="2">2 Columns</SelectItem>
+                  <SelectItem value="3">3 Columns</SelectItem>
+                  <SelectItem value="4">4 Columns</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          )}
         </div>
       );
 
@@ -635,6 +684,15 @@ function ContentSettings({ block, onUpdate }: ContentSettingsProps) {
         </div>
       );
 
+    case 'banner-grid':
+      return (
+        <BannerGridSettings
+          block={block}
+          onUpdate={onUpdate}
+          updateProp={updateProp}
+        />
+      );
+
     case 'accordion':
       return (
         <AccordionSettings
@@ -658,6 +716,140 @@ function ContentSettings({ block, onUpdate }: ContentSettingsProps) {
         </div>
       );
 
+    case 'category-products':
+      return (
+        <CategoryProductsSettings
+          block={block}
+          onUpdate={onUpdate}
+          updateProp={updateProp}
+          updateLocalizedProp={updateLocalizedProp}
+        />
+      );
+
+    case 'promo-banners':
+      return (
+        <PromoBannersSettings
+          block={block}
+          onUpdate={onUpdate}
+          updateProp={updateProp}
+        />
+      );
+
+    case 'contact-form':
+      return (
+        <div className="space-y-4 pt-3">
+          <LocalizedInput
+            label="Title"
+            propKey="title"
+            value={block.props.title}
+            onChange={updateLocalizedProp}
+          />
+          <LocalizedInput
+            label="Subtitle"
+            propKey="subtitle"
+            value={block.props.subtitle}
+            onChange={updateLocalizedProp}
+          />
+          <div>
+            <Label className="text-xs">Layout</Label>
+            <Select
+              value={(block.props.layout as string) || 'side-by-side'}
+              onValueChange={(v) => updateProp('layout', v)}
+            >
+              <SelectTrigger className="mt-1">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="side-by-side">Side by Side</SelectItem>
+                <SelectItem value="stacked">Stacked</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="flex items-center gap-2">
+            <input
+              type="checkbox"
+              id="showContactInfo"
+              checked={block.props.showContactInfo !== false}
+              onChange={(e) => updateProp('showContactInfo', e.target.checked)}
+              className="h-4 w-4 rounded border-slate-300"
+            />
+            <Label htmlFor="showContactInfo" className="text-xs">
+              Show Contact Info
+            </Label>
+          </div>
+        </div>
+      );
+
+    case 'blog-posts':
+      return (
+        <div className="space-y-4 pt-3">
+          <LocalizedInput
+            label="Title"
+            propKey="title"
+            value={block.props.title}
+            onChange={updateLocalizedProp}
+          />
+          <FieldInput
+            label="Limit"
+            value={String((block.props.limit as number) ?? 4)}
+            onChange={(v) => updateProp('limit', parseInt(v, 10) || 4)}
+            type="number"
+          />
+          <div>
+            <Label className="text-xs">Columns</Label>
+            <Select
+              value={String((block.props.columns as number) || 4)}
+              onValueChange={(v) => updateProp('columns', parseInt(v, 10))}
+            >
+              <SelectTrigger className="mt-1">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="2">2 Columns</SelectItem>
+                <SelectItem value="3">3 Columns</SelectItem>
+                <SelectItem value="4">4 Columns</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="flex items-center gap-2">
+            <input
+              type="checkbox"
+              id="showExcerpt"
+              checked={block.props.showExcerpt !== false}
+              onChange={(e) => updateProp('showExcerpt', e.target.checked)}
+              className="h-4 w-4 rounded border-slate-300"
+            />
+            <Label htmlFor="showExcerpt" className="text-xs">
+              Show Excerpt
+            </Label>
+          </div>
+          <div className="flex items-center gap-2">
+            <input
+              type="checkbox"
+              id="showDate"
+              checked={block.props.showDate !== false}
+              onChange={(e) => updateProp('showDate', e.target.checked)}
+              className="h-4 w-4 rounded border-slate-300"
+            />
+            <Label htmlFor="showDate" className="text-xs">
+              Show Date
+            </Label>
+          </div>
+          <div className="flex items-center gap-2">
+            <input
+              type="checkbox"
+              id="showAuthor"
+              checked={block.props.showAuthor !== false}
+              onChange={(e) => updateProp('showAuthor', e.target.checked)}
+              className="h-4 w-4 rounded border-slate-300"
+            />
+            <Label htmlFor="showAuthor" className="text-xs">
+              Show Author
+            </Label>
+          </div>
+        </div>
+      );
+
     default:
       return (
         <div className="pt-3 text-center text-sm text-slate-400">
@@ -667,7 +859,550 @@ function ContentSettings({ block, onUpdate }: ContentSettingsProps) {
   }
 }
 
+// ─── Category Products Settings ───────────────────────────────────────────
+
+function CategoryProductsSettings({
+  block,
+  onUpdate,
+  updateProp,
+  updateLocalizedProp,
+}: {
+  block: Block;
+  onUpdate: (id: string, props: Record<string, unknown>) => void;
+  updateProp: (key: string, value: unknown) => void;
+  updateLocalizedProp: (key: string, locale: string, value: string) => void;
+}) {
+  const sideBanner = (block.props.sideBanner as Record<string, unknown>) ?? {};
+
+  const updateSideBannerField = (key: string, value: unknown) => {
+    updateProp('sideBanner', { ...sideBanner, [key]: value });
+  };
+
+  const updateSideBannerLocalized = (key: string, locale: string, value: string) => {
+    const current = (sideBanner[key] as Record<string, string>) ?? {};
+    updateProp('sideBanner', { ...sideBanner, [key]: { ...current, [locale]: value } });
+  };
+
+  return (
+    <div className="space-y-4 pt-3">
+      <LocalizedInput
+        label="Title"
+        propKey="title"
+        value={block.props.title}
+        onChange={updateLocalizedProp}
+      />
+      <FieldInput
+        label="Category Slug"
+        value={(block.props.categorySlug as string) ?? ''}
+        onChange={(v) => updateProp('categorySlug', v)}
+        placeholder="e.g. electronics"
+      />
+      <FieldInput
+        label="Product Limit"
+        value={String((block.props.limit as number) ?? 4)}
+        onChange={(v) => updateProp('limit', parseInt(v, 10) || 4)}
+        type="number"
+      />
+      <div className="flex items-center gap-2">
+        <input
+          type="checkbox"
+          id="showSideBanner"
+          checked={block.props.showSideBanner !== false}
+          onChange={(e) => updateProp('showSideBanner', e.target.checked)}
+          className="h-4 w-4 rounded border-slate-300"
+        />
+        <Label htmlFor="showSideBanner" className="text-xs">
+          Show Side Banner
+        </Label>
+      </div>
+
+      {block.props.showSideBanner !== false && (
+        <>
+          <Separator />
+          <Label className="text-xs font-semibold uppercase">Side Banner</Label>
+          <FieldInput
+            label="Image URL"
+            value={(sideBanner.image as string) ?? ''}
+            onChange={(v) => updateSideBannerField('image', v)}
+            placeholder="https://..."
+          />
+          {LOCALES.map((loc) => (
+            <FieldInput
+              key={`sb-title-${loc}`}
+              label={`Title (${LOCALE_LABELS[loc]})`}
+              value={((sideBanner.title as Record<string, string>)?.[loc]) ?? ''}
+              onChange={(v) => updateSideBannerLocalized('title', loc, v)}
+            />
+          ))}
+          {LOCALES.map((loc) => (
+            <FieldInput
+              key={`sb-subtitle-${loc}`}
+              label={`Subtitle (${LOCALE_LABELS[loc]})`}
+              value={((sideBanner.subtitle as Record<string, string>)?.[loc]) ?? ''}
+              onChange={(v) => updateSideBannerLocalized('subtitle', loc, v)}
+            />
+          ))}
+          {LOCALES.map((loc) => (
+            <FieldInput
+              key={`sb-btn-${loc}`}
+              label={`Button (${LOCALE_LABELS[loc]})`}
+              value={((sideBanner.buttonText as Record<string, string>)?.[loc]) ?? ''}
+              onChange={(v) => updateSideBannerLocalized('buttonText', loc, v)}
+            />
+          ))}
+          <FieldInput
+            label="Button Link"
+            value={(sideBanner.buttonLink as string) ?? '#'}
+            onChange={(v) => updateSideBannerField('buttonLink', v)}
+          />
+          <FieldInput
+            label="Background Color"
+            value={(sideBanner.backgroundColor as string) ?? '#1a1a2e'}
+            onChange={(v) => updateSideBannerField('backgroundColor', v)}
+            type="color"
+          />
+        </>
+      )}
+    </div>
+  );
+}
+
+// ─── Promo Banners Settings ───────────────────────────────────────────────
+
+interface PromoBannerItem {
+  id: string;
+  image?: string;
+  title?: Record<string, string>;
+  subtitle?: Record<string, string>;
+  buttonText?: Record<string, string>;
+  buttonLink?: string;
+  backgroundColor?: string;
+  textColor?: string;
+}
+
+function PromoBannersSettings({
+  block,
+  onUpdate,
+  updateProp,
+}: {
+  block: Block;
+  onUpdate: (id: string, props: Record<string, unknown>) => void;
+  updateProp: (key: string, value: unknown) => void;
+}) {
+  const banners = (block.props.banners as PromoBannerItem[]) ?? [];
+
+  const updateBanner = (index: number, key: string, value: unknown) => {
+    const updated = [...banners];
+    updated[index] = { ...updated[index], [key]: value };
+    updateProp('banners', updated);
+  };
+
+  const updateBannerLocalized = (index: number, key: string, locale: string, value: string) => {
+    const updated = [...banners];
+    const current = (updated[index][key as keyof PromoBannerItem] as Record<string, string>) ?? {};
+    updated[index] = { ...updated[index], [key]: { ...current, [locale]: value } };
+    updateProp('banners', updated);
+  };
+
+  const addBanner = () => {
+    updateProp('banners', [
+      ...banners,
+      {
+        id: `pb_${Date.now()}`,
+        image: '',
+        title: { en: '' },
+        subtitle: { en: '' },
+        buttonText: { en: 'View Details' },
+        buttonLink: '#',
+        backgroundColor: '#3b82f6',
+        textColor: 'white',
+      },
+    ]);
+  };
+
+  const removeBanner = (index: number) => {
+    updateProp('banners', banners.filter((_, i) => i !== index));
+  };
+
+  return (
+    <div className="space-y-4 pt-3">
+      <div className="mb-2 flex items-center justify-between">
+        <Label className="text-xs font-semibold uppercase">Banners ({banners.length}/3)</Label>
+        {banners.length < 3 && (
+          <button onClick={addBanner} className="flex items-center gap-1 text-xs text-violet-600 hover:text-violet-800">
+            <Plus className="h-3 w-3" /> Add
+          </button>
+        )}
+      </div>
+      <div className="space-y-3">
+        {banners.map((banner, idx) => (
+          <div key={banner.id} className="rounded-md border border-slate-200 p-3">
+            <div className="mb-2 flex items-center justify-between">
+              <span className="text-xs font-medium text-slate-600">Banner {idx + 1}</span>
+              <button onClick={() => removeBanner(idx)} className="text-red-400 hover:text-red-600">
+                <Trash2 className="h-3 w-3" />
+              </button>
+            </div>
+            <div className="space-y-2">
+              <FieldInput
+                label="Image URL"
+                value={banner.image ?? ''}
+                onChange={(v) => updateBanner(idx, 'image', v)}
+                placeholder="https://..."
+              />
+              {LOCALES.map((loc) => (
+                <FieldInput
+                  key={`title-${loc}`}
+                  label={`Title (${LOCALE_LABELS[loc]})`}
+                  value={banner.title?.[loc] ?? ''}
+                  onChange={(v) => updateBannerLocalized(idx, 'title', loc, v)}
+                />
+              ))}
+              {LOCALES.map((loc) => (
+                <FieldInput
+                  key={`subtitle-${loc}`}
+                  label={`Subtitle (${LOCALE_LABELS[loc]})`}
+                  value={banner.subtitle?.[loc] ?? ''}
+                  onChange={(v) => updateBannerLocalized(idx, 'subtitle', loc, v)}
+                />
+              ))}
+              {LOCALES.map((loc) => (
+                <FieldInput
+                  key={`btn-${loc}`}
+                  label={`Button (${LOCALE_LABELS[loc]})`}
+                  value={banner.buttonText?.[loc] ?? ''}
+                  onChange={(v) => updateBannerLocalized(idx, 'buttonText', loc, v)}
+                />
+              ))}
+              <FieldInput
+                label="Button Link"
+                value={banner.buttonLink ?? '#'}
+                onChange={(v) => updateBanner(idx, 'buttonLink', v)}
+              />
+              <FieldInput
+                label="Background Color"
+                value={banner.backgroundColor ?? '#3b82f6'}
+                onChange={(v) => updateBanner(idx, 'backgroundColor', v)}
+                type="color"
+              />
+              <FieldInput
+                label="Text Color"
+                value={banner.textColor ?? 'white'}
+                onChange={(v) => updateBanner(idx, 'textColor', v)}
+                type="color"
+              />
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 // ─── Accordion Settings (complex due to items array) ──────────────────────
+
+// ---------------------------------------------------------------------------
+// Banner Grid Settings
+// ---------------------------------------------------------------------------
+
+interface BannerGridSlide {
+  id: string;
+  image: string;
+  title?: Record<string, string>;
+  subtitle?: Record<string, string>;
+  buttonText?: Record<string, string>;
+  buttonLink?: string;
+  textColor?: string;
+  textPosition?: string;
+  overlayOpacity?: number;
+}
+
+interface BannerGridSideBanner {
+  id: string;
+  image: string;
+  title?: Record<string, string>;
+  subtitle?: Record<string, string>;
+  buttonText?: Record<string, string>;
+  buttonLink?: string;
+  textColor?: string;
+  countdown?: string;
+}
+
+function BannerGridSettings({
+  block,
+  onUpdate,
+  updateProp,
+}: {
+  block: Block;
+  onUpdate: (id: string, props: Record<string, unknown>) => void;
+  updateProp: (key: string, value: unknown) => void;
+}) {
+  const slides = (block.props.slides as BannerGridSlide[]) ?? [];
+  const sideBanners = (block.props.sideBanners as BannerGridSideBanner[]) ?? [];
+
+  const updateSlide = (index: number, key: string, value: unknown) => {
+    const updated = [...slides];
+    updated[index] = { ...updated[index], [key]: value };
+    updateProp('slides', updated);
+  };
+
+  const updateSlideLocalized = (index: number, key: string, locale: string, value: string) => {
+    const updated = [...slides];
+    const current = (updated[index][key as keyof BannerGridSlide] as Record<string, string>) ?? {};
+    updated[index] = { ...updated[index], [key]: { ...current, [locale]: value } };
+    updateProp('slides', updated);
+  };
+
+  const addSlide = () => {
+    updateProp('slides', [
+      ...slides,
+      {
+        id: `slide_${Date.now()}`,
+        image: '',
+        title: { en: '' },
+        subtitle: { en: '' },
+        buttonText: { en: '' },
+        buttonLink: '',
+        textColor: 'white',
+        textPosition: 'left',
+        overlayOpacity: 0.3,
+      },
+    ]);
+  };
+
+  const removeSlide = (index: number) => {
+    updateProp('slides', slides.filter((_, i) => i !== index));
+  };
+
+  const updateSideBanner = (index: number, key: string, value: unknown) => {
+    const updated = [...sideBanners];
+    updated[index] = { ...updated[index], [key]: value };
+    updateProp('sideBanners', updated);
+  };
+
+  const updateSideBannerLocalized = (index: number, key: string, locale: string, value: string) => {
+    const updated = [...sideBanners];
+    const current = (updated[index][key as keyof BannerGridSideBanner] as Record<string, string>) ?? {};
+    updated[index] = { ...updated[index], [key]: { ...current, [locale]: value } };
+    updateProp('sideBanners', updated);
+  };
+
+  const addSideBanner = () => {
+    updateProp('sideBanners', [
+      ...sideBanners,
+      {
+        id: `side_${Date.now()}`,
+        image: '',
+        title: { en: '' },
+        subtitle: { en: '' },
+        buttonText: { en: '' },
+        buttonLink: '',
+        textColor: 'white',
+        countdown: '',
+      },
+    ]);
+  };
+
+  const removeSideBanner = (index: number) => {
+    updateProp('sideBanners', sideBanners.filter((_, i) => i !== index));
+  };
+
+  return (
+    <div className="space-y-4 pt-3">
+      {/* General Settings */}
+      <div className="space-y-3">
+        <FieldInput
+          label="Height"
+          value={(block.props.height as string) ?? '500px'}
+          onChange={(v) => updateProp('height', v)}
+          placeholder="500px"
+        />
+        <FieldInput
+          label="Gap"
+          value={(block.props.gap as string) ?? '12px'}
+          onChange={(v) => updateProp('gap', v)}
+          placeholder="12px"
+        />
+        <div className="flex items-center gap-2">
+          <input
+            type="checkbox"
+            checked={(block.props.autoplay as boolean) ?? true}
+            onChange={(e) => updateProp('autoplay', e.target.checked)}
+            className="rounded"
+          />
+          <Label className="text-xs">Autoplay</Label>
+        </div>
+        {block.props.autoplay !== false && (
+          <FieldInput
+            label="Interval (ms)"
+            value={String((block.props.autoplayInterval as number) ?? 5000)}
+            onChange={(v) => updateProp('autoplayInterval', parseInt(v) || 5000)}
+            type="number"
+          />
+        )}
+      </div>
+
+      <Separator />
+
+      {/* Main Slides */}
+      <div>
+        <div className="mb-2 flex items-center justify-between">
+          <Label className="text-xs font-semibold uppercase">Main Slides ({slides.length})</Label>
+          <button onClick={addSlide} className="flex items-center gap-1 text-xs text-violet-600 hover:text-violet-800">
+            <Plus className="h-3 w-3" /> Add
+          </button>
+        </div>
+        <div className="space-y-3">
+          {slides.map((slide, idx) => (
+            <div key={slide.id} className="rounded-md border border-slate-200 p-3">
+              <div className="mb-2 flex items-center justify-between">
+                <span className="text-xs font-medium text-slate-600">Slide {idx + 1}</span>
+                <button onClick={() => removeSlide(idx)} className="text-red-400 hover:text-red-600">
+                  <Trash2 className="h-3 w-3" />
+                </button>
+              </div>
+              <div className="space-y-2">
+                <FieldInput
+                  label="Image URL"
+                  value={slide.image}
+                  onChange={(v) => updateSlide(idx, 'image', v)}
+                  placeholder="https://..."
+                />
+                {LOCALES.map((loc) => (
+                  <FieldInput
+                    key={`title-${loc}`}
+                    label={`Title (${LOCALE_LABELS[loc]})`}
+                    value={slide.title?.[loc] ?? ''}
+                    onChange={(v) => updateSlideLocalized(idx, 'title', loc, v)}
+                  />
+                ))}
+                {LOCALES.map((loc) => (
+                  <FieldInput
+                    key={`subtitle-${loc}`}
+                    label={`Subtitle (${LOCALE_LABELS[loc]})`}
+                    value={slide.subtitle?.[loc] ?? ''}
+                    onChange={(v) => updateSlideLocalized(idx, 'subtitle', loc, v)}
+                  />
+                ))}
+                {LOCALES.map((loc) => (
+                  <FieldInput
+                    key={`btn-${loc}`}
+                    label={`Button (${LOCALE_LABELS[loc]})`}
+                    value={slide.buttonText?.[loc] ?? ''}
+                    onChange={(v) => updateSlideLocalized(idx, 'buttonText', loc, v)}
+                  />
+                ))}
+                <FieldInput
+                  label="Button Link"
+                  value={slide.buttonLink ?? ''}
+                  onChange={(v) => updateSlide(idx, 'buttonLink', v)}
+                />
+                <FieldInput
+                  label="Text Color"
+                  value={slide.textColor ?? 'white'}
+                  onChange={(v) => updateSlide(idx, 'textColor', v)}
+                  type="color"
+                />
+                <div>
+                  <Label className="mb-1 block text-xs text-slate-600">Text Position</Label>
+                  <select
+                    value={slide.textPosition ?? 'left'}
+                    onChange={(e) => updateSlide(idx, 'textPosition', e.target.value)}
+                    className="w-full rounded-md border px-2 py-1 text-xs"
+                  >
+                    <option value="left">Left</option>
+                    <option value="center">Center</option>
+                    <option value="right">Right</option>
+                  </select>
+                </div>
+                <FieldInput
+                  label="Overlay Opacity (0-1)"
+                  value={String(slide.overlayOpacity ?? 0.3)}
+                  onChange={(v) => updateSlide(idx, 'overlayOpacity', parseFloat(v) || 0)}
+                  type="number"
+                />
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <Separator />
+
+      {/* Side Banners */}
+      <div>
+        <div className="mb-2 flex items-center justify-between">
+          <Label className="text-xs font-semibold uppercase">Side Banners ({sideBanners.length})</Label>
+          <button onClick={addSideBanner} className="flex items-center gap-1 text-xs text-violet-600 hover:text-violet-800">
+            <Plus className="h-3 w-3" /> Add
+          </button>
+        </div>
+        <div className="space-y-3">
+          {sideBanners.map((banner, idx) => (
+            <div key={banner.id} className="rounded-md border border-slate-200 p-3">
+              <div className="mb-2 flex items-center justify-between">
+                <span className="text-xs font-medium text-slate-600">Side Banner {idx + 1}</span>
+                <button onClick={() => removeSideBanner(idx)} className="text-red-400 hover:text-red-600">
+                  <Trash2 className="h-3 w-3" />
+                </button>
+              </div>
+              <div className="space-y-2">
+                <FieldInput
+                  label="Image URL"
+                  value={banner.image}
+                  onChange={(v) => updateSideBanner(idx, 'image', v)}
+                  placeholder="https://..."
+                />
+                {LOCALES.map((loc) => (
+                  <FieldInput
+                    key={`title-${loc}`}
+                    label={`Title (${LOCALE_LABELS[loc]})`}
+                    value={banner.title?.[loc] ?? ''}
+                    onChange={(v) => updateSideBannerLocalized(idx, 'title', loc, v)}
+                  />
+                ))}
+                {LOCALES.map((loc) => (
+                  <FieldInput
+                    key={`subtitle-${loc}`}
+                    label={`Subtitle (${LOCALE_LABELS[loc]})`}
+                    value={banner.subtitle?.[loc] ?? ''}
+                    onChange={(v) => updateSideBannerLocalized(idx, 'subtitle', loc, v)}
+                  />
+                ))}
+                {LOCALES.map((loc) => (
+                  <FieldInput
+                    key={`btn-${loc}`}
+                    label={`Button (${LOCALE_LABELS[loc]})`}
+                    value={banner.buttonText?.[loc] ?? ''}
+                    onChange={(v) => updateSideBannerLocalized(idx, 'buttonText', loc, v)}
+                  />
+                ))}
+                <FieldInput
+                  label="Button Link"
+                  value={banner.buttonLink ?? ''}
+                  onChange={(v) => updateSideBanner(idx, 'buttonLink', v)}
+                />
+                <FieldInput
+                  label="Text Color"
+                  value={banner.textColor ?? 'white'}
+                  onChange={(v) => updateSideBanner(idx, 'textColor', v)}
+                  type="color"
+                />
+                <FieldInput
+                  label="Countdown (ISO Date)"
+                  value={banner.countdown ?? ''}
+                  onChange={(v) => updateSideBanner(idx, 'countdown', v)}
+                  placeholder="2026-12-31T00:00:00"
+                  type="datetime-local"
+                />
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
 
 function AccordionSettings({
   block,
@@ -1072,10 +1807,15 @@ function getBlockTypeLabel(type: string): string {
     'product-listing': 'Product Listing',
     'category-listing': 'Category Grid',
     banner: 'Banner',
+    'banner-grid': 'Banner Grid',
     spacer: 'Spacer',
     divider: 'Divider',
     button: 'Button',
     accordion: 'Accordion',
+    'category-products': 'Category Products',
+    'promo-banners': 'Promo Banners',
+    'contact-form': 'Contact Form',
+    'blog-posts': 'Blog Posts',
   };
   return labels[type] ?? type;
 }

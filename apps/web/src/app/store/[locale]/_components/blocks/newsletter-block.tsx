@@ -36,24 +36,26 @@ export function NewsletterBlock({ block, locale }: NewsletterProps) {
     }
   };
 
+  const bgColor = props.backgroundColor || block.style?.backgroundColor || 'var(--color-muted)';
+  const isDark = bgColor.startsWith('#') && parseInt(bgColor.replace('#', '').substring(0, 2), 16) < 100;
+  const textClass = isDark ? 'text-white' : 'text-[var(--color-foreground)]';
+
   return (
     <section
       className="px-4 py-12 sm:px-6 lg:px-8"
-      style={{
-        backgroundColor: props.backgroundColor || 'var(--color-muted)',
-      }}
+      style={{ backgroundColor: bgColor }}
     >
       <div className="mx-auto max-w-2xl text-center">
         {title && (
           <h2
-            className="text-2xl font-bold text-[var(--color-foreground)]"
+            className={`text-2xl font-bold ${textClass}`}
             style={{ fontFamily: 'var(--font-heading)' }}
           >
             {title}
           </h2>
         )}
         {subtitle && (
-          <p className="mt-2 text-[var(--color-foreground)]/70">{subtitle}</p>
+          <p className={`mt-2 ${isDark ? 'text-white/70' : 'text-[var(--color-foreground)]/70'}`}>{subtitle}</p>
         )}
         {submitted ? (
           <p className="mt-4 text-sm font-medium text-green-600">

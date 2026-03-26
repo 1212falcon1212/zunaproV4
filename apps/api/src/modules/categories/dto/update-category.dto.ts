@@ -3,6 +3,7 @@ import {
   IsOptional,
   IsString,
   IsInt,
+  IsBoolean,
   IsUUID,
   Matches,
   Min,
@@ -32,6 +33,14 @@ export class UpdateCategoryDto {
   @IsInt()
   @Min(0)
   sortOrder?: number;
+
+  @IsOptional()
+  @IsBoolean()
+  isFeatured?: boolean;
+
+  @IsOptional()
+  @IsObject()
+  description?: Record<string, string>;
 
   @IsOptional()
   @IsObject()

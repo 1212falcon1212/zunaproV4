@@ -64,6 +64,16 @@ export default function OrdersPage() {
     setPage(1);
   };
 
+  const handleDelete = async (id: string) => {
+    if (!confirm('Bu siparişi silmek istediğinize emin misiniz?')) return;
+    try {
+      await panelApi.delete(`/orders/${id}`);
+      fetchOrders();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Sipariş silinemedi');
+    }
+  };
+
   return (
     <div className="space-y-6">
       <div>
@@ -95,6 +105,7 @@ export default function OrdersPage() {
           orders={orders.data}
           meta={orders.meta}
           onPageChange={setPage}
+          onDelete={handleDelete}
         />
       ) : null}
     </div>

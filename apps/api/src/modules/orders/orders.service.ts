@@ -306,6 +306,17 @@ export class OrdersService {
     return updated;
   }
 
+  async remove(tenantSlug: string, id: string) {
+    const prisma = getTenantClient(tenantSlug);
+    const order = await prisma.order.findUnique({ where: { id } });
+    if (!order) {
+      throw new NotFoundException(`Order ${id} not found`);
+    }
+    await prisma.order.delete({ where: { id } });
+    this.logger.log(`Order deleted: ${id} (tenant: ${tenantSlug})`);
+    return { deleted: true };
+  }
+
   async getStats(tenantSlug: string) {
     const prisma = getTenantClient(tenantSlug);
 

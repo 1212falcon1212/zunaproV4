@@ -1,4 +1,5 @@
 -- Tenant database initial schema
+-- Synced with packages/db/prisma/tenant.prisma
 -- Multi-language fields use JSONB: {"en": "...", "tr": "...", "de": "..."}
 
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
@@ -48,6 +49,9 @@ CREATE TABLE customers (
     first_name VARCHAR(100) NOT NULL,
     last_name VARCHAR(100) NOT NULL,
     phone VARCHAR(50),
+    password_hash VARCHAR(255),
+    is_guest BOOLEAN NOT NULL DEFAULT false,
+    last_login_at TIMESTAMPTZ,
     locale VARCHAR(10) NOT NULL DEFAULT 'tr',
     addresses JSONB NOT NULL DEFAULT '[]',
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
@@ -63,11 +67,21 @@ CREATE TABLE orders (
     customer_id UUID REFERENCES customers(id) ON DELETE SET NULL,
     status VARCHAR(30) NOT NULL DEFAULT 'pending',
     total_amount DECIMAL(10, 2) NOT NULL DEFAULT 0,
+    subtotal_amount DECIMAL(10, 2) NOT NULL DEFAULT 0,
+    tax_amount DECIMAL(10, 2) NOT NULL DEFAULT 0,
+    discount_amount DECIMAL(10, 2) NOT NULL DEFAULT 0,
+    shipping_cost DECIMAL(10, 2) NOT NULL DEFAULT 0,
     currency VARCHAR(10) NOT NULL DEFAULT 'TRY',
     exchange_rate DECIMAL(10, 6),
     items JSONB NOT NULL DEFAULT '[]',
     shipping_address JSONB,
     billing_address JSONB,
+    payment_method VARCHAR(50),
+    payment_status VARCHAR(30) NOT NULL DEFAULT 'pending',
+    payment_ref VARCHAR(255),
+    tracking_number VARCHAR(100),
+    shipping_method VARCHAR(50),
+    notes TEXT,
     locale VARCHAR(10) NOT NULL DEFAULT 'tr',
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
@@ -106,6 +120,14 @@ CREATE TABLE settings (
 CREATE INDEX idx_settings_key ON settings(key);
 CREATE INDEX idx_settings_group ON settings("group");
 
+-- Global Sections (header/footer block content)
+CREATE TABLE global_sections (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    type VARCHAR(50) UNIQUE NOT NULL,
+    content JSONB NOT NULL DEFAULT '{}',
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
 -- Media
 CREATE TABLE media (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
@@ -116,6 +138,22 @@ CREATE TABLE media (
     alt JSONB,
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
+
+-- Menus (WooCommerce-style navigation menus)
+CREATE TABLE menus (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    name JSONB NOT NULL DEFAULT '{}',
+    slug VARCHAR(255) UNIQUE NOT NULL,
+    location VARCHAR(50) NOT NULL DEFAULT 'header',
+    items JSONB NOT NULL DEFAULT '[]',
+    is_active BOOLEAN NOT NULL DEFAULT true,
+    sort_order INT NOT NULL DEFAULT 0,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX idx_menus_location ON menus(location);
+CREATE INDEX idx_menus_slug ON menus(slug);
 
 -- Updated_at trigger function
 CREATE OR REPLACE FUNCTION update_updated_at_column()
@@ -136,4 +174,10 @@ CREATE TRIGGER update_orders_updated_at BEFORE UPDATE ON orders
     FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
 CREATE TRIGGER update_pages_updated_at BEFORE UPDATE ON pages
+    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
+CREATE TRIGGER update_global_sections_updated_at BEFORE UPDATE ON global_sections
+    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
+CREATE TRIGGER update_menus_updated_at BEFORE UPDATE ON menus
     FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();

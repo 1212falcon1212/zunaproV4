@@ -48,6 +48,10 @@ const BLOCK_TYPE_LABELS: Record<BlockType, string> = {
   newsletter: 'Newsletter',
   'product-listing': 'Product Listing',
   'category-listing': 'Category Grid',
+  'banner-grid': 'Banner Grid',
+  'category-products': 'Category Row',
+  'promo-banners': 'Promo Banners',
+  'contact-form': 'Contact Form',
 };
 
 function getDefaultPropsForType(type: BlockType): Record<string, unknown> {
@@ -99,6 +103,27 @@ function getDefaultPropsForType(type: BlockType): Record<string, unknown> {
         backgroundColor: '#4f46e5',
         backgroundImage: '',
       };
+    case 'banner-grid':
+      return {
+        slides: [
+          {
+            id: `slide_${Date.now()}`,
+            image: '',
+            title: { en: 'Main Banner' },
+            subtitle: { en: 'Your promotional text here' },
+            buttonText: { en: 'Shop Now' },
+            buttonLink: '/products',
+            textColor: 'white',
+            textPosition: 'left',
+            overlayOpacity: 0.3,
+          },
+        ],
+        sideBanners: [],
+        autoplay: true,
+        autoplayInterval: 5000,
+        height: '500px',
+        gap: '12px',
+      };
     case 'accordion':
       return {
         title: { en: 'FAQ' },
@@ -111,6 +136,51 @@ function getDefaultPropsForType(type: BlockType): Record<string, unknown> {
       };
     case 'html':
       return { html: { en: '<div>Custom HTML</div>' } };
+    case 'category-products':
+      return {
+        title: { en: 'New Products' },
+        categorySlug: '',
+        limit: 4,
+        showSideBanner: true,
+        sideBanner: {
+          image: '',
+          title: { en: '' },
+          subtitle: { en: '' },
+          buttonText: { en: 'Shop Now' },
+          buttonLink: '#',
+          backgroundColor: '#1a1a2e',
+        },
+      };
+    case 'promo-banners':
+      return {
+        banners: [
+          {
+            id: 'pb_1',
+            image: '',
+            title: { en: 'Banner 1' },
+            subtitle: { en: '' },
+            buttonText: { en: 'View Details' },
+            buttonLink: '#',
+            backgroundColor: '#3b82f6',
+            textColor: 'white',
+          },
+        ],
+      };
+    case 'contact-form':
+      return {
+        title: { en: 'Contact Us' },
+        showContactInfo: true,
+        layout: 'side-by-side',
+      };
+    case 'blog-posts':
+      return {
+        title: { en: 'Our Articles' },
+        limit: 4,
+        columns: 4,
+        showExcerpt: true,
+        showDate: true,
+        showAuthor: true,
+      };
     default:
       return {};
   }

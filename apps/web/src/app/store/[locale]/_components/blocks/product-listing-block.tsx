@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import type { Block } from '@zunapro/types';
+import { useTenantSlug } from '../tenant-context';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
 
@@ -47,6 +48,7 @@ export function ProductListingBlock({ block, locale }: ProductListingBlockProps)
   const showFilters = props.showFilters ?? true;
   const showSearch = props.showSearch ?? true;
 
+  const tenantSlug = useTenantSlug();
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [page, setPage] = useState(0);
@@ -72,7 +74,9 @@ export function ProductListingBlock({ block, locale }: ProductListingBlockProps)
       if (priceMin) params.set('priceMin', priceMin);
       if (priceMax) params.set('priceMax', priceMax);
 
-      const res = await fetch(`${API_URL}/storefront/products?${params.toString()}`);
+      const res = await fetch(`${API_URL}/storefront/products?${params.toString()}`, {
+        headers: { 'x-tenant-slug': tenantSlug },
+      });
       if (!res.ok) throw new Error('Failed to fetch products');
       const data: ProductsResponse = await res.json();
       setProducts(data.data ?? []);
@@ -88,7 +92,9 @@ export function ProductListingBlock({ block, locale }: ProductListingBlockProps)
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const res = await fetch(`${API_URL}/storefront/categories`);
+        const res = await fetch(`${API_URL}/storefront/categories`, {
+          headers: { 'x-tenant-slug': tenantSlug },
+        });
         if (!res.ok) return;
         const data: Category[] = await res.json();
         setCategories(data);

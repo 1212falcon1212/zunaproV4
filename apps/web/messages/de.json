@@ -8,7 +8,9 @@
     "signup": "Registrieren"
   },
   "landing": {
-    "nav": { "features": "Funktionen" },
+    "nav": {
+      "features": "Funktionen"
+    },
     "hero": {
       "title": "Starten Sie Ihren Online-Shop in Minuten",
       "subtitle": "ZunaPro macht es einfach, Ihr E-Commerce-Geschaeft zu erstellen, zu verwalten und zu wachsen.",
@@ -18,12 +20,27 @@
     "features": {
       "title": "Alles was Sie brauchen",
       "subtitle": "Vier leistungsstarke Module fuer Ihr gesamtes Geschaeft.",
-      "ecommerce": { "title": "E-Commerce", "description": "Voll ausgestatteter Online-Shop mit Produkten, Bestellungen, Kunden und Themes." },
-      "marketplace": { "title": "Marktplatz", "description": "Verbinden Sie sich mit Trendyol, Hepsiburada, N11 mit bidirektionaler Synchronisierung." },
-      "finance": { "title": "Finanzen", "description": "E-Rechnung, E-Archiv-Automatisierung, Einnahmen-Ausgaben-Verfolgung, Buchhaltungsberichte." },
-      "export": { "title": "E-Export", "description": "Peppol-Integration, Multi-Waehrungs-Unterstuetzung, internationaler Versand." }
+      "ecommerce": {
+        "title": "E-Commerce",
+        "description": "Voll ausgestatteter Online-Shop mit Produkten, Bestellungen, Kunden und Themes."
+      },
+      "marketplace": {
+        "title": "Marktplatz",
+        "description": "Verbinden Sie sich mit Trendyol, Hepsiburada, N11 mit bidirektionaler Synchronisierung."
+      },
+      "finance": {
+        "title": "Finanzen",
+        "description": "E-Rechnung, E-Archiv-Automatisierung, Einnahmen-Ausgaben-Verfolgung, Buchhaltungsberichte."
+      },
+      "export": {
+        "title": "E-Export",
+        "description": "Peppol-Integration, Multi-Waehrungs-Unterstuetzung, internationaler Versand."
+      }
     },
-    "cta": { "title": "Bereit loszulegen?", "subtitle": "Schliessen Sie sich Tausenden von Haendlern an, die mit ZunaPro wachsen." }
+    "cta": {
+      "title": "Bereit loszulegen?",
+      "subtitle": "Schliessen Sie sich Tausenden von Haendlern an, die mit ZunaPro wachsen."
+    }
   },
   "wizard": {
     "title": "Richten Sie Ihren Shop ein",
@@ -142,7 +159,50 @@
       "collapse": "Einklappen",
       "controlPanel": "Kontrollzentrum",
       "themes": "Themes",
-      "pages": "Seiten"
+      "pages": "Seiten",
+      "menus": "Menus",
+      "settings": "Einstellungen",
+      "lockedModule": "Gesperrt",
+      "support": "Support",
+      "blog": "Blog",
+      "siteSettings": "Website-Einstellungen"
+    },
+    "menus": {
+      "title": "Menus",
+      "description": "Verwalten Sie die Navigationsmenus Ihres Shops",
+      "createMenu": "Menu erstellen",
+      "editMenu": "Menu bearbeiten",
+      "deleteConfirm": "Sind Sie sicher, dass Sie dieses Menu loeschen moechten?",
+      "empty": "Keine Menus gefunden. Erstellen Sie Ihr erstes Menu.",
+      "name": "Menu-Name",
+      "namePlaceholder": "Menu-Name eingeben",
+      "location": "Position",
+      "locations": {
+        "header": "Kopfzeile",
+        "top-header": "Obere Kopfzeile",
+        "footer": "Fusszeile",
+        "mobile": "Mobil"
+      },
+      "items": "Menu-Eintraege",
+      "noItems": "Keine Eintraege in diesem Menu. Fuegen Sie Ihren ersten Eintrag hinzu.",
+      "addItem": "Eintrag hinzufuegen",
+      "itemLabel": "Bezeichnung",
+      "itemLabelPlaceholder": "Bezeichnung eingeben",
+      "itemType": "Typ",
+      "itemTypes": {
+        "page": "Seite",
+        "category": "Kategorie",
+        "custom": "Benutzerdefinierte URL"
+      },
+      "itemHref": "URL / Pfad",
+      "itemHrefPlaceholder": "URL oder Pfad eingeben",
+      "save": "Speichern",
+      "cancel": "Abbrechen",
+      "active": "Aktiv",
+      "inactive": "Inaktiv",
+      "itemCount": "{count} Eintraege",
+      "saving": "Speichern...",
+      "searchPlaceholder": "Menus suchen..."
     },
     "controlPanel": {
       "title": "Kontrollzentrum",
@@ -173,6 +233,8 @@
       "contentStats": "Inhaltsstatistiken",
       "lastUpdated": "Vor 1 Stunde aktualisiert",
       "pages": "Seiten",
+      "settings": "Einstellungen",
+      "lockedModule": "Gesperrt",
       "blogPosts": "Blog-Beitraege",
       "activeProducts": "Aktive Produkte",
       "pageViews": "Seitenaufrufe",
@@ -272,13 +334,24 @@
         "draft": "Entwurf",
         "archived": "Archiviert"
       },
+      "stats": {
+        "total": "Gesamtprodukte",
+        "active": "Aktiv",
+        "draft": "Entwurf",
+        "archived": "Archiviert"
+      },
+      "breadcrumb": {
+        "panel": "Panel"
+      },
       "table": {
         "image": "Bild",
         "name": "Name",
         "price": "Preis",
         "stock": "Bestand",
         "status": "Status",
-        "actions": "Aktionen"
+        "actions": "Aktionen",
+        "inStock": "auf Lager",
+        "outOfStock": "Nicht auf Lager"
       },
       "form": {
         "basicInfo": "Grundinformationen",
@@ -304,7 +377,9 @@
         "cancel": "Abbrechen",
         "saving": "Wird gespeichert...",
         "create": "Produkt erstellen",
-        "update": "Produkt aktualisieren"
+        "update": "Produkt aktualisieren",
+        "featured": "Hervorgehoben",
+        "featuredDescription": "Dieses Produkt auf der Startseite und in hervorgehobenen Bereichen anzeigen."
       },
       "dragDrop": "Bilder hierher ziehen",
       "uploading": "Wird hochgeladen...",
@@ -341,10 +416,11 @@
     },
     "categories": {
       "title": "Kategorien",
-      "subtitle": "Organisieren Sie Ihre Produkte in Kategorien",
+      "subtitle": "Organisieren Sie Ihre Produkte in Kategorien und Unterkategorien",
       "addCategory": "Kategorie hinzufugen",
       "editCategory": "Kategorie bearbeiten",
       "empty": "Noch keine Kategorien. Erstellen Sie Ihre erste Kategorie.",
+      "emptyDescription": "Erstellen Sie eine Kategorie, um Ihre Produkte zu organisieren.",
       "deleteConfirm": "Sind Sie sicher, dass Sie diese Kategorie loschen mochten?",
       "name": "Name",
       "namePlaceholder": "Kategoriename",
@@ -357,7 +433,21 @@
       "cancel": "Abbrechen",
       "saving": "Wird gespeichert...",
       "create": "Kategorie erstellen",
-      "update": "Kategorie aktualisieren"
+      "update": "Kategorie aktualisieren",
+      "image": "Bild-URL",
+      "featured": "Hervorgehoben (auf der Startseite anzeigen)",
+      "totalCategories": "Kategorien Gesamt",
+      "parentCategories": "Hauptkategorien",
+      "subcategories": "Unterkategorien",
+      "featuredCategories": "Hervorgehoben",
+      "searchPlaceholder": "Kategorien suchen...",
+      "removeImage": "Entfernen",
+      "basicInfo": "Grundinformationen",
+      "organization": "Organisation",
+      "media": "Medien & Anzeige",
+      "description": "Beschreibung",
+      "htmlHint": "HTML wird fur SEO-Inhalte unterstutzt.",
+      "createFirst": "Erstellen Sie Ihre erste Kategorie"
     },
     "orders": {
       "title": "Bestellungen",
@@ -384,8 +474,10 @@
         "status": "Status",
         "payment": "Zahlung",
         "total": "Gesamt",
-        "date": "Datum"
+        "date": "Datum",
+        "actions": "Aktionen"
       },
+      "deleteConfirm": "Möchten Sie diese Bestellung wirklich löschen?",
       "actions": {
         "confirmed": "Bestatigen",
         "processing": "Bearbeitung starten",
@@ -448,8 +540,10 @@
         "email": "E-Mail",
         "type": "Typ",
         "orders": "Bestellungen",
-        "joined": "Beigetreten"
+        "joined": "Beigetreten",
+        "actions": "Aktionen"
       },
+      "deleteConfirm": "Möchten Sie diesen Kunden wirklich löschen?",
       "totalOrders": "Gesamtbestellungen",
       "totalSpent": "Gesamtausgaben",
       "recentOrders": "Letzte Bestellungen",
@@ -573,7 +667,33 @@
     "categories": "Kategorien",
     "search": "Produkte suchen...",
     "cart": "Warenkorb",
-    "checkout": "Zur Kasse",
+    "checkout": {
+      "shippingAddress": "Lieferadresse",
+      "firstName": "Vorname",
+      "lastName": "Nachname",
+      "address": "Adresse",
+      "city": "Stadt",
+      "postalCode": "PLZ",
+      "country": "Land",
+      "phone": "Telefon",
+      "continue": "Weiter",
+      "back": "Zuruck",
+      "shippingMethod": "Versandart",
+      "estimatedDays": "{days} Werktage",
+      "paymentMethod": "Zahlungsart",
+      "reviewOrder": "Bestellung prufen",
+      "review": "Ihre Bestellung prufen",
+      "orderItems": "Bestellartikel",
+      "subtotal": "Zwischensumme",
+      "placeOrder": "Bestellung aufgeben",
+      "placing": "Bestellung wird aufgegeben...",
+      "steps": {
+        "address": "Adresse",
+        "shipping": "Versand",
+        "payment": "Zahlung",
+        "review": "Prufung"
+      }
+    },
     "noProducts": "Keine Produkte gefunden",
     "currency": "Wahrung",
     "language": "Sprache",
@@ -589,7 +709,8 @@
       "menu": "Menu",
       "myAccount": "Mein Konto",
       "search": "Suche",
-      "language": "Sprache"
+      "language": "Sprache",
+      "viewAll": "Alle anzeigen"
     },
     "footer": {
       "description": "Ihr vertrauenswurdiger Online-Shop.",
@@ -602,7 +723,10 @@
       "privacy": "Datenschutzrichtlinie",
       "terms": "Nutzungsbedingungen",
       "followUs": "Folgen Sie uns",
-      "allRightsReserved": "Alle Rechte vorbehalten."
+      "allRightsReserved": "Alle Rechte vorbehalten.",
+      "aboutStore": "Über den Shop",
+      "categories": "Kategorien",
+      "copyright": "Alle Rechte vorbehalten."
     },
     "hero": {
       "shopNow": "Jetzt einkaufen",
@@ -623,7 +747,19 @@
       "listView": "Listenansicht",
       "prev": "Zuruck",
       "next": "Weiter",
-      "searchResults": "Suchergebnisse"
+      "searchResults": "Suchergebnisse",
+      "sortPriceLow": "Preis: Niedrig bis Hoch",
+      "sortPriceHigh": "Preis: Hoch bis Niedrig",
+      "sortNameAZ": "Name: A bis Z",
+      "price": "Preisbereich",
+      "filter": "Filtern",
+      "filters": "Filter",
+      "clearFilters": "Filter löschen",
+      "activeFilters": "Aktive Filter",
+      "showing": "Anzeige",
+      "show": "Anzeigen",
+      "of": "von",
+      "noProducts": "Keine Produkte gefunden."
     },
     "product": {
       "description": "Beschreibung",
@@ -691,33 +827,6 @@
       "noAccount": "Noch kein Konto?",
       "hasAccount": "Bereits ein Konto?"
     },
-    "checkout": {
-      "shippingAddress": "Lieferadresse",
-      "firstName": "Vorname",
-      "lastName": "Nachname",
-      "address": "Adresse",
-      "city": "Stadt",
-      "postalCode": "PLZ",
-      "country": "Land",
-      "phone": "Telefon",
-      "continue": "Weiter",
-      "back": "Zuruck",
-      "shippingMethod": "Versandart",
-      "estimatedDays": "{days} Werktage",
-      "paymentMethod": "Zahlungsart",
-      "reviewOrder": "Bestellung prufen",
-      "review": "Ihre Bestellung prufen",
-      "orderItems": "Bestellartikel",
-      "subtotal": "Zwischensumme",
-      "placeOrder": "Bestellung aufgeben",
-      "placing": "Bestellung wird aufgegeben...",
-      "steps": {
-        "address": "Adresse",
-        "shipping": "Versand",
-        "payment": "Zahlung",
-        "review": "Prufung"
-      }
-    },
     "account": {
       "title": "Mein Konto",
       "profile": "Profil",
@@ -732,6 +841,38 @@
       "items": "Artikel",
       "prev": "Zuruck",
       "next": "Weiter"
+    },
+    "blog": {
+      "title": "Blog",
+      "readMore": "Weiterlesen",
+      "publishedOn": "Veröffentlicht am",
+      "by": "Von",
+      "noPosts": "Noch keine Blogbeiträge.",
+      "backToBlog": "Zurück zum Blog",
+      "articles": "Unsere Artikel"
+    },
+    "contact": {
+      "title": "Kontakt",
+      "firstName": "Vorname",
+      "lastName": "Nachname",
+      "email": "E-Mail",
+      "message": "Ihre Nachricht",
+      "send": "Nachricht senden",
+      "needHelp": "Brauchen Sie Hilfe?",
+      "sending": "Wird gesendet...",
+      "sent": "Nachricht erfolgreich gesendet!"
+    },
+    "filters": {
+      "priceRange": "Preisbereich",
+      "filter": "Filtern",
+      "sortBy": "Sortieren nach",
+      "newest": "Neueste",
+      "priceLowHigh": "Preis: Niedrig bis Hoch",
+      "priceHighLow": "Preis: Hoch bis Niedrig",
+      "nameAZ": "Name: A bis Z",
+      "itemsPerPage": "Anzeigen",
+      "showing": "{from}-{to} von {total} angezeigt",
+      "clearFilters": "Filter zurücksetzen"
     }
   }
 }

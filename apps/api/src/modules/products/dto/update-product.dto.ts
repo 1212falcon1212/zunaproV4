@@ -66,4 +66,7 @@ export class UpdateProductDto {
   @IsOptional()
   @IsIn(['draft', 'active', 'archived'])
   status?: string;
+
+  @IsOptional()
+  isFeatured?: boolean;
 }

@@ -3,6 +3,7 @@ import {
   Get,
   Post,
   Patch,
+  Delete,
   Body,
   Param,
   Query,
@@ -70,6 +71,12 @@ export class OrdersPanelController {
     @Body() dto: UpdateOrderStatusDto,
   ) {
     return this.ordersService.updateStatus(req.tenant!.slug, id, dto);
+  }
+
+  @Delete(':id')
+  @RequireRoles('owner', 'admin')
+  remove(@Req() req: Request, @Param('id') id: string) {
+    return this.ordersService.remove(req.tenant!.slug, id);
   }
 }
 

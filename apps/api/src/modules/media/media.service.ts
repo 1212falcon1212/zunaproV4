@@ -58,17 +58,21 @@ export class MediaService {
   }
 
   private getPublicUrl(bucketName: string, filename: string): string {
-    const endpoint = this.configService.get('MINIO_ENDPOINT', 'localhost');
-    const port = this.configService.get('MINIO_PORT', '9000');
-    const useSSL = this.configService.get('MINIO_USE_SSL', 'false') === 'true';
-    const protocol = useSSL ? 'https' : 'http';
     const publicUrl = this.configService.get('MINIO_PUBLIC_URL');
 
     if (publicUrl) {
       return `${publicUrl}/${bucketName}/${filename}`;
     }
 
-    return `${protocol}://${endpoint}:${port}/${bucketName}/${filename}`;
+    // Proxy through API so browser doesn't need direct MinIO access
+    const apiUrl = this.configService.get('API_PUBLIC_URL', 'http://localhost:4000');
+    return `${apiUrl}/media/file/${bucketName}/${filename}`;
+  }
+
+  async getFileStream(bucket: string, filename: string) {
+    const stream = await this.minioClient.getObject(bucket, filename);
+    const stat = await this.minioClient.statObject(bucket, filename);
+    return { stream, contentType: stat.metaData?.['content-type'] || 'application/octet-stream', size: stat.size };
   }
 
   validateFile(file: Express.Multer.File): void {

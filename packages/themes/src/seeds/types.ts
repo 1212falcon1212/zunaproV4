@@ -11,6 +11,7 @@ export interface SeedProduct {
   images: string[];
   categorySlug: string;
   status: 'active';
+  isFeatured?: boolean;
   seoMeta?: Record<string, string>;
 }
 
@@ -19,6 +20,8 @@ export interface SeedCategory {
   slug: string;
   image?: string;
   sortOrder: number;
+  isFeatured?: boolean;
+  parentSlug?: string;
 }
 
 export interface SeedPage {
@@ -57,12 +60,45 @@ export interface SeedOrder {
   quantities: number[];
 }
 
-export type SeedSettingValue = string | number | boolean | string[] | Record<string, string>;
+export type SeedSettingValue = string | number | boolean | string[] | Record<string, unknown>;
 
 export interface SeedSetting {
   key: string;
   value: SeedSettingValue;
   group: string;
+}
+
+export interface SeedMenu {
+  name: Record<string, string>;
+  slug: string;
+  location: string;
+  isActive?: boolean;
+  items: {
+    id: string;
+    label: Record<string, string>;
+    type: 'page' | 'category' | 'product' | 'custom';
+    href: string;
+    target?: '_blank' | '_self';
+    children?: {
+      id: string;
+      label: Record<string, string>;
+      type: 'page' | 'category' | 'product' | 'custom';
+      href: string;
+    }[];
+  }[];
+}
+
+export interface SeedBlogPost {
+  title: Record<string, string>;
+  slug: string;
+  excerpt: Record<string, string>;
+  content: Record<string, string>;
+  featuredImage?: string;
+  author?: string;
+  category?: string;
+  tags?: string[];
+  status: 'published';
+  publishedAt: string;
 }
 
 export interface SectorSeedData {
@@ -74,4 +110,6 @@ export interface SectorSeedData {
   settings: SeedSetting[];
   customers?: SeedCustomer[];
   orders?: SeedOrder[];
+  menus?: SeedMenu[];
+  blogPosts?: SeedBlogPost[];
 }

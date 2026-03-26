@@ -8,7 +8,9 @@
     "signup": "Registrarse"
   },
   "landing": {
-    "nav": { "features": "Caracteristicas" },
+    "nav": {
+      "features": "Caracteristicas"
+    },
     "hero": {
       "title": "Lanza tu tienda online en minutos",
       "subtitle": "ZunaPro facilita la creacion, gestion y crecimiento de tu negocio e-commerce.",
@@ -18,12 +20,27 @@
     "features": {
       "title": "Todo lo que necesitas para triunfar",
       "subtitle": "Cuatro modulos potentes para gestionar tu negocio completo.",
-      "ecommerce": { "title": "E-Commerce", "description": "Tienda online completa con productos, pedidos, clientes y temas." },
-      "marketplace": { "title": "Marketplace", "description": "Conecta con Trendyol, Hepsiburada, N11 con sincronizacion bidireccional." },
-      "finance": { "title": "Finanzas", "description": "E-factura, e-archivo, seguimiento de ingresos-gastos, informes contables." },
-      "export": { "title": "E-Exportacion", "description": "Integracion Peppol, soporte multi-divisa, envio internacional." }
+      "ecommerce": {
+        "title": "E-Commerce",
+        "description": "Tienda online completa con productos, pedidos, clientes y temas."
+      },
+      "marketplace": {
+        "title": "Marketplace",
+        "description": "Conecta con Trendyol, Hepsiburada, N11 con sincronizacion bidireccional."
+      },
+      "finance": {
+        "title": "Finanzas",
+        "description": "E-factura, e-archivo, seguimiento de ingresos-gastos, informes contables."
+      },
+      "export": {
+        "title": "E-Exportacion",
+        "description": "Integracion Peppol, soporte multi-divisa, envio internacional."
+      }
     },
-    "cta": { "title": "Listo para empezar?", "subtitle": "Unete a miles de comerciantes que crecen con ZunaPro." }
+    "cta": {
+      "title": "Listo para empezar?",
+      "subtitle": "Unete a miles de comerciantes que crecen con ZunaPro."
+    }
   },
   "wizard": {
     "title": "Configure su tienda",
@@ -142,7 +159,50 @@
       "collapse": "Contraer",
       "controlPanel": "Panel de Control",
       "themes": "Temas",
-      "pages": "Páginas"
+      "pages": "Páginas",
+      "menus": "Menus",
+      "settings": "Configuración",
+      "lockedModule": "Bloqueado",
+      "support": "Soporte",
+      "blog": "Blog",
+      "siteSettings": "Configuración del sitio"
+    },
+    "menus": {
+      "title": "Menus",
+      "description": "Gestiona los menus de navegacion de tu tienda",
+      "createMenu": "Crear menu",
+      "editMenu": "Editar menu",
+      "deleteConfirm": "Estas seguro de que quieres eliminar este menu?",
+      "empty": "No se encontraron menus. Crea tu primer menu.",
+      "name": "Nombre del menu",
+      "namePlaceholder": "Ingresa el nombre del menu",
+      "location": "Ubicacion",
+      "locations": {
+        "header": "Encabezado",
+        "top-header": "Encabezado superior",
+        "footer": "Pie de pagina",
+        "mobile": "Movil"
+      },
+      "items": "Elementos del menu",
+      "noItems": "No hay elementos en este menu. Agrega tu primer elemento.",
+      "addItem": "Agregar elemento",
+      "itemLabel": "Etiqueta",
+      "itemLabelPlaceholder": "Ingresa la etiqueta",
+      "itemType": "Tipo",
+      "itemTypes": {
+        "page": "Pagina",
+        "category": "Categoria",
+        "custom": "URL personalizada"
+      },
+      "itemHref": "URL / Ruta",
+      "itemHrefPlaceholder": "Ingresa la URL o ruta",
+      "save": "Guardar",
+      "cancel": "Cancelar",
+      "active": "Activo",
+      "inactive": "Inactivo",
+      "itemCount": "{count} elementos",
+      "saving": "Guardando...",
+      "searchPlaceholder": "Buscar menus..."
     },
     "controlPanel": {
       "title": "Panel de Control",
@@ -272,13 +332,24 @@
         "draft": "Borrador",
         "archived": "Archivado"
       },
+      "stats": {
+        "total": "Productos totales",
+        "active": "Activo",
+        "draft": "Borrador",
+        "archived": "Archivado"
+      },
+      "breadcrumb": {
+        "panel": "Panel"
+      },
       "table": {
         "image": "Imagen",
         "name": "Nombre",
         "price": "Precio",
         "stock": "Stock",
         "status": "Estado",
-        "actions": "Acciones"
+        "actions": "Acciones",
+        "inStock": "en stock",
+        "outOfStock": "Agotado"
       },
       "form": {
         "basicInfo": "Informacion basica",
@@ -304,7 +375,9 @@
         "cancel": "Cancelar",
         "saving": "Guardando...",
         "create": "Crear producto",
-        "update": "Actualizar producto"
+        "update": "Actualizar producto",
+        "featured": "Destacado",
+        "featuredDescription": "Mostrar este producto en la pagina de inicio y secciones destacadas."
       },
       "dragDrop": "Arrastra y suelta imagenes aqui",
       "uploading": "Subiendo...",
@@ -341,10 +414,11 @@
     },
     "categories": {
       "title": "Categorias",
-      "subtitle": "Organiza tus productos en categorias",
+      "subtitle": "Organiza tus productos en categorias y subcategorias",
       "addCategory": "Anadir categoria",
       "editCategory": "Editar categoria",
       "empty": "Aun no hay categorias. Crea tu primera categoria.",
+      "emptyDescription": "Comienza creando una categoria para organizar tus productos.",
       "deleteConfirm": "Esta seguro de que desea eliminar esta categoria?",
       "name": "Nombre",
       "namePlaceholder": "Nombre de la categoria",
@@ -357,7 +431,21 @@
       "cancel": "Cancelar",
       "saving": "Guardando...",
       "create": "Crear categoria",
-      "update": "Actualizar categoria"
+      "update": "Actualizar categoria",
+      "image": "URL de la imagen",
+      "featured": "Destacada (mostrar en la pagina principal)",
+      "totalCategories": "Total de categorias",
+      "parentCategories": "Categorias principales",
+      "subcategories": "Subcategorias",
+      "featuredCategories": "Destacadas",
+      "searchPlaceholder": "Buscar categorias...",
+      "removeImage": "Eliminar",
+      "basicInfo": "Informacion basica",
+      "organization": "Organizacion",
+      "media": "Medios y visualizacion",
+      "description": "Descripcion",
+      "htmlHint": "Se admite HTML para contenido SEO.",
+      "createFirst": "Crea tu primera categoria"
     },
     "orders": {
       "title": "Pedidos",
@@ -384,8 +472,10 @@
         "status": "Estado",
         "payment": "Pago",
         "total": "Total",
-        "date": "Fecha"
+        "date": "Fecha",
+        "actions": "Acciones"
       },
+      "deleteConfirm": "¿Está seguro de que desea eliminar este pedido?",
       "actions": {
         "confirmed": "Confirmar",
         "processing": "Iniciar procesamiento",
@@ -448,8 +538,10 @@
         "email": "Email",
         "type": "Tipo",
         "orders": "Pedidos",
-        "joined": "Registro"
+        "joined": "Registro",
+        "actions": "Acciones"
       },
+      "deleteConfirm": "¿Está seguro de que desea eliminar este cliente?",
       "totalOrders": "Total pedidos",
       "totalSpent": "Total gastado",
       "recentOrders": "Pedidos recientes",
@@ -573,7 +665,33 @@
     "categories": "Categorias",
     "search": "Buscar productos...",
     "cart": "Carrito",
-    "checkout": "Pagar",
+    "checkout": {
+      "shippingAddress": "Direccion de envio",
+      "firstName": "Nombre",
+      "lastName": "Apellido",
+      "address": "Direccion",
+      "city": "Ciudad",
+      "postalCode": "Codigo postal",
+      "country": "Pais",
+      "phone": "Telefono",
+      "continue": "Continuar",
+      "back": "Volver",
+      "shippingMethod": "Metodo de envio",
+      "estimatedDays": "{days} dias habiles",
+      "paymentMethod": "Metodo de pago",
+      "reviewOrder": "Revisar pedido",
+      "review": "Revisa tu pedido",
+      "orderItems": "Articulos del pedido",
+      "subtotal": "Subtotal",
+      "placeOrder": "Realizar pedido",
+      "placing": "Procesando pedido...",
+      "steps": {
+        "address": "Direccion",
+        "shipping": "Envio",
+        "payment": "Pago",
+        "review": "Revision"
+      }
+    },
     "noProducts": "No se encontraron productos",
     "currency": "Moneda",
     "language": "Idioma",
@@ -589,7 +707,8 @@
       "menu": "Menu",
       "myAccount": "Mi cuenta",
       "search": "Buscar",
-      "language": "Idioma"
+      "language": "Idioma",
+      "viewAll": "Ver todo"
     },
     "footer": {
       "description": "Tu destino de compras en linea de confianza.",
@@ -602,7 +721,10 @@
       "privacy": "Politica de privacidad",
       "terms": "Terminos de servicio",
       "followUs": "Siguenos",
-      "allRightsReserved": "Todos los derechos reservados."
+      "allRightsReserved": "Todos los derechos reservados.",
+      "aboutStore": "Sobre la tienda",
+      "categories": "Categorias",
+      "copyright": "Todos los derechos reservados."
     },
     "hero": {
       "shopNow": "Comprar ahora",
@@ -623,7 +745,19 @@
       "listView": "Vista de lista",
       "prev": "Anterior",
       "next": "Siguiente",
-      "searchResults": "Resultados de busqueda"
+      "searchResults": "Resultados de busqueda",
+      "sortPriceLow": "Precio: Menor a Mayor",
+      "sortPriceHigh": "Precio: Mayor a Menor",
+      "sortNameAZ": "Nombre: A a Z",
+      "price": "Rango de precio",
+      "filter": "Filtrar",
+      "filters": "Filtros",
+      "clearFilters": "Limpiar filtros",
+      "activeFilters": "Filtros activos",
+      "showing": "Mostrando",
+      "show": "Mostrar",
+      "of": "de",
+      "noProducts": "No se encontraron productos."
     },
     "product": {
       "description": "Descripcion",
@@ -691,33 +825,6 @@
       "noAccount": "No tienes cuenta?",
       "hasAccount": "Ya tienes cuenta?"
     },
-    "checkout": {
-      "shippingAddress": "Direccion de envio",
-      "firstName": "Nombre",
-      "lastName": "Apellido",
-      "address": "Direccion",
-      "city": "Ciudad",
-      "postalCode": "Codigo postal",
-      "country": "Pais",
-      "phone": "Telefono",
-      "continue": "Continuar",
-      "back": "Volver",
-      "shippingMethod": "Metodo de envio",
-      "estimatedDays": "{days} dias habiles",
-      "paymentMethod": "Metodo de pago",
-      "reviewOrder": "Revisar pedido",
-      "review": "Revisa tu pedido",
-      "orderItems": "Articulos del pedido",
-      "subtotal": "Subtotal",
-      "placeOrder": "Realizar pedido",
-      "placing": "Procesando pedido...",
-      "steps": {
-        "address": "Direccion",
-        "shipping": "Envio",
-        "payment": "Pago",
-        "review": "Revision"
-      }
-    },
     "account": {
       "title": "Mi cuenta",
       "profile": "Perfil",
@@ -732,6 +839,38 @@
       "items": "articulos",
       "prev": "Anterior",
       "next": "Siguiente"
+    },
+    "blog": {
+      "title": "Blog",
+      "readMore": "Seguir leyendo",
+      "publishedOn": "Publicado el",
+      "by": "Por",
+      "noPosts": "Aun no hay publicaciones en el blog.",
+      "backToBlog": "Volver al blog",
+      "articles": "Nuestros articulos"
+    },
+    "contact": {
+      "title": "Contacto",
+      "firstName": "Nombre",
+      "lastName": "Apellido",
+      "email": "Email",
+      "message": "Tu mensaje",
+      "send": "Enviar mensaje",
+      "needHelp": "Necesitas ayuda?",
+      "sending": "Enviando...",
+      "sent": "Mensaje enviado con exito!"
+    },
+    "filters": {
+      "priceRange": "Rango de precio",
+      "filter": "Filtrar",
+      "sortBy": "Ordenar por",
+      "newest": "Mas recientes",
+      "priceLowHigh": "Precio: menor a mayor",
+      "priceHighLow": "Precio: mayor a menor",
+      "nameAZ": "Nombre: A a Z",
+      "itemsPerPage": "Mostrar",
+      "showing": "{from}-{to} de {total} mostrados",
+      "clearFilters": "Limpiar filtros"
     }
   }
 }

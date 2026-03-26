@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import type { Block } from '@zunapro/types';
+import { useTenantSlug } from '../tenant-context';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
 
@@ -32,6 +33,7 @@ export function CategoryListingBlock({ block, locale }: CategoryListingBlockProp
   const showProductCount = props.showProductCount ?? true;
   const layout = props.layout || 'grid';
 
+  const tenantSlug = useTenantSlug();
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -39,7 +41,9 @@ export function CategoryListingBlock({ block, locale }: CategoryListingBlockProp
     const fetchCategories = async () => {
       setLoading(true);
       try {
-        const res = await fetch(`${API_URL}/storefront/categories`);
+        const res = await fetch(`${API_URL}/storefront/categories`, {
+          headers: { 'x-tenant-slug': tenantSlug },
+        });
         if (!res.ok) throw new Error('Failed to fetch categories');
         const data: Category[] = await res.json();
         setCategories(data);

@@ -52,6 +52,16 @@ export default function CustomersPage() {
     fetchCustomers();
   }, [fetchCustomers]);
 
+  const handleDelete = async (id: string) => {
+    if (!confirm('Bu müşteriyi silmek istediğinize emin misiniz?')) return;
+    try {
+      await panelApi.delete(`/customers/${id}`);
+      fetchCustomers();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Müşteri silinemedi');
+    }
+  };
+
   return (
     <div className="space-y-6">
       <div>
@@ -107,6 +117,7 @@ export default function CustomersPage() {
           customers={customers.data}
           meta={customers.meta}
           onPageChange={setPage}
+          onDelete={handleDelete}
         />
       ) : null}
     </div>

@@ -45,9 +45,16 @@ export class StorefrontService {
     if (categorySlug) {
       const category = await prisma.category.findUnique({
         where: { slug: categorySlug },
+        include: { children: { select: { id: true } } },
       });
       if (category) {
-        where.categoryId = category.id;
+        // Include products from this category AND all child categories
+        const childIds = (category.children ?? []).map((c: { id: string }) => c.id);
+        if (childIds.length > 0) {
+          where.categoryId = { in: [category.id, ...childIds] };
+        } else {
+          where.categoryId = category.id;
+        }
       }
     }
 
@@ -123,6 +130,20 @@ export class StorefrontService {
     return { ...BASE_THEME, ...(setting.value as unknown as Partial<ThemeConfig>) };
   }
 
+  async getStoreInfo(tenantSlug: string): Promise<Record<string, unknown>> {
+    const prisma = getTenantClient(tenantSlug);
+    const setting = await prisma.setting.findUnique({ where: { key: 'store_info' } });
+    if (!setting) {
+      return {
+        store_name: {},
+        store_phone: '',
+        store_email: '',
+        header_messages: [],
+      };
+    }
+    return setting.value as unknown as Record<string, unknown>;
+  }
+
   async getActiveThemeId(tenantSlug: string): Promise<{ themeId: string | null }> {
     const prisma = getTenantClient(tenantSlug);
     const setting = await prisma.setting.findUnique({ where: { key: 'active_theme_id' } });
@@ -133,6 +154,29 @@ export class StorefrontService {
       return { themeId: (val as { value: string }).value };
     }
     return { themeId: typeof val === 'string' ? val : null };
+  }
+
+  async findFeaturedProducts(tenantSlug: string, limit = 10) {
+    const prisma = getTenantClient(tenantSlug);
+    return prisma.product.findMany({
+      where: { status: 'active', isFeatured: true },
+      take: limit,
+      orderBy: { createdAt: 'desc' },
+      include: {
+        category: { select: { id: true, name: true, slug: true } },
+      },
+    });
+  }
+
+  async findFeaturedCategories(tenantSlug: string) {
+    const prisma = getTenantClient(tenantSlug);
+    return prisma.category.findMany({
+      where: { isFeatured: true },
+      orderBy: { sortOrder: 'asc' },
+      include: {
+        _count: { select: { products: { where: { status: 'active' } } } },
+      },
+    });
   }
 
   async findCategories(tenantSlug: string) {
@@ -155,7 +199,73 @@ export class StorefrontService {
     return categories;
   }
 
-  async findCategoryBySlug(tenantSlug: string, slug: string, page = 1, limit = 20) {
+  async findMenuByLocation(tenantSlug: string, location: string) {
+    const prisma = getTenantClient(tenantSlug);
+    const menu = await prisma.menu.findFirst({
+      where: { location, isActive: true },
+      orderBy: { sortOrder: 'asc' },
+    });
+    if (!menu) {
+      throw new NotFoundException(`No active menu found for location "${location}"`);
+    }
+    return { items: menu.items, name: menu.name, slug: menu.slug };
+  }
+
+  async findRecentBlogPosts(tenantSlug: string, limit = 4) {
+    const prisma = getTenantClient(tenantSlug);
+    return prisma.blogPost.findMany({
+      where: { status: 'published' },
+      take: limit,
+      orderBy: { publishedAt: 'desc' },
+    });
+  }
+
+  async findBlogPosts(
+    tenantSlug: string,
+    options: { page?: number; limit?: number } = {},
+  ) {
+    const { page = 1, limit = 12 } = options;
+    const prisma = getTenantClient(tenantSlug);
+    const skip = (page - 1) * limit;
+
+    const where = { status: 'published' };
+
+    const [data, total] = await Promise.all([
+      prisma.blogPost.findMany({
+        where,
+        skip,
+        take: limit,
+        orderBy: { publishedAt: 'desc' },
+      }),
+      prisma.blogPost.count({ where }),
+    ]);
+
+    return {
+      data,
+      meta: { total, page, limit, totalPages: Math.ceil(total / limit) },
+    };
+  }
+
+  async findBlogPostBySlug(tenantSlug: string, slug: string) {
+    const prisma = getTenantClient(tenantSlug);
+    const post = await prisma.blogPost.findUnique({ where: { slug } });
+
+    if (!post || post.status !== 'published') {
+      throw new NotFoundException('Blog post not found');
+    }
+
+    return post;
+  }
+
+  async findCategoryBySlug(
+    tenantSlug: string,
+    slug: string,
+    page = 1,
+    limit = 20,
+    sort?: string,
+    minPrice?: number,
+    maxPrice?: number,
+  ) {
     const prisma = getTenantClient(tenantSlug);
 
     const category = await prisma.category.findUnique({
@@ -174,21 +284,59 @@ export class StorefrontService {
       throw new NotFoundException('Category not found');
     }
 
+    // Include products from this category AND all child categories
+    const childIds = (category.children ?? []).map((c: { id: string }) => c.id);
+    const categoryIds = childIds.length > 0 ? [category.id, ...childIds] : [category.id];
+
+    const where: Record<string, unknown> = {
+      categoryId: { in: categoryIds },
+      status: 'active',
+    };
+
+    if (minPrice !== undefined || maxPrice !== undefined) {
+      const priceFilter: Record<string, number> = {};
+      if (minPrice !== undefined) priceFilter.gte = minPrice;
+      if (maxPrice !== undefined) priceFilter.lte = maxPrice;
+      where.price = priceFilter;
+    }
+
+    let orderBy: Record<string, string>;
+    switch (sort) {
+      case 'price_asc':
+        orderBy = { price: 'asc' };
+        break;
+      case 'price_desc':
+        orderBy = { price: 'desc' };
+        break;
+      case 'name_asc':
+        orderBy = { slug: 'asc' };
+        break;
+      default:
+        orderBy = { createdAt: 'desc' };
+    }
+
     const skip = (page - 1) * limit;
-    const [products, total] = await Promise.all([
+    const [products, total, priceAgg] = await Promise.all([
       prisma.product.findMany({
-        where: { categoryId: category.id, status: 'active' },
+        where,
         skip,
         take: limit,
-        orderBy: { createdAt: 'desc' },
+        orderBy,
       }),
-      prisma.product.count({
+      prisma.product.count({ where }),
+      prisma.product.aggregate({
         where: { categoryId: category.id, status: 'active' },
+        _min: { price: true },
+        _max: { price: true },
       }),
     ]);
 
     return {
       category,
+      priceRange: {
+        min: priceAgg._min.price ? Number(priceAgg._min.price) : 0,
+        max: priceAgg._max.price ? Number(priceAgg._max.price) : 0,
+      },
       products: {
         data: products,
         meta: { total, page, limit, totalPages: Math.ceil(total / limit) },

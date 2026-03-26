@@ -1,6 +1,6 @@
 'use client';
 
-import { use, useEffect, useState, useMemo } from 'react';
+import { use, useEffect, useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
@@ -22,7 +22,6 @@ import {
   LogOut,
   Bell,
   Search,
-  Plus,
   Menu,
   X,
   Lock,
@@ -36,6 +35,12 @@ import {
   Ship,
   FileCheck,
   Layers,
+  AlignJustify,
+  Newspaper,
+  Sun,
+  LayoutGrid,
+  Settings,
+  LifeBuoy,
 } from 'lucide-react';
 
 interface ModuleConfig {
@@ -63,6 +68,9 @@ const MODULE_CONFIGS: ModuleConfig[] = [
       { href: '/panel/media', labelKey: 'sidebar.media', icon: <Image className="h-4 w-4" /> },
       { href: '/panel/themes', labelKey: 'sidebar.themes', icon: <Palette className="h-4 w-4" /> },
       { href: '/panel/pages', labelKey: 'sidebar.pages', icon: <FileText className="h-4 w-4" /> },
+      { href: '/panel/menus', labelKey: 'sidebar.menus', icon: <AlignJustify className="h-4 w-4" /> },
+      { href: '/panel/blog', labelKey: 'sidebar.blog', icon: <Newspaper className="h-4 w-4" /> },
+      { href: '/panel/site-settings', labelKey: 'sidebar.siteSettings', icon: <Globe className="h-4 w-4" /> },
     ],
   },
   {
@@ -99,84 +107,12 @@ const MODULE_CONFIGS: ModuleConfig[] = [
   },
 ];
 
-function SidebarModule({
-  module,
-  locale,
-  pathname,
-  isActive,
-  isLocked,
-  expanded,
-  onToggle,
-  onNavigate,
-  t,
-}: {
-  module: ModuleConfig;
-  locale: string;
-  pathname: string;
-  isActive: boolean;
-  isLocked: boolean;
-  expanded: boolean;
-  onToggle: () => void;
-  onNavigate: () => void;
-  t: ReturnType<typeof useTranslations>;
-}) {
-  return (
-    <div className="mb-1">
-      <button
-        onClick={isLocked ? undefined : onToggle}
-        className={cn(
-          'flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-sm font-semibold transition-all duration-200',
-          isLocked
-            ? 'cursor-not-allowed text-indigo-400/40'
-            : isActive
-              ? 'bg-white/10 text-white shadow-lg shadow-indigo-500/10'
-              : 'text-indigo-200 hover:bg-white/5 hover:text-white',
-        )}
-      >
-        <div className="flex items-center gap-3">
-          {module.icon}
-          <span>{t(module.labelKey)}</span>
-        </div>
-        {isLocked ? (
-          <Lock className="h-3.5 w-3.5 text-indigo-400/40" />
-        ) : (
-          <ChevronDown
-            className={cn(
-              'h-4 w-4 transition-transform duration-200',
-              expanded && 'rotate-180',
-            )}
-          />
-        )}
-      </button>
-
-      {expanded && !isLocked && (
-        <div className="ml-3 mt-1 space-y-0.5 border-l border-indigo-700/50 pl-3">
-          {module.items.map((item) => {
-            const fullHref = `/${locale}${item.href}`;
-            const isItemActive = pathname === fullHref || pathname?.startsWith(fullHref + '/');
-
-            return (
-              <Link
-                key={item.href}
-                href={fullHref}
-                onClick={onNavigate}
-                className={cn(
-                  'flex items-center gap-2.5 rounded-lg px-3 py-2 text-[13px] transition-all duration-150',
-                  isItemActive
-                    ? 'bg-gradient-to-r from-violet-500/20 to-blue-500/20 font-medium text-white'
-                    : 'text-indigo-300 hover:bg-white/5 hover:text-white',
-                )}
-              >
-                {item.icon}
-                <span>{t(item.labelKey)}</span>
-              </Link>
-            );
-          })}
-        </div>
-      )}
-    </div>
-  );
-}
+const LOCALE_FLAGS: Record<string, string> = {
+  tr: '🇹🇷', en: '🇬🇧', de: '🇩🇪', fr: '🇫🇷', es: '🇪🇸',
+};
+const LOCALE_NAMES: Record<string, string> = {
+  tr: 'Türkiye', en: 'United Kingdom', de: 'Deutschland', fr: 'France', es: 'España',
+};
 
 export default function PanelLayout({
   children,
@@ -191,7 +127,7 @@ export default function PanelLayout({
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [user, setUser] = useState<ReturnType<typeof getUserFromToken>>(null);
-  const [expandedModules, setExpandedModules] = useState<string[]>(['ecommerce']);
+  const [expandedModules, setExpandedModules] = useState<string[]>([]);
   const { locale } = use(params);
 
   useEffect(() => {
@@ -202,62 +138,39 @@ export default function PanelLayout({
     setUser(getUserFromToken());
   }, [router, locale]);
 
-  // Auto-expand module based on current path
-  useEffect(() => {
-    if (!pathname) return;
-    for (const mod of MODULE_CONFIGS) {
-      const hasActiveItem = mod.items.some((item) => {
-        const fullHref = `/${locale}${item.href}`;
-        return pathname?.startsWith(fullHref);
-      });
-      if (hasActiveItem && !expandedModules.includes(mod.id)) {
-        setExpandedModules((prev) => [...prev, mod.id]);
-      }
-    }
-  }, [pathname, locale]);
-
-  // Map individual feature slugs to parent module categories
-  const MODULE_SLUG_MAP: Record<string, string> = {
-    products: 'ecommerce', orders: 'ecommerce', customers: 'ecommerce',
-    'seo-basic': 'ecommerce', 'seo-advanced': 'ecommerce', settings: 'ecommerce',
-    shipping: 'ecommerce', payments: 'ecommerce', 'variants-stock': 'ecommerce',
-    coupons: 'ecommerce', 'bulk-import': 'ecommerce', 'email-marketing': 'ecommerce',
-    'marketplace-trendyol': 'marketplace', 'marketplace-hepsiburada': 'marketplace',
-    'marketplace-n11': 'marketplace', 'marketplace-amazon': 'marketplace',
-    einvoice: 'finance', 'income-expense': 'finance', accounting: 'finance', reports: 'finance',
-    'api-access': 'export', peppol: 'export',
-  };
-
-  const activeModules = useMemo(() => {
-    const slugs = user?.activeModules || [];
-    // If slugs already contain category IDs, use them; otherwise map from feature slugs
-    const categories = new Set<string>();
-    for (const slug of slugs) {
-      if (['ecommerce', 'marketplace', 'export', 'finance'].includes(slug)) {
-        categories.add(slug);
-      } else if (MODULE_SLUG_MAP[slug]) {
-        categories.add(MODULE_SLUG_MAP[slug]);
-      }
-    }
-    return categories.size > 0 ? Array.from(categories) : ['ecommerce'];
-  }, [user]);
-
-  const toggleModule = (moduleId: string) => {
-    setExpandedModules((prev) =>
-      prev.includes(moduleId)
-        ? prev.filter((id) => id !== moduleId)
-        : [...prev, moduleId],
-    );
-  };
-
   const handleLogout = () => {
     clearTokens();
     router.push(`/${locale}/auth/login`);
   };
 
+  const toggleModule = (id: string) => {
+    setExpandedModules((prev) => prev.includes(id) ? prev.filter((m) => m !== id) : [...prev, id]);
+  };
+
+  // Auto-expand active module only if not on main dashboard
+  useEffect(() => {
+    if (!pathname) return;
+    // Don't auto-expand on main dashboard
+    if (pathname === `/${locale}/panel`) return;
+    for (const mod of MODULE_CONFIGS) {
+      const hasActive = mod.items.some((item) => pathname?.startsWith(`/${locale}${item.href}`));
+      if (hasActive && !expandedModules.includes(mod.id)) {
+        setExpandedModules((prev) => [...prev, mod.id]);
+      }
+    }
+  }, [pathname, locale]);
+
+  const navLinkClass = (href: string) =>
+    cn(
+      'flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-all duration-150',
+      pathname === href || pathname?.startsWith(href + '/')
+        ? 'bg-violet-100 font-semibold text-violet-700'
+        : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900',
+    );
+
   if (!user) {
     return (
-      <div className="flex h-screen items-center justify-center bg-slate-950">
+      <div className="flex h-screen items-center justify-center bg-slate-50">
         <div className="flex flex-col items-center gap-3">
           <div className="h-10 w-10 animate-spin rounded-full border-4 border-violet-500 border-t-transparent" />
           <span className="text-sm text-slate-400">Loading...</span>
@@ -265,6 +178,10 @@ export default function PanelLayout({
       </div>
     );
   }
+
+  const flag = LOCALE_FLAGS[locale] || '🌐';
+  const localeName = LOCALE_NAMES[locale] || locale.toUpperCase();
+  const userInitial = (user.role?.[0] || 'U').toUpperCase();
 
   return (
     <div className="flex h-screen bg-slate-50">
@@ -279,108 +196,149 @@ export default function PanelLayout({
       {/* Sidebar */}
       <aside
         className={cn(
-          'fixed inset-y-0 left-0 z-50 flex flex-col transition-all duration-300 lg:static',
-          sidebarCollapsed ? 'w-[72px]' : 'w-72',
+          'fixed inset-y-0 left-0 z-50 flex flex-col bg-white border-r border-slate-200 transition-all duration-300 lg:static',
+          sidebarCollapsed ? 'w-[72px]' : 'w-64',
           sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0',
         )}
-        style={{
-          background: 'linear-gradient(180deg, #1e1b4b 0%, #312e81 50%, #1e1b4b 100%)',
-        }}
       >
         {/* Logo */}
-        <div className="flex h-16 items-center justify-between px-5">
+        <div className="relative flex h-16 items-center justify-center px-5 border-b border-slate-100">
           {!sidebarCollapsed && (
-            <Link href={`/${locale}/panel`} className="flex items-center gap-2.5">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-violet-500 to-blue-500">
-                <span className="text-sm font-bold text-white">Z</span>
-              </div>
-              <span className="text-lg font-bold tracking-tight text-white">
-                ZunaPro
-              </span>
+            <Link href={`/${locale}/panel`} className="flex w-full items-center justify-center">
+              <img
+                src="https://www.zunapro.com/web/img/zunapro-kucuk-logo.webp"
+                alt="ZunaPro"
+                className="h-8 w-auto object-contain"
+              />
             </Link>
           )}
           {sidebarCollapsed && (
-            <div className="mx-auto flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-violet-500 to-blue-500">
-              <span className="text-sm font-bold text-white">Z</span>
-            </div>
+            <img
+              src="https://www.zunapro.com/web/img/zunapro-kucuk-logo.webp"
+              alt="ZunaPro"
+              className="mx-auto h-7 w-auto object-contain"
+            />
           )}
-          <button
-            onClick={() => setSidebarOpen(false)}
-            className="rounded-lg p-1 text-indigo-300 hover:text-white lg:hidden"
-          >
+          <button onClick={() => setSidebarOpen(false)} className="absolute right-4 rounded-lg p-1 text-slate-400 hover:text-slate-700 lg:hidden">
             <X className="h-5 w-5" />
           </button>
         </div>
 
+        {/* Country selector */}
+        {!sidebarCollapsed && (
+          <div className="px-3 pt-3 pb-1">
+            <button className="flex w-full items-center justify-between rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-700 hover:bg-slate-100 transition-colors">
+              <div className="flex items-center gap-2">
+                <span>{flag}</span>
+                <span className="font-medium">{localeName}</span>
+              </div>
+              <ChevronDown className="h-4 w-4 text-slate-400" />
+            </button>
+          </div>
+        )}
+
         {/* Navigation */}
-        <nav className="flex-1 overflow-y-auto px-3 py-4 scrollbar-thin">
+        <nav className="flex-1 overflow-y-auto px-3 py-3 scrollbar-thin space-y-0.5">
           {!sidebarCollapsed ? (
-            <div className="space-y-1">
-              {/* Dashboard link — always visible at top */}
+            <>
+              {/* Main dashboard */}
               <Link
                 href={`/${locale}/panel`}
                 onClick={() => setSidebarOpen(false)}
                 className={cn(
-                  'flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold transition-all duration-200',
+                  'flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-150',
                   pathname === `/${locale}/panel`
-                    ? 'bg-white/10 text-white shadow-lg shadow-indigo-500/10'
-                    : 'text-indigo-200 hover:bg-white/5 hover:text-white',
+                    ? 'bg-violet-100 text-violet-700'
+                    : 'text-slate-700 hover:bg-slate-50 hover:text-slate-900',
                 )}
               >
-                <LayoutDashboard className="h-5 w-5" />
+                <LayoutDashboard className="h-4 w-4 shrink-0" />
                 <span>{t('sidebar.controlPanel')}</span>
               </Link>
 
-              <div className="my-2 border-t border-indigo-700/50" />
-
+              {/* Module sections */}
               {MODULE_CONFIGS.map((mod) => {
-                const isLocked = !activeModules.includes(mod.id);
-                const isActive = mod.items.some((item) => {
+                const isLocked = mod.id !== 'ecommerce';
+                const isExpanded = expandedModules.includes(mod.id);
+                const isModuleActive = mod.items.some((item) => {
                   const fullHref = `/${locale}${item.href}`;
                   return pathname === fullHref || pathname?.startsWith(fullHref + '/');
                 });
-
                 return (
-                  <SidebarModule
-                    key={mod.id}
-                    module={mod}
-                    locale={locale}
-                    pathname={pathname}
-                    isActive={isActive}
-                    isLocked={isLocked}
-                    expanded={expandedModules.includes(mod.id)}
-                    onToggle={() => toggleModule(mod.id)}
-                    onNavigate={() => setSidebarOpen(false)}
-                    t={t}
-                  />
+                  <div key={mod.id} className="mt-1">
+                    <button
+                      onClick={() => toggleModule(mod.id)}
+                      className={cn(
+                        'flex w-full items-center justify-between rounded-lg px-3 py-2.5 text-sm transition-all duration-150',
+                        isModuleActive
+                          ? 'bg-slate-100 font-semibold text-slate-800'
+                          : 'font-medium text-slate-700 hover:bg-slate-50 hover:text-slate-900',
+                      )}
+                    >
+                      <div className="flex items-center gap-3">
+                        {mod.icon}
+                        <span>{t(mod.labelKey)}</span>
+                      </div>
+                      <div className="flex items-center gap-1.5">
+                        {isLocked && <Lock className="h-3.5 w-3.5 text-amber-500" />}
+                        <ChevronDown className={cn('h-4 w-4 text-slate-400 transition-transform duration-200', isExpanded && 'rotate-180')} />
+                      </div>
+                    </button>
+                    {isExpanded && (
+                      <div className="ml-3 mt-0.5 space-y-0.5 border-l border-slate-200 pl-3">
+                        {mod.items.map((item) => {
+                          const fullHref = `/${locale}${item.href}`;
+                          const isItemActive = pathname === fullHref || pathname?.startsWith(fullHref + '/');
+                          return (
+                            <Link
+                              key={item.href}
+                              href={fullHref}
+                              onClick={() => setSidebarOpen(false)}
+                              className={cn(
+                                'flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-all duration-150',
+                                isItemActive
+                                  ? 'bg-gradient-to-r from-violet-500 to-indigo-400 font-semibold text-white shadow-sm'
+                                  : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900',
+                              )}
+                            >
+                              <span
+                                className={cn(
+                                  'h-2.5 w-2.5 rounded-full border',
+                                  isItemActive ? 'border-white/90 bg-white/90' : 'border-slate-400',
+                                )}
+                              />
+                              <span>{t(item.labelKey)}</span>
+                            </Link>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </div>
                 );
               })}
-            </div>
+
+            </>
           ) : (
-            <div className="flex flex-col items-center gap-2">
+            <div className="flex flex-col items-center gap-1">
               <Link
                 href={`/${locale}/panel`}
                 className={cn(
                   'flex h-10 w-10 items-center justify-center rounded-xl transition-all',
-                  pathname === `/${locale}/panel`
-                    ? 'bg-white/10 text-white'
-                    : 'text-indigo-200 hover:bg-white/10 hover:text-white',
+                  pathname === `/${locale}/panel` ? 'bg-indigo-50 text-indigo-700' : 'text-slate-500 hover:bg-slate-100 hover:text-slate-900',
                 )}
                 title={t('sidebar.controlPanel')}
               >
                 <LayoutDashboard className="h-5 w-5" />
               </Link>
-              <div className="my-1 w-6 border-t border-indigo-700/50" />
+              <div className="my-1 w-6 border-t border-slate-200" />
               {MODULE_CONFIGS.map((mod) => {
-                const isLocked = !activeModules.includes(mod.id);
+                const isLocked = mod.id !== 'ecommerce';
                 return (
                   <button
                     key={mod.id}
                     className={cn(
                       'flex h-10 w-10 items-center justify-center rounded-xl transition-all',
-                      isLocked
-                        ? 'cursor-not-allowed text-indigo-400/40'
-                        : 'text-indigo-200 hover:bg-white/10 hover:text-white',
+                      isLocked ? 'cursor-not-allowed text-slate-500' : 'text-slate-500 hover:bg-slate-100 hover:text-slate-900',
                     )}
                     title={t(mod.labelKey)}
                   >
@@ -392,42 +350,37 @@ export default function PanelLayout({
           )}
         </nav>
 
-        {/* Collapse toggle + User info */}
-        <div className="border-t border-indigo-700/50 p-3">
-          {!sidebarCollapsed && (
+        {/* Bottom: settings + collapse + user */}
+        <div className="border-t border-slate-200 p-3">
+          {!sidebarCollapsed ? (
             <>
               <button
                 onClick={() => setSidebarCollapsed(true)}
-                className="mb-3 flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-xs text-indigo-300 transition-colors hover:bg-white/5 hover:text-white"
+                className="mb-2 flex w-full items-center gap-2 rounded-lg px-3 py-1.5 text-xs text-slate-400 hover:bg-slate-50 hover:text-slate-700 transition-colors"
               >
-                <ChevronLeft className="h-4 w-4" />
+                <ChevronLeft className="h-3.5 w-3.5" />
                 <span>{t('sidebar.collapse')}</span>
               </button>
-              <div className="flex items-center gap-3 rounded-xl bg-white/5 px-3 py-2.5">
-                <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-violet-500 to-blue-500 text-sm font-bold text-white">
-                  {user.role?.[0]?.toUpperCase() || 'U'}
+              <div className="flex items-center gap-3 rounded-xl bg-slate-50 border border-slate-100 px-3 py-2.5">
+                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-violet-500 to-blue-500 text-sm font-bold text-white">
+                  {userInitial}
                 </div>
                 <div className="min-w-0 flex-1">
-                  <p className="truncate text-sm font-medium text-white capitalize">
-                    {user.role}
-                  </p>
-                  <p className="truncate text-xs text-indigo-300">
-                    {user.tenantId?.slice(0, 8)}...
-                  </p>
+                  <p className="truncate text-sm font-semibold text-slate-800 capitalize">{user.role}</p>
+                  <p className="truncate text-xs text-slate-400">{user.tenantId?.slice(0, 12)}...</p>
                 </div>
               </div>
             </>
-          )}
-          {sidebarCollapsed && (
+          ) : (
             <div className="flex flex-col items-center gap-2">
               <button
                 onClick={() => setSidebarCollapsed(false)}
-                className="flex h-8 w-8 items-center justify-center rounded-lg text-indigo-300 hover:bg-white/10 hover:text-white"
+                className="flex h-8 w-8 items-center justify-center rounded-lg text-slate-400 hover:bg-slate-100 hover:text-slate-700"
               >
                 <ChevronDown className="h-4 w-4 -rotate-90" />
               </button>
-              <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-violet-500 to-blue-500 text-sm font-bold text-white">
-                {user.role?.[0]?.toUpperCase() || 'U'}
+              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-violet-500 to-blue-500 text-sm font-bold text-white">
+                {userInitial}
               </div>
             </div>
           )}
@@ -460,32 +413,35 @@ export default function PanelLayout({
             </div>
           </div>
 
-          <div className="flex items-center gap-2">
-            {/* Quick actions */}
-            <button className="flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-violet-600 to-blue-600 px-4 py-2 text-sm font-medium text-white shadow-md shadow-violet-500/20 transition-all hover:shadow-lg hover:shadow-violet-500/30">
-              <Plus className="h-4 w-4" />
-              <span className="hidden sm:inline">{t('header.quickActions')}</span>
+          <div className="flex items-center gap-1">
+            {/* Theme toggle */}
+            <button className="flex h-9 w-9 items-center justify-center rounded-xl text-slate-500 transition-colors hover:bg-slate-100">
+              <Sun className="h-4.5 w-4.5" />
+            </button>
+
+            {/* Apps grid */}
+            <button className="flex h-9 w-9 items-center justify-center rounded-xl text-slate-500 transition-colors hover:bg-slate-100">
+              <LayoutGrid className="h-4.5 w-4.5" />
             </button>
 
             {/* Notifications */}
-            <button className="relative rounded-xl p-2.5 text-slate-500 transition-colors hover:bg-slate-100">
-              <Bell className="h-5 w-5" />
+            <button className="relative flex h-9 w-9 items-center justify-center rounded-xl text-slate-500 transition-colors hover:bg-slate-100">
+              <Bell className="h-4.5 w-4.5" />
               <span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-rose-500" />
             </button>
 
-            {/* Language */}
-            <div className="flex items-center gap-1.5 rounded-xl border border-slate-200 px-2.5 py-1.5 text-sm text-slate-600">
-              <Globe className="h-4 w-4" />
-              <span className="uppercase">{locale}</span>
+            {/* User avatar */}
+            <div className="mx-1 flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-violet-500 to-blue-500 text-sm font-bold text-white cursor-pointer">
+              {userInitial}
             </div>
 
             {/* Logout */}
             <button
               onClick={handleLogout}
-              className="rounded-xl p-2.5 text-slate-500 transition-colors hover:bg-rose-50 hover:text-rose-600"
+              className="flex h-9 w-9 items-center justify-center rounded-xl text-slate-500 transition-colors hover:bg-rose-50 hover:text-rose-600"
               title={t('logout')}
             >
-              <LogOut className="h-5 w-5" />
+              <LogOut className="h-4.5 w-4.5" />
             </button>
           </div>
         </header>

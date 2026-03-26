@@ -13,7 +13,9 @@
     "db:push": "pnpm --filter @zunapro/db push",
     "db:migrate": "pnpm --filter @zunapro/db migrate",
     "db:seed": "pnpm --filter @zunapro/db db:seed",
-    "db:studio": "pnpm --filter @zunapro/db studio"
+    "db:studio": "pnpm --filter @zunapro/db studio",
+    "dev:provisioner": "cd services/provisioner && export $(cat .env | grep -v '^#' | xargs) && go run cmd/main.go",
+    "dev:all": "concurrently \"pnpm dev\" \"pnpm dev:provisioner\""
   },
   "devDependencies": {
     "turbo": "^2.4.4"

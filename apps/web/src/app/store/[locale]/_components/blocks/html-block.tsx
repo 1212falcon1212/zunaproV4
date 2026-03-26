@@ -7,16 +7,16 @@ interface HtmlProps {
 
 export function HtmlBlock({ block, locale }: HtmlProps) {
   const props = block.props as {
-    html?: Record<string, string>;
+    html?: Record<string, string> | string;
   };
 
-  const html = props.html?.[locale] ?? props.html?.en ?? '';
+  const raw = props.html;
+  const html = typeof raw === 'string'
+    ? raw
+    : raw?.[locale] ?? raw?.en ?? '';
   if (!html) return null;
 
   return (
-    <div
-      className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 prose prose-lg max-w-none"
-      dangerouslySetInnerHTML={{ __html: html }}
-    />
+    <div dangerouslySetInnerHTML={{ __html: html }} />
   );
 }

@@ -42,14 +42,20 @@ export class CategoriesService {
     return categories
       .filter((c) => c.parentId === parentId)
       .sort((a, b) => a.sortOrder - b.sortOrder)
-      .map((category) => ({
-        ...category,
-        productCount: category._count.products,
-        _count: undefined,
-        children: depth < MAX_DEPTH
+      .map((category) => {
+        const children = depth < MAX_DEPTH
           ? this.buildTree(categories, category.id, depth + 1)
-          : [],
-      }));
+          : [];
+        // Sum up child product counts for parent categories
+        const childProductCount = (children as Array<{ productCount: number }>)
+          .reduce((sum, child) => sum + (child.productCount || 0), 0);
+        return {
+          ...category,
+          productCount: category._count.products + childProductCount,
+          _count: undefined,
+          children,
+        };
+      });
   }
 
   async findAll(tenantSlug: string) {
@@ -124,6 +130,8 @@ export class CategoriesService {
         image: dto.image,
         parentId: dto.parentId,
         sortOrder: dto.sortOrder ?? 0,
+        isFeatured: dto.isFeatured ?? false,
+        description: dto.description ? JSON.parse(JSON.stringify(dto.description)) : null,
         seoMeta: dto.seoMeta as object ?? undefined,
       },
     });
@@ -174,6 +182,8 @@ export class CategoriesService {
         : { disconnect: true };
     }
     if (dto.sortOrder !== undefined) data.sortOrder = dto.sortOrder;
+    if (dto.isFeatured !== undefined) data.isFeatured = dto.isFeatured;
+    if (dto.description !== undefined) data.description = dto.description;
     if (dto.seoMeta !== undefined) data.seoMeta = dto.seoMeta as object;
 
     const updated = await prisma.category.update({

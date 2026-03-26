@@ -105,10 +105,14 @@ export class TenantResolverMiddleware implements NestMiddleware {
       tenant.status === 'provisioning' ||
       tenant.status === 'provisioning_failed'
     ) {
-      throw new HttpException(
-        'This store is being set up',
-        HttpStatus.SERVICE_UNAVAILABLE,
-      );
+      // Allow internal provisioner calls to bypass this check
+      const isProvisioner = req.headers['x-provisioner-internal'] === 'true';
+      if (!isProvisioner) {
+        throw new HttpException(
+          'This store is being set up',
+          HttpStatus.SERVICE_UNAVAILABLE,
+        );
+      }
     }
 
     // Resolve request locale from Accept-Language header
