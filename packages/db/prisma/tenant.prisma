@@ -20,6 +20,8 @@ model Product {
   price          Decimal  @db.Decimal(10, 2)
   compareAtPrice Decimal? @map("compare_at_price") @db.Decimal(10, 2)
   sku            String?
+  barcode        String?
+  weight         Decimal? @db.Decimal(10, 2)
   stock          Int      @default(0)
   images         Json     @default("[]") // string[] as JSONB
   variants       Json     @default("[]") // ProductVariant[] as JSONB
@@ -30,7 +32,8 @@ model Product {
   createdAt      DateTime @default(now()) @map("created_at")
   updatedAt      DateTime @updatedAt @map("updated_at")
 
-  category Category? @relation(fields: [categoryId], references: [id])
+  category            Category?             @relation(fields: [categoryId], references: [id])
+  marketplaceListings MarketplaceListing[]
 
   @@map("products")
 }
@@ -46,9 +49,10 @@ model Category {
   description Json?    // {"en": "<html>...", "tr": "<html>..."} SEO description
   seoMeta     Json?    @map("seo_meta") // {"en": {title, description}, "tr": {title, description}}
 
-  parent   Category?  @relation("CategoryTree", fields: [parentId], references: [id])
-  children Category[] @relation("CategoryTree")
-  products Product[]
+  parent              Category?                    @relation("CategoryTree", fields: [parentId], references: [id])
+  children            Category[]                   @relation("CategoryTree")
+  products            Product[]
+  marketplaceMappings MarketplaceCategoryMapping[]
 
   @@map("categories")
 }
@@ -178,4 +182,75 @@ model BlogPost {
   updatedAt     DateTime  @updatedAt @map("updated_at")
 
   @@map("blog_posts")
+}
+
+// ==================== Marketplace Models ====================
+
+model MarketplaceIntegration {
+  id          String   @id @default(uuid())
+  marketplace String   @unique // 'trendyol' | 'hepsiburada' | 'ciceksepeti'
+  credentials Json     // { supplierId, apiKey, apiSecret } or { apiKey } (CS)
+  isActive    Boolean  @default(true) @map("is_active")
+  settings    Json?    // marketplace-specific settings
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@map("marketplace_integrations")
+}
+
+model MarketplaceCategory {
+  id                    String  @id @default(uuid())
+  marketplace           String
+  marketplaceCategoryId String  @map("marketplace_category_id")
+  categoryName          String  @map("category_name")
+  parentId              String? @map("parent_id")
+  attributes            Json?   // cached category attributes from marketplace API
+
+  @@unique([marketplace, marketplaceCategoryId])
+  @@map("marketplace_categories")
+}
+
+model MarketplaceCategoryMapping {
+  id                    String   @id @default(uuid())
+  marketplace           String
+  localCategoryId       String   @map("local_category_id")
+  marketplaceCategoryId String   @map("marketplace_category_id")
+  attributeMapping      Json?    @map("attribute_mapping") // saved attribute defaults
+
+  localCategory Category @relation(fields: [localCategoryId], references: [id])
+
+  @@unique([marketplace, localCategoryId])
+  @@map("marketplace_category_mappings")
+}
+
+model MarketplaceListing {
+  id                   String    @id @default(uuid())
+  marketplace          String
+  productId            String    @map("product_id")
+  marketplaceProductId String?   @map("marketplace_product_id")
+  batchId              String?   @map("batch_id")
+  status               String    @default("pending") // pending, sent, approved, rejected, error
+  lastSyncedAt         DateTime? @map("last_synced_at")
+  syncData             Json?     @map("sync_data")
+  errorMessage         String?   @map("error_message")
+  createdAt            DateTime  @default(now()) @map("created_at")
+  updatedAt            DateTime  @updatedAt @map("updated_at")
+
+  product Product @relation(fields: [productId], references: [id])
+
+  @@unique([marketplace, productId])
+  @@map("marketplace_listings")
+}
+
+model SyncLog {
+  id          String   @id @default(uuid())
+  marketplace String
+  action      String   // 'import', 'export', 'price_sync', 'stock_sync', 'category_sync'
+  status      String   // 'started', 'completed', 'failed'
+  details     Json?
+  itemCount   Int      @default(0) @map("item_count")
+  errorCount  Int      @default(0) @map("error_count")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  @@map("sync_logs")
 }
