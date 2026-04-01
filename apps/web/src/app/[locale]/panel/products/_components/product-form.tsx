@@ -24,7 +24,8 @@ import {
 } from '@zunapro/ui';
 import { panelApi } from '@/lib/panel-api';
 import { ImageUpload } from './image-upload';
-import { VariantBuilder } from './variant-builder';
+import { VariantBuilder, type ProductVariantData } from './variant-builder';
+import { AttributeEditor } from './attribute-editor';
 
 const LOCALES = ['en', 'tr', 'de', 'fr', 'es'] as const;
 
@@ -59,7 +60,7 @@ interface Category {
 
 interface ProductFormProps {
   locale: string;
-  initialData?: ProductFormData & { id?: string; images?: string[]; variants?: Record<string, unknown>[] };
+  initialData?: ProductFormData & { id?: string; images?: string[]; variants?: Record<string, unknown>[]; brand?: string; vatRate?: number; productMainId?: string; productAttributes?: Array<{ name: string; value: string }> };
 }
 
 export function ProductForm({ locale, initialData }: ProductFormProps) {
@@ -67,9 +68,12 @@ export function ProductForm({ locale, initialData }: ProductFormProps) {
   const router = useRouter();
   const [categories, setCategories] = useState<Category[]>([]);
   const [images, setImages] = useState<string[]>(initialData?.images ?? []);
-  const [variants, setVariants] = useState<{ name: string; sku: string; price: number; stock: number }[]>(
-    (initialData?.variants as { name: string; sku: string; price: number; stock: number }[]) ?? [],
+  const [variants, setVariants] = useState<ProductVariantData[]>(
+    (initialData?.variants as unknown as ProductVariantData[]) ?? [],
   );
+  const [brand, setBrand] = useState(initialData?.brand ?? '');
+  const [vatRate, setVatRate] = useState(initialData?.vatRate ?? 20);
+  const [attributes, setAttributes] = useState<{ name: string; value: string }[]>(initialData?.productAttributes ?? []);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
 
@@ -131,6 +135,23 @@ export function ProductForm({ locale, initialData }: ProductFormProps) {
         ...data,
         images,
         variants,
+        brand,
+        vatRate,
+        productVariants: variants.map(v => ({
+          sku: v.sku,
+          barcode: v.barcode,
+          price: v.price,
+          listPrice: v.listPrice,
+          stock: v.stock,
+          weight: v.weight,
+          images: v.images,
+          isActive: v.isActive,
+          options: (v.options ?? []).map(o => ({
+            variantTypeSlug: o.variantTypeSlug,
+            variantOptionSlug: o.variantOptionSlug,
+          })),
+        })),
+        attributes,
       };
 
       if (initialData?.id) {
@@ -262,6 +283,29 @@ export function ProductForm({ locale, initialData }: ProductFormProps) {
                     className="mt-1.5"
                   />
                 </div>
+                <div>
+                  <Label className="text-xs font-medium text-slate-500">Marka</Label>
+                  <Input
+                    value={brand}
+                    onChange={(e) => setBrand(e.target.value)}
+                    placeholder="Marka adı..."
+                    className="mt-1.5"
+                  />
+                </div>
+                <div>
+                  <Label className="text-xs font-medium text-slate-500">KDV Oranı</Label>
+                  <select
+                    value={vatRate}
+                    onChange={(e) => setVatRate(Number(e.target.value))}
+                    className="mt-1.5 h-9 w-full rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-700"
+                  >
+                    <option value={0}>%0</option>
+                    <option value={1}>%1</option>
+                    <option value={8}>%8</option>
+                    <option value={10}>%10</option>
+                    <option value={20}>%20</option>
+                  </select>
+                </div>
               </div>
 
               {/* Currency prices from seoMeta */}
@@ -357,7 +401,17 @@ export function ProductForm({ locale, initialData }: ProductFormProps) {
               <h2 className="text-sm font-semibold text-slate-800">{t('variants.title')}</h2>
             </div>
             <div className="p-6">
-              <VariantBuilder variants={variants} onChange={setVariants} />
+              <VariantBuilder variants={variants} onChange={setVariants} locale={locale} />
+            </div>
+          </Card>
+
+          {/* Attributes */}
+          <Card className="overflow-hidden border border-slate-200 shadow-sm">
+            <div className="border-b border-slate-200 bg-slate-50/50 px-6 py-4">
+              <h2 className="text-sm font-semibold text-slate-800">Özellikler</h2>
+            </div>
+            <div className="p-6">
+              <AttributeEditor attributes={attributes} onChange={setAttributes} />
             </div>
           </Card>
 

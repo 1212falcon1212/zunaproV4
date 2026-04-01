@@ -79,7 +79,7 @@ export default function OrdersPage() {
       <div>
         <h1 className="text-2xl font-bold">{t('title')}</h1>
         {orders && (
-          <p className="text-sm text-gray-500">
+          <p className="text-sm text-slate-500">
             {t('subtitle', { count: orders.meta.total })}
           </p>
         )}
@@ -94,10 +94,10 @@ export default function OrdersPage() {
 
       {loading ? (
         <div className="flex justify-center py-12">
-          <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
+          <div className="h-8 w-8 animate-spin rounded-full border-4 border-violet-500 border-t-transparent" />
         </div>
       ) : error ? (
-        <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-600">
+        <div className="rounded-lg border border-rose-200 bg-rose-50 p-4 text-sm text-rose-700">
           {error}
         </div>
       ) : orders ? (

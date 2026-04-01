@@ -771,7 +771,9 @@
       "outOfStock": "Nicht vorraetig",
       "inStock": "Auf Lager",
       "added": "Hinzugefugt!",
-      "variants": "Optionen"
+      "variants": "Optionen",
+      "selectVariant": "Optionen wahlen",
+      "onlyLeft": "Nur noch {count} verfugbar"
     },
     "storeSetup": "Shop wird eingerichtet",
     "storeSetupDescription": "Ihr Shop wird vorbereitet. Bitte schauen Sie in Kurze wieder vorbei.",

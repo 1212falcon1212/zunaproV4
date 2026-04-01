@@ -32,6 +32,7 @@ export class CartService {
     sessionId: string,
     productId: string,
     quantity: number,
+    variantId?: string,
     variantIndex?: number,
   ): Promise<Cart> {
     if (quantity < 1) {
@@ -41,47 +42,99 @@ export class CartService {
     const prisma = getTenantClient(tenantSlug);
     const product = await prisma.product.findUnique({
       where: { id: productId },
+      include: {
+        productVariants: variantId
+          ? {
+              where: { id: variantId, isActive: true },
+              include: {
+                optionValues: {
+                  include: {
+                    variantOption: { include: { variantType: true } },
+                  },
+                },
+              },
+            }
+          : false,
+      },
     });
 
     if (!product || product.status !== 'active') {
       throw new NotFoundException('Product not found or not available');
     }
 
+    let itemPrice = Number(product.price);
+    let availableStock = product.stock;
+    let variantName: string | undefined;
+    let resolvedVariantId: string | undefined;
+    let itemImage: string | undefined = (product.images as string[])[0];
+
+    if (variantId && 'productVariants' in product) {
+      const variants = (product as unknown as { productVariants: Array<{
+        id: string;
+        price: unknown;
+        stock: number;
+        images: unknown;
+        optionValues: Array<{
+          variantOption: { name: Record<string, string>; variantType: { name: Record<string, string> } };
+        }>;
+      }> }).productVariants;
+      const pv = variants[0];
+      if (!pv) {
+        throw new NotFoundException('Variant not found or not active');
+      }
+      itemPrice = Number(pv.price);
+      availableStock = pv.stock;
+      resolvedVariantId = pv.id;
+      const pvImages = pv.images as string[];
+      if (pvImages.length > 0) {
+        itemImage = pvImages[0];
+      }
+      variantName = pv.optionValues
+        .map((ov) => {
+          const optName = ov.variantOption.name.en || Object.values(ov.variantOption.name)[0] || '';
+          return optName;
+        })
+        .join(' / ');
+    } else if (variantIndex !== undefined) {
+      const legacyVariants = product.variants as Array<{ name?: string; price?: number; stock?: number }>;
+      const legacy = legacyVariants[variantIndex];
+      if (legacy) {
+        variantName = legacy.name;
+        if (legacy.price !== undefined) itemPrice = legacy.price;
+        if (legacy.stock !== undefined) availableStock = legacy.stock;
+      }
+    }
+
     const cart = await this.getCart(tenantSlug, sessionId);
     const existingIndex = cart.items.findIndex(
       (item) =>
-        item.productId === productId && item.variantIndex === variantIndex,
+        item.productId === productId &&
+        (resolvedVariantId ? item.variantId === resolvedVariantId : item.variantIndex === variantIndex),
     );
 
     const requestedQty =
       existingIndex >= 0 ? cart.items[existingIndex].quantity + quantity : quantity;
 
-    if (requestedQty > product.stock) {
+    if (requestedQty > availableStock) {
       throw new BadRequestException(
-        `Insufficient stock. Available: ${product.stock}`,
+        `Insufficient stock. Available: ${availableStock}`,
       );
-    }
-
-    const images = product.images as string[];
-    let variantName: string | undefined;
-    if (variantIndex !== undefined) {
-      const variants = product.variants as Array<{ name?: string }>;
-      variantName = variants[variantIndex]?.name;
     }
 
     if (existingIndex >= 0) {
       cart.items[existingIndex].quantity = requestedQty;
-      cart.items[existingIndex].price = Number(product.price);
+      cart.items[existingIndex].price = itemPrice;
     } else {
       const item: CartItem = {
         productId,
         name: product.name as Record<string, string>,
         slug: product.slug,
-        price: Number(product.price),
+        price: itemPrice,
         quantity,
-        image: images[0],
-        variantIndex,
+        image: itemImage,
+        variantId: resolvedVariantId,
         variantName,
+        variantIndex: resolvedVariantId ? undefined : variantIndex,
       };
       cart.items.push(item);
     }

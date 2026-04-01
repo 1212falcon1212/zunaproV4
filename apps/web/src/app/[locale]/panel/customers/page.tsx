@@ -67,7 +67,7 @@ export default function CustomersPage() {
       <div>
         <h1 className="text-2xl font-bold">{t('title')}</h1>
         {customers && (
-          <p className="text-sm text-gray-500">
+          <p className="text-sm text-slate-500">
             {t('subtitle', { count: customers.meta.total })}
           </p>
         )}
@@ -84,8 +84,8 @@ export default function CustomersPage() {
               }}
               className={`rounded-lg px-3 py-1.5 text-sm font-medium transition-colors ${
                 filterType === type
-                  ? 'bg-primary text-white'
-                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                  ? 'bg-violet-600 text-white'
+                  : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
               }`}
             >
               {t(`filter.${type}`)}
@@ -100,16 +100,16 @@ export default function CustomersPage() {
             setPage(1);
           }}
           placeholder={t('searchPlaceholder')}
-          className="rounded-lg border border-gray-200 px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+          className="rounded-lg border border-slate-200 px-3 py-2 text-sm focus:border-violet-500 focus:outline-none focus:ring-1 focus:ring-violet-400"
         />
       </div>
 
       {loading ? (
         <div className="flex justify-center py-12">
-          <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
+          <div className="h-8 w-8 animate-spin rounded-full border-4 border-violet-500 border-t-transparent" />
         </div>
       ) : error ? (
-        <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-600">
+        <div className="rounded-lg border border-rose-200 bg-rose-50 p-4 text-sm text-rose-700">
           {error}
         </div>
       ) : customers ? (

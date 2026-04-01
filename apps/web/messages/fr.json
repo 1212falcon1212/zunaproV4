@@ -771,7 +771,9 @@
       "outOfStock": "Rupture de stock",
       "inStock": "En stock",
       "added": "Ajoute !",
-      "variants": "Options"
+      "variants": "Options",
+      "selectVariant": "Choisir les options",
+      "onlyLeft": "Plus que {count} en stock"
     },
     "storeSetup": "Boutique en cours de configuration",
     "storeSetupDescription": "Votre boutique est en cours de preparation. Veuillez revenir dans un instant.",

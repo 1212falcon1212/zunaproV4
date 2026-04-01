@@ -2,13 +2,11 @@ import type { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import { serverFetch } from '@/lib/server-store-api';
-import { ProductGallery } from './_components/product-gallery';
-import { ProductInfo } from './_components/product-info';
-import { AddToCartForm } from './_components/add-to-cart-form';
+import { ProductDetailClient } from './_components/product-detail-client';
 import { RelatedProducts } from './_components/related-products';
 import { Breadcrumbs } from './_components/breadcrumbs';
-import { ShareButton } from './_components/share-button';
 import { buildProductJsonLd } from '@/lib/seo';
+import type { ProductVariantDisplay } from './_components/variant-selector';
 
 interface Product {
   id: string;
@@ -20,7 +18,9 @@ interface Product {
   sku?: string | null;
   stock: number;
   images: string[];
-  variants: { name: string; sku?: string; price?: number; stock?: number }[];
+  /** @deprecated Old variant format — kept for backwards compatibility */
+  variants?: { name: string; sku?: string; price?: number; stock?: number }[];
+  productVariants: ProductVariantDisplay[];
   category?: { id: string; name: Record<string, string>; slug: string } | null;
   seoMeta?: Record<string, { title?: string; description?: string }> | null;
 }
@@ -89,26 +89,21 @@ export default async function ProductDetailPage({ params }: Props) {
           ]}
         />
 
-        <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
-          {/* Gallery */}
-          <ProductGallery images={product.images} productName={productName} />
-
-          {/* Product info + cart form */}
-          <div>
-            <ProductInfo product={product} locale={locale} />
-            <AddToCartForm
-              productId={product.id}
-              variants={product.variants ?? []}
-              stock={product.stock}
-            />
-
-            {/* Share */}
-            <div className="mt-6 flex items-center gap-2 border-t border-[var(--color-border)] pt-6">
-              <span className="text-sm text-[var(--color-secondary)]">{t('product.share')}:</span>
-              <ShareButton />
-            </div>
-          </div>
-        </div>
+        <ProductDetailClient
+          product={{
+            id: product.id,
+            name: product.name,
+            slug: product.slug,
+            description: product.description,
+            price: product.price,
+            compareAtPrice: product.compareAtPrice,
+            sku: product.sku,
+            stock: product.stock,
+            images: product.images,
+            productVariants: product.productVariants ?? [],
+          }}
+          locale={locale}
+        />
 
         {/* Related Products */}
         {product.category && (

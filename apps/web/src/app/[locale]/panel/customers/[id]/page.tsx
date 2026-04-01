@@ -62,7 +62,7 @@ export default function CustomerDetailPage() {
   if (loading) {
     return (
       <div className="flex justify-center py-12">
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
+        <div className="h-8 w-8 animate-spin rounded-full border-4 border-violet-500 border-t-transparent" />
       </div>
     );
   }
@@ -72,11 +72,11 @@ export default function CustomerDetailPage() {
       <div className="space-y-4">
         <button
           onClick={() => router.push(`/${locale}/panel/customers`)}
-          className="text-sm text-primary hover:underline"
+          className="text-sm text-violet-600 hover:underline"
         >
           &larr; {t('backToCustomers')}
         </button>
-        <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-600">
+        <div className="rounded-lg border border-rose-200 bg-rose-50 p-4 text-sm text-rose-700">
           {error || 'Customer not found'}
         </div>
       </div>
@@ -87,45 +87,45 @@ export default function CustomerDetailPage() {
     <div className="space-y-6">
       <button
         onClick={() => router.push(`/${locale}/panel/customers`)}
-        className="text-sm text-primary hover:underline"
+        className="text-sm text-violet-600 hover:underline"
       >
         &larr; {t('backToCustomers')}
       </button>
 
       <div className="grid gap-6 lg:grid-cols-3">
         {/* Profile */}
-        <div className="rounded-lg border border-gray-200 p-6">
+        <div className="rounded-lg border border-slate-200 p-6">
           <h2 className="text-xl font-bold">
             {customer.firstName} {customer.lastName}
           </h2>
-          <p className="text-sm text-gray-500">{customer.email}</p>
+          <p className="text-sm text-slate-500">{customer.email}</p>
           {customer.phone && (
-            <p className="text-sm text-gray-500">{customer.phone}</p>
+            <p className="text-sm text-slate-500">{customer.phone}</p>
           )}
           <div className="mt-4 flex gap-4">
             <div>
               <p className="text-2xl font-bold">{customer.orderCount}</p>
-              <p className="text-xs text-gray-500">{t('totalOrders')}</p>
+              <p className="text-xs text-slate-500">{t('totalOrders')}</p>
             </div>
             <div>
               <p className="text-2xl font-bold">
                 {customer.totalSpent.toFixed(2)}
               </p>
-              <p className="text-xs text-gray-500">{t('totalSpent')}</p>
+              <p className="text-xs text-slate-500">{t('totalSpent')}</p>
             </div>
           </div>
           <div className="mt-3">
             <span
               className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
                 customer.isGuest
-                  ? 'bg-gray-100 text-gray-600'
-                  : 'bg-green-100 text-green-700'
+                  ? 'bg-slate-100 text-slate-600'
+                  : 'bg-emerald-100 text-emerald-700'
               }`}
             >
               {customer.isGuest ? t('guest') : t('registered')}
             </span>
           </div>
-          <p className="mt-2 text-xs text-gray-400">
+          <p className="mt-2 text-xs text-slate-400">
             {t('joined')}: {new Date(customer.createdAt).toLocaleDateString()}
           </p>
         </div>
@@ -134,35 +134,35 @@ export default function CustomerDetailPage() {
         <div className="lg:col-span-2">
           <h3 className="mb-3 text-lg font-medium">{t('recentOrders')}</h3>
           {customer.orders.length === 0 ? (
-            <div className="rounded-lg border border-dashed border-gray-300 p-8 text-center text-sm text-gray-500">
+            <div className="rounded-lg border border-dashed border-slate-300 p-8 text-center text-sm text-slate-500">
               {t('noOrders')}
             </div>
           ) : (
-            <div className="overflow-x-auto rounded-lg border border-gray-200">
+            <div className="overflow-x-auto rounded-lg border border-slate-200">
               <table className="w-full text-sm">
-                <thead className="bg-gray-50">
+                <thead className="bg-slate-50">
                   <tr>
-                    <th className="px-4 py-3 text-left font-medium text-gray-500">
+                    <th className="px-4 py-3 text-left font-medium text-slate-500">
                       {t('orderNumber')}
                     </th>
-                    <th className="px-4 py-3 text-left font-medium text-gray-500">
+                    <th className="px-4 py-3 text-left font-medium text-slate-500">
                       {t('status')}
                     </th>
-                    <th className="px-4 py-3 text-right font-medium text-gray-500">
+                    <th className="px-4 py-3 text-right font-medium text-slate-500">
                       {t('amount')}
                     </th>
-                    <th className="px-4 py-3 text-left font-medium text-gray-500">
+                    <th className="px-4 py-3 text-left font-medium text-slate-500">
                       {t('date')}
                     </th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-100">
+                <tbody className="divide-y divide-slate-100">
                   {customer.orders.map((order) => (
-                    <tr key={order.id} className="hover:bg-gray-50">
+                    <tr key={order.id} className="hover:bg-slate-50">
                       <td className="px-4 py-3">
                         <Link
                           href={`/${locale}/panel/orders/${order.id}`}
-                          className="font-medium text-primary hover:underline"
+                          className="font-medium text-violet-600 hover:underline"
                         >
                           {order.orderNumber}
                         </Link>
@@ -174,7 +174,7 @@ export default function CustomerDetailPage() {
                         {order.currency}{' '}
                         {parseFloat(order.totalAmount).toFixed(2)}
                       </td>
-                      <td className="px-4 py-3 text-gray-500">
+                      <td className="px-4 py-3 text-slate-500">
                         {new Date(order.createdAt).toLocaleDateString()}
                       </td>
                     </tr>

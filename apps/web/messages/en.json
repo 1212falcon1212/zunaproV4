@@ -782,7 +782,9 @@
       "outOfStock": "Out of Stock",
       "inStock": "In Stock",
       "added": "Added!",
-      "variants": "Options"
+      "variants": "Options",
+      "selectVariant": "Select options",
+      "onlyLeft": "Only {count} left"
     },
     "storeSetup": "Store is being set up",
     "storeSetupDescription": "Your store is being prepared. Please check back shortly.",

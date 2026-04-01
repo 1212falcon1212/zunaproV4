@@ -17,10 +17,32 @@ interface Product {
   stock: number;
   images: string[];
   variants: Record<string, unknown>[];
+  productVariants?: Array<{
+    id: string;
+    sku?: string;
+    barcode?: string;
+    price: number;
+    listPrice?: number;
+    stock: number;
+    images: string[];
+    isActive: boolean;
+    optionValues: Array<{
+      variantOption: {
+        slug: string;
+        name: Record<string, string>;
+        colorCode?: string;
+        variantType: { slug: string; name: Record<string, string> };
+      };
+    }>;
+  }>;
   categoryId: string | null;
   status: string;
   isFeatured?: boolean;
   seoMeta: Record<string, unknown> | null;
+  brand?: string;
+  vatRate?: number;
+  productMainId?: string;
+  productAttributes?: Array<{ name: string; value: string }>;
 }
 
 export default function EditProductPage({
@@ -99,11 +121,28 @@ export default function EditProductPage({
           sku: product.sku,
           stock: product.stock,
           images: product.images,
-          variants: product.variants,
+          variants: (product.productVariants ?? []).map(pv => ({
+            sku: pv.sku ?? '',
+            barcode: pv.barcode ?? '',
+            price: Number(pv.price),
+            listPrice: pv.listPrice ? Number(pv.listPrice) : undefined,
+            stock: pv.stock,
+            images: pv.images ?? [],
+            isActive: pv.isActive,
+            options: (pv.optionValues ?? []).map(ov => ({
+              variantTypeSlug: ov.variantOption.variantType.slug,
+              variantOptionSlug: ov.variantOption.slug,
+              variantTypeName: (ov.variantOption.variantType.name as Record<string,string>).tr ?? '',
+              variantOptionName: (ov.variantOption.name as Record<string,string>).tr ?? '',
+            })),
+          })) as unknown as Record<string, unknown>[],
           categoryId: product.categoryId,
           status: product.status as 'draft' | 'active' | 'archived',
           isFeatured: product.isFeatured ?? false,
           seoMeta: product.seoMeta ?? undefined,
+          brand: product.brand ?? '',
+          vatRate: product.vatRate ?? 20,
+          productAttributes: product.productAttributes ?? [],
         }}
       />
     </div>

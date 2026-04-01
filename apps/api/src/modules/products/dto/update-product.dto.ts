@@ -7,9 +7,13 @@ import {
   IsArray,
   IsIn,
   IsUUID,
+  IsBoolean,
   Min,
   Matches,
+  ValidateNested,
 } from 'class-validator';
+import { Type } from 'class-transformer';
+import { ProductVariantDto, ProductAttributeDto } from './create-product.dto';
 
 export class UpdateProductDto {
   @IsOptional()
@@ -60,6 +64,19 @@ export class UpdateProductDto {
   categoryId?: string | null;
 
   @IsOptional()
+  @IsString()
+  brand?: string | null;
+
+  @IsOptional()
+  @IsInt()
+  @Min(0)
+  vatRate?: number;
+
+  @IsOptional()
+  @IsString()
+  productMainId?: string | null;
+
+  @IsOptional()
   @IsObject()
   seoMeta?: Record<string, unknown>;
 
@@ -68,5 +85,18 @@ export class UpdateProductDto {
   status?: string;
 
   @IsOptional()
+  @IsBoolean()
   isFeatured?: boolean;
+
+  @IsOptional()
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => ProductVariantDto)
+  productVariants?: ProductVariantDto[];
+
+  @IsOptional()
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => ProductAttributeDto)
+  attributes?: ProductAttributeDto[];
 }

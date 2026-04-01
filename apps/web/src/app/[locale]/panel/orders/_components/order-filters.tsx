@@ -37,8 +37,8 @@ export function OrderFilters({
             onClick={() => onStatusChange(status)}
             className={`rounded-lg px-3 py-1.5 text-sm font-medium transition-colors ${
               currentStatus === status
-                ? 'bg-primary text-white'
-                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                ? 'bg-violet-600 text-white'
+                : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
             }`}
           >
             {t(`status.${status}`)}
@@ -50,7 +50,7 @@ export function OrderFilters({
         value={search}
         onChange={(e) => onSearchChange(e.target.value)}
         placeholder={t('searchPlaceholder')}
-        className="rounded-lg border border-gray-200 px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+        className="rounded-lg border border-slate-200 px-3 py-2 text-sm focus:border-violet-500 focus:outline-none focus:ring-1 focus:ring-violet-400"
       />
     </div>
   );

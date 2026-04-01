@@ -194,7 +194,7 @@ export default function PagesPage({
   if (loading) {
     return (
       <div className="flex h-64 items-center justify-center">
-        <Loader2 className="h-6 w-6 animate-spin text-gray-400" />
+        <Loader2 className="h-6 w-6 animate-spin text-slate-400" />
       </div>
     );
   }
@@ -204,8 +204,8 @@ export default function PagesPage({
       {/* Header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">{t('title')}</h1>
-          <p className="mt-1 text-sm text-gray-500">{t('subtitle')}</p>
+          <h1 className="text-2xl font-bold text-slate-900">{t('title')}</h1>
+          <p className="mt-1 text-sm text-slate-500">{t('subtitle')}</p>
         </div>
         <div className="flex items-center gap-2">
           <Link href={`/${locale}/panel/pages/header`}>
@@ -232,45 +232,45 @@ export default function PagesPage({
       </div>
 
       {/* Desktop Table */}
-      <div className="hidden overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm md:block">
+      <div className="hidden overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm md:block">
         <table className="w-full">
           <thead>
-            <tr className="border-b border-gray-200 bg-gray-50">
-              <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+            <tr className="border-b border-slate-200 bg-slate-50">
+              <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500">
                 {t('pageName')}
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+              <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500">
                 {t('slug')}
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+              <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500">
                 {t('status')}
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+              <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500">
                 {t('lastModified')}
               </th>
-              <th className="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500">
+              <th className="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-slate-500">
                 {t('actions')}
               </th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-200">
+          <tbody className="divide-y divide-slate-200">
             {pages.map((page) => (
               <tr
                 key={page.id}
-                className="transition-colors hover:bg-gray-50"
+                className="transition-colors hover:bg-slate-50"
               >
                 <td className="px-6 py-4">
                   <div className="flex items-center gap-3">
-                    <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary/10">
-                      <FileText className="h-4 w-4 text-primary" />
+                    <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-violet-600/10">
+                      <FileText className="h-4 w-4 text-violet-600" />
                     </div>
-                    <span className="font-medium text-gray-900">
+                    <span className="font-medium text-slate-900">
                       {getPageName(page)}
                     </span>
                   </div>
                 </td>
                 <td className="px-6 py-4">
-                  <div className="flex items-center gap-1.5 text-sm text-gray-500">
+                  <div className="flex items-center gap-1.5 text-sm text-slate-500">
                     <Globe className="h-3.5 w-3.5 shrink-0" />
                     <span className="font-mono text-xs">/{page.slug}</span>
                   </div>
@@ -280,7 +280,7 @@ export default function PagesPage({
                     className={
                       page.isPublished
                         ? 'border-green-200 bg-green-50 text-green-700 hover:bg-green-100'
-                        : 'border-gray-200 bg-gray-100 text-gray-600 hover:bg-gray-200'
+                        : 'border-slate-200 bg-slate-100 text-slate-600 hover:bg-slate-200'
                     }
                   >
                     {page.isPublished ? (
@@ -292,7 +292,7 @@ export default function PagesPage({
                   </Badge>
                 </td>
                 <td className="px-6 py-4">
-                  <div className="flex items-center gap-1.5 text-sm text-gray-500">
+                  <div className="flex items-center gap-1.5 text-sm text-slate-500">
                     <Clock className="h-3.5 w-3.5" />
                     {formatDate(page.updatedAt, locale)}
                   </div>
@@ -351,7 +351,7 @@ export default function PagesPage({
             ))}
             {pages.length === 0 && (
               <tr>
-                <td colSpan={5} className="px-6 py-12 text-center text-gray-400">
+                <td colSpan={5} className="px-6 py-12 text-center text-slate-400">
                   <FileText className="mx-auto mb-3 h-8 w-8" />
                   <p>{t('noPages')}</p>
                 </td>
@@ -366,18 +366,18 @@ export default function PagesPage({
         {pages.map((page) => (
           <div
             key={page.id}
-            className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm"
+            className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm"
           >
             <div className="flex items-start justify-between">
               <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
-                  <FileText className="h-5 w-5 text-primary" />
+                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-violet-600/10">
+                  <FileText className="h-5 w-5 text-violet-600" />
                 </div>
                 <div>
-                  <p className="font-medium text-gray-900">
+                  <p className="font-medium text-slate-900">
                     {getPageName(page)}
                   </p>
-                  <div className="mt-0.5 flex items-center gap-1 text-xs text-gray-500">
+                  <div className="mt-0.5 flex items-center gap-1 text-xs text-slate-500">
                     <Globe className="h-3 w-3" />
                     <span className="font-mono">/{page.slug}</span>
                   </div>
@@ -387,15 +387,15 @@ export default function PagesPage({
                 className={
                   page.isPublished
                     ? 'border-green-200 bg-green-50 text-green-700'
-                    : 'border-gray-200 bg-gray-100 text-gray-600'
+                    : 'border-slate-200 bg-slate-100 text-slate-600'
                 }
               >
                 {page.isPublished ? t('published') : t('draft')}
               </Badge>
             </div>
 
-            <div className="mt-3 flex items-center justify-between border-t border-gray-100 pt-3">
-              <div className="flex items-center gap-1.5 text-xs text-gray-500">
+            <div className="mt-3 flex items-center justify-between border-t border-slate-100 pt-3">
+              <div className="flex items-center gap-1.5 text-xs text-slate-500">
                 <Clock className="h-3 w-3" />
                 {formatDate(page.updatedAt, locale)}
               </div>

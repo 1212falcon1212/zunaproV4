@@ -22,15 +22,15 @@ export function ProductFilters({
 
   return (
     <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-      <div className="flex gap-1 rounded-lg bg-gray-100 p-1">
+      <div className="flex gap-1 rounded-lg bg-slate-100 p-1">
         {STATUS_TABS.map((tab) => (
           <button
             key={tab}
             onClick={() => onStatusChange(tab)}
             className={`rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${
               status === tab
-                ? 'bg-white text-primary shadow-sm'
-                : 'text-gray-600 hover:text-gray-900'
+                ? 'bg-white text-violet-600 shadow-sm'
+                : 'text-slate-600 hover:text-slate-900'
             }`}
           >
             {t(`status.${tab}`)}

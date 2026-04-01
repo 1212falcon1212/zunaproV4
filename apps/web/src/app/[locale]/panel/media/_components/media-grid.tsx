@@ -31,7 +31,7 @@ export function MediaGrid({ items, onDelete }: MediaGridProps) {
   if (items.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center rounded-lg border border-dashed py-12">
-        <p className="text-sm text-gray-500">{t('empty')}</p>
+        <p className="text-sm text-slate-500">{t('empty')}</p>
       </div>
     );
   }
@@ -57,9 +57,9 @@ export function MediaGrid({ items, onDelete }: MediaGridProps) {
                 className="h-full w-full object-cover"
               />
             ) : (
-              <div className="flex h-full items-center justify-center bg-gray-100">
+              <div className="flex h-full items-center justify-center bg-slate-100">
                 <svg
-                  className="h-8 w-8 text-gray-400"
+                  className="h-8 w-8 text-slate-400"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -76,10 +76,10 @@ export function MediaGrid({ items, onDelete }: MediaGridProps) {
           </div>
 
           <div className="p-2">
-            <p className="truncate text-xs font-medium text-gray-700">
+            <p className="truncate text-xs font-medium text-slate-700">
               {item.filename}
             </p>
-            <p className="text-xs text-gray-400">{formatFileSize(item.size)}</p>
+            <p className="text-xs text-slate-400">{formatFileSize(item.size)}</p>
           </div>
 
           {/* Hover overlay */}

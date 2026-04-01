@@ -36,7 +36,7 @@ export class CartController {
   addItem(
     @Req() req: Request,
     @Res({ passthrough: true }) res: Response,
-    @Body() body: { productId: string; quantity: number; variantIndex?: number },
+    @Body() body: { productId: string; quantity: number; variantId?: string; variantIndex?: number },
   ) {
     const sessionId = this.getSessionId(req, res);
     return this.cartService.addItem(
@@ -44,6 +44,7 @@ export class CartController {
       sessionId,
       body.productId,
       body.quantity,
+      body.variantId,
       body.variantIndex,
     );
   }

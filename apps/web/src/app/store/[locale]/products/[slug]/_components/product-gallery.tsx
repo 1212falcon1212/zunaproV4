@@ -1,19 +1,29 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 interface ProductGalleryProps {
   images: string[];
   productName: string;
+  variantImages?: string[];
 }
 
-export function ProductGallery({ images, productName }: ProductGalleryProps) {
+export function ProductGallery({ images, productName, variantImages }: ProductGalleryProps) {
+  // When variant has its own images, show those; otherwise show product images
+  const displayImages = variantImages && variantImages.length > 0 ? variantImages : images;
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [zoomed, setZoomed] = useState(false);
 
-  const currentImage = images[selectedIndex];
+  // Reset to first image when the variant images change
+  const imageKey = variantImages?.[0] ?? '';
+  useEffect(() => {
+    setSelectedIndex(0);
+    setZoomed(false);
+  }, [imageKey]);
 
-  if (images.length === 0) {
+  const currentImage = displayImages[selectedIndex];
+
+  if (displayImages.length === 0) {
     return (
       <div className="flex aspect-square items-center justify-center rounded-[var(--radius)] bg-[var(--color-muted)]">
         <svg className="h-20 w-20 text-[var(--color-secondary)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -38,9 +48,9 @@ export function ProductGallery({ images, productName }: ProductGalleryProps) {
       </div>
 
       {/* Thumbnails */}
-      {images.length > 1 && (
+      {displayImages.length > 1 && (
         <div className="flex gap-2 overflow-x-auto">
-          {images.map((img, i) => (
+          {displayImages.map((img, i) => (
             <button
               key={i}
               onClick={() => { setSelectedIndex(i); setZoomed(false); }}

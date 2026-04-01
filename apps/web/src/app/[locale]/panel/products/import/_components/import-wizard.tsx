@@ -323,7 +323,7 @@ export function ImportWizard({ locale }: { locale: string }) {
   return (
     <div className="space-y-6">
       {/* Step indicator */}
-      <div className="flex items-center gap-2 text-sm text-gray-500">
+      <div className="flex items-center gap-2 text-sm text-slate-500">
         {t('step', { current: stepNumber, total: 3 })}
       </div>
 
@@ -331,7 +331,7 @@ export function ImportWizard({ locale }: { locale: string }) {
       {step === 'upload' && (
         <div className="space-y-4">
           <div>
-            <h2 className="text-lg font-semibold text-gray-900">
+            <h2 className="text-lg font-semibold text-slate-900">
               {t('uploadFile')}
             </h2>
           </div>
@@ -343,12 +343,12 @@ export function ImportWizard({ locale }: { locale: string }) {
             onClick={() => fileInputRef.current?.click()}
             className={`flex cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed p-12 transition-colors ${
               dragOver
-                ? 'border-primary bg-primary/5'
-                : 'border-gray-300 hover:border-gray-400'
+                ? 'border-violet-500 bg-violet-600/5'
+                : 'border-slate-300 hover:border-slate-400'
             }`}
           >
             <svg
-              className="mb-4 h-12 w-12 text-gray-400"
+              className="mb-4 h-12 w-12 text-slate-400"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -360,8 +360,8 @@ export function ImportWizard({ locale }: { locale: string }) {
                 d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
               />
             </svg>
-            <p className="text-sm font-medium text-gray-700">{t('dragDrop')}</p>
-            <p className="mt-1 text-xs text-gray-500">
+            <p className="text-sm font-medium text-slate-700">{t('dragDrop')}</p>
+            <p className="mt-1 text-xs text-slate-500">
               {t('acceptedFormats')}
             </p>
           </div>
@@ -375,7 +375,7 @@ export function ImportWizard({ locale }: { locale: string }) {
           />
 
           {error && (
-            <div className="rounded-lg bg-destructive/10 p-3 text-sm text-destructive">
+            <div className="rounded-lg bg-rose-50 p-3 text-sm text-rose-700">
               {error}
             </div>
           )}
@@ -386,33 +386,33 @@ export function ImportWizard({ locale }: { locale: string }) {
       {step === 'mapping' && parsedData && (
         <div className="space-y-6">
           <div>
-            <h2 className="text-lg font-semibold text-gray-900">
+            <h2 className="text-lg font-semibold text-slate-900">
               {t('columnMapping')}
             </h2>
-            <p className="mt-1 text-sm text-gray-500">
+            <p className="mt-1 text-sm text-slate-500">
               {fileName} &mdash; {t('rows', { count: parsedData.rows.length })}
             </p>
           </div>
 
-          <div className="rounded-lg border border-gray-200">
+          <div className="rounded-lg border border-slate-200">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-gray-200 bg-gray-50">
-                  <th className="px-4 py-3 text-left font-medium text-gray-700">
+                <tr className="border-b border-slate-200 bg-slate-50">
+                  <th className="px-4 py-3 text-left font-medium text-slate-700">
                     {t('mapTo')}
                   </th>
-                  <th className="px-4 py-3 text-left font-medium text-gray-700">
+                  <th className="px-4 py-3 text-left font-medium text-slate-700">
                     {t('csvColumn')}
                   </th>
                 </tr>
               </thead>
               <tbody>
                 {PRODUCT_FIELDS.map((field) => (
-                  <tr key={field} className="border-b border-gray-100">
-                    <td className="px-4 py-3 font-medium text-gray-900">
+                  <tr key={field} className="border-b border-slate-100">
+                    <td className="px-4 py-3 font-medium text-slate-900">
                       {field}
                       {(field === 'name' || field === 'price') && (
-                        <span className="ml-1 text-destructive">*</span>
+                        <span className="ml-1 text-rose-700">*</span>
                       )}
                     </td>
                     <td className="px-4 py-3">
@@ -421,7 +421,7 @@ export function ImportWizard({ locale }: { locale: string }) {
                         onChange={(e) =>
                           handleMappingChange(field, e.target.value)
                         }
-                        className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+                        className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm focus:border-violet-500 focus:outline-none focus:ring-1 focus:ring-violet-500"
                       >
                         <option value="">{t('skip')}</option>
                         {parsedData.headers.map((header) => (
@@ -440,17 +440,17 @@ export function ImportWizard({ locale }: { locale: string }) {
           {/* Preview first 3 rows */}
           {parsedData.rows.length > 0 && (
             <div className="space-y-2">
-              <h3 className="text-sm font-medium text-gray-700">
+              <h3 className="text-sm font-medium text-slate-700">
                 {t('preview')}
               </h3>
-              <div className="overflow-x-auto rounded-lg border border-gray-200">
+              <div className="overflow-x-auto rounded-lg border border-slate-200">
                 <table className="w-full text-sm">
                   <thead>
-                    <tr className="border-b border-gray-200 bg-gray-50">
+                    <tr className="border-b border-slate-200 bg-slate-50">
                       {parsedData.headers.map((header) => (
                         <th
                           key={header}
-                          className="whitespace-nowrap px-4 py-2 text-left font-medium text-gray-700"
+                          className="whitespace-nowrap px-4 py-2 text-left font-medium text-slate-700"
                         >
                           {header}
                         </th>
@@ -459,11 +459,11 @@ export function ImportWizard({ locale }: { locale: string }) {
                   </thead>
                   <tbody>
                     {parsedData.rows.slice(0, 3).map((row, i) => (
-                      <tr key={i} className="border-b border-gray-100">
+                      <tr key={i} className="border-b border-slate-100">
                         {row.map((cell, j) => (
                           <td
                             key={j}
-                            className="whitespace-nowrap px-4 py-2 text-gray-600"
+                            className="whitespace-nowrap px-4 py-2 text-slate-600"
                           >
                             {cell}
                           </td>
@@ -501,22 +501,22 @@ export function ImportWizard({ locale }: { locale: string }) {
       {step === 'preview' && parsedData && (
         <div className="space-y-6">
           <div>
-            <h2 className="text-lg font-semibold text-gray-900">
+            <h2 className="text-lg font-semibold text-slate-900">
               {t('preview')}
             </h2>
-            <p className="mt-1 text-sm text-gray-500">
+            <p className="mt-1 text-sm text-slate-500">
               {t('rows', { count: parsedData.rows.length })}
             </p>
           </div>
 
-          <div className="overflow-x-auto rounded-lg border border-gray-200">
+          <div className="overflow-x-auto rounded-lg border border-slate-200">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-gray-200 bg-gray-50">
+                <tr className="border-b border-slate-200 bg-slate-50">
                   {PRODUCT_FIELDS.filter((f) => mapping[f]).map((field) => (
                     <th
                       key={field}
-                      className="whitespace-nowrap px-4 py-2 text-left font-medium text-gray-700"
+                      className="whitespace-nowrap px-4 py-2 text-left font-medium text-slate-700"
                     >
                       {field}
                     </th>
@@ -525,13 +525,13 @@ export function ImportWizard({ locale }: { locale: string }) {
               </thead>
               <tbody>
                 {parsedData.rows.slice(0, 10).map((row, i) => (
-                  <tr key={i} className="border-b border-gray-100">
+                  <tr key={i} className="border-b border-slate-100">
                     {PRODUCT_FIELDS.filter((f) => mapping[f]).map((field) => {
                       const idx = parsedData.headers.indexOf(mapping[field]);
                       return (
                         <td
                           key={field}
-                          className="whitespace-nowrap px-4 py-2 text-gray-600"
+                          className="whitespace-nowrap px-4 py-2 text-slate-600"
                         >
                           {idx >= 0 ? (row[idx] ?? '') : ''}
                         </td>
@@ -545,8 +545,8 @@ export function ImportWizard({ locale }: { locale: string }) {
 
           {importing && (
             <div className="flex items-center gap-3">
-              <div className="h-5 w-5 animate-spin rounded-full border-2 border-primary border-t-transparent" />
-              <span className="text-sm text-gray-600">{t('importing')}</span>
+              <div className="h-5 w-5 animate-spin rounded-full border-2 border-violet-500 border-t-transparent" />
+              <span className="text-sm text-slate-600">{t('importing')}</span>
             </div>
           )}
 
@@ -557,7 +557,7 @@ export function ImportWizard({ locale }: { locale: string }) {
           )}
 
           {error && (
-            <div className="rounded-lg bg-destructive/10 p-3 text-sm text-destructive">
+            <div className="rounded-lg bg-rose-50 p-3 text-sm text-rose-700">
               {error}
             </div>
           )}

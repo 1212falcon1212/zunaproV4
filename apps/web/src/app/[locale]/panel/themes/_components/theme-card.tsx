@@ -85,7 +85,7 @@ export function ThemeCard({ theme, isActive, onPreview }: ThemeCardProps) {
       type="button"
       onClick={() => onPreview(theme)}
       className={`group relative w-full overflow-hidden rounded-2xl border-2 bg-white text-left shadow-sm transition-all duration-300 hover:shadow-lg ${
-        isActive ? 'border-blue-500 ring-2 ring-blue-100' : 'border-gray-200 hover:border-gray-300'
+        isActive ? 'border-blue-500 ring-2 ring-blue-100' : 'border-slate-200 hover:border-slate-300'
       }`}
     >
       {isActive && (
@@ -99,7 +99,7 @@ export function ThemeCard({ theme, isActive, onPreview }: ThemeCardProps) {
 
       <div className="absolute left-3 top-3 z-10">
         <span className={`rounded-full px-2.5 py-1 text-[11px] font-medium tracking-wide backdrop-blur-sm ${
-          theme.category === 'universal' ? 'bg-violet-500/80 text-white' : 'bg-gray-900/70 text-white'
+          theme.category === 'universal' ? 'bg-violet-500/80 text-white' : 'bg-slate-900/70 text-white'
         }`}>
           {theme.category === 'universal' ? 'Universal' : theme.sector}
         </span>
@@ -228,32 +228,32 @@ export function ThemeCard({ theme, isActive, onPreview }: ThemeCardProps) {
 
       {/* ===== Card Body ===== */}
       <div className="p-5">
-        <h3 className="text-lg font-bold text-gray-900">{theme.name}</h3>
-        <p className="mt-1 line-clamp-2 text-sm leading-relaxed text-gray-500">{theme.description}</p>
+        <h3 className="text-lg font-bold text-slate-900">{theme.name}</h3>
+        <p className="mt-1 line-clamp-2 text-sm leading-relaxed text-slate-500">{theme.description}</p>
 
         <div className="mt-4">
-          <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-gray-400">Colors</p>
+          <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-slate-400">Colors</p>
           <div className="flex items-center gap-2">
             {palette.map((color, i) => (
-              <div key={i} className="h-7 w-7 rounded-full border border-gray-200 shadow-sm" style={{ backgroundColor: color }} />
+              <div key={i} className="h-7 w-7 rounded-full border border-slate-200 shadow-sm" style={{ backgroundColor: color }} />
             ))}
           </div>
         </div>
 
         <div className="mt-4">
-          <p className="mb-1 text-xs font-semibold uppercase tracking-wider text-gray-400">Fonts</p>
-          <p className="text-sm text-gray-600">
+          <p className="mb-1 text-xs font-semibold uppercase tracking-wider text-slate-400">Fonts</p>
+          <p className="text-sm text-slate-600">
             <span className="font-medium">{fonts.heading}</span>
             {fonts.heading !== fonts.body && (
               <>
-                <span className="mx-1.5 text-gray-300">/</span>
+                <span className="mx-1.5 text-slate-300">/</span>
                 <span>{fonts.body}</span>
               </>
             )}
           </p>
         </div>
 
-        <div className="mt-4 flex items-center justify-center gap-1.5 rounded-xl bg-gray-100 px-4 py-2.5 text-sm font-medium text-gray-600 transition-colors group-hover:bg-gray-200">
+        <div className="mt-4 flex items-center justify-center gap-1.5 rounded-xl bg-slate-100 px-4 py-2.5 text-sm font-medium text-slate-600 transition-colors group-hover:bg-slate-200">
           <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" />
             <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />

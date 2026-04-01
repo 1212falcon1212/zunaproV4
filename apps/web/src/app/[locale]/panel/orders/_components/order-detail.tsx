@@ -91,7 +91,7 @@ export function OrderDetail({ order, onStatusUpdate }: OrderDetailProps) {
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-2xl font-bold">{order.orderNumber}</h2>
-          <p className="text-sm text-gray-500">
+          <p className="text-sm text-slate-500">
             {new Date(order.createdAt).toLocaleString()}
           </p>
         </div>
@@ -109,7 +109,7 @@ export function OrderDetail({ order, onStatusUpdate }: OrderDetailProps) {
               key={status}
               onClick={() => handleStatusChange(status)}
               disabled={updating}
-              className="rounded-lg border border-gray-200 px-4 py-2 text-sm font-medium capitalize hover:bg-gray-50 disabled:opacity-50"
+              className="rounded-lg border border-slate-200 px-4 py-2 text-sm font-medium capitalize hover:bg-slate-50 disabled:opacity-50"
             >
               {updating ? '...' : t(`actions.${status}`)}
             </button>
@@ -117,14 +117,14 @@ export function OrderDetail({ order, onStatusUpdate }: OrderDetailProps) {
           {canRefund && (
             <button
               onClick={() => setShowRefund(true)}
-              className="rounded-lg border border-red-200 bg-red-50 px-4 py-2 text-sm font-medium text-red-700 hover:bg-red-100"
+              className="rounded-lg border border-rose-200 bg-rose-50 px-4 py-2 text-sm font-medium text-rose-700 hover:bg-rose-100"
             >
               {t('actions.refunded')}
             </button>
           )}
           <button
             onClick={handleDownloadInvoice}
-            className="rounded-lg border border-gray-200 px-4 py-2 text-sm font-medium hover:bg-gray-50"
+            className="rounded-lg border border-slate-200 px-4 py-2 text-sm font-medium hover:bg-slate-50"
           >
             {t('downloadInvoice')}
           </button>
@@ -134,11 +134,11 @@ export function OrderDetail({ order, onStatusUpdate }: OrderDetailProps) {
       <div className="grid gap-6 lg:grid-cols-3">
         {/* Items */}
         <div className="lg:col-span-2">
-          <div className="rounded-lg border border-gray-200">
-            <div className="border-b bg-gray-50 px-4 py-3">
+          <div className="rounded-lg border border-slate-200">
+            <div className="border-b bg-slate-50 px-4 py-3">
               <h3 className="font-medium">{t('items')}</h3>
             </div>
-            <div className="divide-y divide-gray-100">
+            <div className="divide-y divide-slate-100">
               {order.items.map((item, idx) => (
                 <div key={idx} className="flex items-center gap-4 p-4">
                   {item.image && (
@@ -153,14 +153,14 @@ export function OrderDetail({ order, onStatusUpdate }: OrderDetailProps) {
                       {item.name[order.locale] || Object.values(item.name)[0]}
                     </p>
                     {item.variantName && (
-                      <p className="text-sm text-gray-500">{item.variantName}</p>
+                      <p className="text-sm text-slate-500">{item.variantName}</p>
                     )}
                     {item.sku && (
-                      <p className="text-xs text-gray-400">SKU: {item.sku}</p>
+                      <p className="text-xs text-slate-400">SKU: {item.sku}</p>
                     )}
                   </div>
                   <div className="text-right">
-                    <p className="text-sm text-gray-500">x{item.quantity}</p>
+                    <p className="text-sm text-slate-500">x{item.quantity}</p>
                     <p className="font-medium">
                       {order.currency} {item.total.toFixed(2)}
                     </p>
@@ -169,17 +169,17 @@ export function OrderDetail({ order, onStatusUpdate }: OrderDetailProps) {
               ))}
             </div>
             {/* Totals */}
-            <div className="border-t bg-gray-50 px-4 py-3">
+            <div className="border-t bg-slate-50 px-4 py-3">
               <div className="space-y-1 text-sm">
                 <div className="flex justify-between">
-                  <span className="text-gray-500">{t('subtotal')}</span>
+                  <span className="text-slate-500">{t('subtotal')}</span>
                   <span>
                     {order.currency} {parseFloat(order.subtotalAmount).toFixed(2)}
                   </span>
                 </div>
                 {parseFloat(order.taxAmount) > 0 && (
                   <div className="flex justify-between">
-                    <span className="text-gray-500">{t('tax')}</span>
+                    <span className="text-slate-500">{t('tax')}</span>
                     <span>
                       {order.currency} {parseFloat(order.taxAmount).toFixed(2)}
                     </span>
@@ -187,7 +187,7 @@ export function OrderDetail({ order, onStatusUpdate }: OrderDetailProps) {
                 )}
                 {parseFloat(order.shippingCost) > 0 && (
                   <div className="flex justify-between">
-                    <span className="text-gray-500">{t('shipping')}</span>
+                    <span className="text-slate-500">{t('shipping')}</span>
                     <span>
                       {order.currency} {parseFloat(order.shippingCost).toFixed(2)}
                     </span>
@@ -195,7 +195,7 @@ export function OrderDetail({ order, onStatusUpdate }: OrderDetailProps) {
                 )}
                 {parseFloat(order.discountAmount) > 0 && (
                   <div className="flex justify-between">
-                    <span className="text-gray-500">{t('discount')}</span>
+                    <span className="text-slate-500">{t('discount')}</span>
                     <span>
                       -{order.currency}{' '}
                       {parseFloat(order.discountAmount).toFixed(2)}
@@ -217,23 +217,23 @@ export function OrderDetail({ order, onStatusUpdate }: OrderDetailProps) {
         <div className="space-y-4">
           {/* Customer */}
           {order.customer && (
-            <div className="rounded-lg border border-gray-200 p-4">
+            <div className="rounded-lg border border-slate-200 p-4">
               <h3 className="mb-2 font-medium">{t('customer')}</h3>
               <p className="text-sm">
                 {order.customer.firstName} {order.customer.lastName}
               </p>
-              <p className="text-sm text-gray-500">{order.customer.email}</p>
+              <p className="text-sm text-slate-500">{order.customer.email}</p>
               {order.customer.phone && (
-                <p className="text-sm text-gray-500">{order.customer.phone}</p>
+                <p className="text-sm text-slate-500">{order.customer.phone}</p>
               )}
             </div>
           )}
 
           {/* Shipping */}
           {order.shippingAddress && (
-            <div className="rounded-lg border border-gray-200 p-4">
+            <div className="rounded-lg border border-slate-200 p-4">
               <h3 className="mb-2 font-medium">{t('shippingAddress')}</h3>
-              <div className="text-sm text-gray-600">
+              <div className="text-sm text-slate-600">
                 <p>
                   {order.shippingAddress.firstName}{' '}
                   {order.shippingAddress.lastName}
@@ -256,15 +256,15 @@ export function OrderDetail({ order, onStatusUpdate }: OrderDetailProps) {
 
           {/* Tracking */}
           {(order.trackingNumber || order.shippingMethod) && (
-            <div className="rounded-lg border border-gray-200 p-4">
+            <div className="rounded-lg border border-slate-200 p-4">
               <h3 className="mb-2 font-medium">{t('trackingInfo')}</h3>
               {order.shippingMethod && (
-                <p className="text-sm capitalize text-gray-600">
+                <p className="text-sm capitalize text-slate-600">
                   {order.shippingMethod}
                 </p>
               )}
               {order.trackingNumber && (
-                <p className="text-sm font-mono text-gray-600">
+                <p className="text-sm font-mono text-slate-600">
                   {order.trackingNumber}
                 </p>
               )}
@@ -273,9 +273,9 @@ export function OrderDetail({ order, onStatusUpdate }: OrderDetailProps) {
 
           {/* Notes */}
           {order.notes && (
-            <div className="rounded-lg border border-gray-200 p-4">
+            <div className="rounded-lg border border-slate-200 p-4">
               <h3 className="mb-2 font-medium">{t('notes')}</h3>
-              <p className="text-sm text-gray-600">{order.notes}</p>
+              <p className="text-sm text-slate-600">{order.notes}</p>
             </div>
           )}
         </div>

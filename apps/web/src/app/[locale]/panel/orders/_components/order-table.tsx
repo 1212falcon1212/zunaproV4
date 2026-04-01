@@ -35,53 +35,53 @@ export function OrderTable({ orders, meta, onPageChange, onDelete }: OrderTableP
 
   if (orders.length === 0) {
     return (
-      <div className="rounded-lg border border-dashed border-gray-300 p-12 text-center">
-        <p className="text-gray-500">{t('empty')}</p>
+      <div className="rounded-lg border border-dashed border-slate-300 p-12 text-center">
+        <p className="text-slate-500">{t('empty')}</p>
       </div>
     );
   }
 
   return (
     <div>
-      <div className="overflow-x-auto rounded-lg border border-gray-200">
+      <div className="overflow-x-auto rounded-lg border border-slate-200">
         <table className="w-full text-sm">
-          <thead className="bg-gray-50">
+          <thead className="bg-slate-50">
             <tr>
-              <th className="px-4 py-3 text-left font-medium text-gray-500">
+              <th className="px-4 py-3 text-left font-medium text-slate-500">
                 {t('table.orderNumber')}
               </th>
-              <th className="px-4 py-3 text-left font-medium text-gray-500">
+              <th className="px-4 py-3 text-left font-medium text-slate-500">
                 {t('table.customer')}
               </th>
-              <th className="px-4 py-3 text-left font-medium text-gray-500">
+              <th className="px-4 py-3 text-left font-medium text-slate-500">
                 {t('table.status')}
               </th>
-              <th className="px-4 py-3 text-left font-medium text-gray-500">
+              <th className="px-4 py-3 text-left font-medium text-slate-500">
                 {t('table.payment')}
               </th>
-              <th className="px-4 py-3 text-right font-medium text-gray-500">
+              <th className="px-4 py-3 text-right font-medium text-slate-500">
                 {t('table.total')}
               </th>
-              <th className="px-4 py-3 text-left font-medium text-gray-500">
+              <th className="px-4 py-3 text-left font-medium text-slate-500">
                 {t('table.date')}
               </th>
-              <th className="px-4 py-3 text-right font-medium text-gray-500">
+              <th className="px-4 py-3 text-right font-medium text-slate-500">
                 {t('table.actions')}
               </th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-100">
+          <tbody className="divide-y divide-slate-100">
             {orders.map((order) => (
-              <tr key={order.id} className="hover:bg-gray-50">
+              <tr key={order.id} className="hover:bg-slate-50/80">
                 <td className="px-4 py-3">
                   <Link
                     href={`/${locale}/panel/orders/${order.id}`}
-                    className="font-medium text-primary hover:underline"
+                    className="font-medium text-violet-600 hover:underline"
                   >
                     {order.orderNumber}
                   </Link>
                 </td>
-                <td className="px-4 py-3 text-gray-600">
+                <td className="px-4 py-3 text-slate-600">
                   {order.customer
                     ? `${order.customer.firstName} ${order.customer.lastName}`
                     : 'Guest'}
@@ -95,7 +95,7 @@ export function OrderTable({ orders, meta, onPageChange, onDelete }: OrderTableP
                 <td className="px-4 py-3 text-right font-medium">
                   {order.currency} {parseFloat(order.totalAmount).toFixed(2)}
                 </td>
-                <td className="px-4 py-3 text-gray-500">
+                <td className="px-4 py-3 text-slate-500">
                   {new Date(order.createdAt).toLocaleDateString()}
                 </td>
                 <td className="px-4 py-3 text-right">
@@ -116,7 +116,7 @@ export function OrderTable({ orders, meta, onPageChange, onDelete }: OrderTableP
 
       {meta.totalPages > 1 && (
         <div className="mt-4 flex items-center justify-between">
-          <span className="text-sm text-gray-500">
+          <span className="text-sm text-slate-500">
             {t('showing', {
               from: (meta.page - 1) * meta.limit + 1,
               to: Math.min(meta.page * meta.limit, meta.total),

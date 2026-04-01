@@ -93,12 +93,12 @@ export function RefundDialog({
         </h3>
 
         {/* Warning */}
-        <p className="mt-2 rounded-lg bg-red-50 p-3 text-sm text-red-700">
+        <p className="mt-2 rounded-lg bg-rose-50 p-3 text-sm text-rose-700">
           {t('warning')}
         </p>
 
         {success ? (
-          <div className="mt-6 rounded-lg bg-green-50 p-4 text-center text-sm font-medium text-green-700">
+          <div className="mt-6 rounded-lg bg-emerald-50 p-4 text-center text-sm font-medium text-emerald-700">
             {t('success')}
           </div>
         ) : (
@@ -113,8 +113,8 @@ export function RefundDialog({
                 }}
                 className={`flex-1 rounded-lg border px-4 py-2 text-sm font-medium transition-colors ${
                   refundType === 'full'
-                    ? 'border-red-500 bg-red-50 text-red-700'
-                    : 'border-gray-200 hover:bg-gray-50'
+                    ? 'border-rose-500 bg-rose-50 text-rose-700'
+                    : 'border-slate-200 hover:bg-slate-50'
                 }`}
               >
                 {t('fullRefund')}
@@ -124,8 +124,8 @@ export function RefundDialog({
                 onClick={() => setRefundType('partial')}
                 className={`flex-1 rounded-lg border px-4 py-2 text-sm font-medium transition-colors ${
                   refundType === 'partial'
-                    ? 'border-red-500 bg-red-50 text-red-700'
-                    : 'border-gray-200 hover:bg-gray-50'
+                    ? 'border-rose-500 bg-rose-50 text-rose-700'
+                    : 'border-slate-200 hover:bg-slate-50'
                 }`}
               >
                 {t('partialRefund')}
@@ -135,7 +135,7 @@ export function RefundDialog({
             {/* Amount (partial only) */}
             {refundType === 'partial' && (
               <div className="mt-4">
-                <label className="mb-1 block text-sm font-medium text-gray-700">
+                <label className="mb-1 block text-sm font-medium text-slate-700">
                   {t('amount')} ({currency})
                 </label>
                 <input
@@ -147,11 +147,11 @@ export function RefundDialog({
                   onChange={(e) => setAmount(e.target.value)}
                   className={`w-full rounded-lg border px-3 py-2 text-sm ${
                     !isAmountValid
-                      ? 'border-red-300 focus:border-red-500 focus:ring-red-200'
-                      : 'border-gray-200 focus:border-blue-500 focus:ring-blue-200'
+                      ? 'border-rose-300 focus:border-rose-500 focus:ring-rose-200'
+                      : 'border-slate-200 focus:border-violet-500 focus:ring-violet-200'
                   } focus:outline-none focus:ring-2`}
                 />
-                <p className="mt-1 text-xs text-gray-500">
+                <p className="mt-1 text-xs text-slate-500">
                   Max: {currency} {totalAmount.toFixed(2)}
                 </p>
               </div>
@@ -159,13 +159,13 @@ export function RefundDialog({
 
             {/* Reason */}
             <div className="mt-4">
-              <label className="mb-1 block text-sm font-medium text-gray-700">
+              <label className="mb-1 block text-sm font-medium text-slate-700">
                 {t('reason')}
               </label>
               <select
                 value={reason}
                 onChange={(e) => setReason(e.target.value as RefundReason)}
-                className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200"
+                className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200"
               >
                 {REFUND_REASONS.map((r) => (
                   <option key={r} value={r}>
@@ -177,7 +177,7 @@ export function RefundDialog({
 
             {/* Notes */}
             <div className="mt-4">
-              <label className="mb-1 block text-sm font-medium text-gray-700">
+              <label className="mb-1 block text-sm font-medium text-slate-700">
                 {t('notes')}
               </label>
               <textarea
@@ -185,13 +185,13 @@ export function RefundDialog({
                 onChange={(e) => setNotes(e.target.value)}
                 placeholder={t('notesPlaceholder')}
                 rows={3}
-                className="w-full resize-none rounded-lg border border-gray-200 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200"
+                className="w-full resize-none rounded-lg border border-slate-200 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200"
               />
             </div>
 
             {/* Error */}
             {error && (
-              <p className="mt-3 rounded-lg bg-red-50 p-3 text-sm text-red-700">
+              <p className="mt-3 rounded-lg bg-rose-50 p-3 text-sm text-rose-700">
                 {error}
               </p>
             )}
@@ -202,7 +202,7 @@ export function RefundDialog({
                 type="button"
                 onClick={onClose}
                 disabled={processing}
-                className="flex-1 rounded-lg border border-gray-200 px-4 py-2 text-sm font-medium hover:bg-gray-50 disabled:opacity-50"
+                className="flex-1 rounded-lg border border-slate-200 px-4 py-2 text-sm font-medium hover:bg-slate-50 disabled:opacity-50"
               >
                 {t('cancel')}
               </button>
@@ -210,7 +210,7 @@ export function RefundDialog({
                 type="button"
                 onClick={handleSubmit}
                 disabled={processing || !isAmountValid}
-                className="flex-1 rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700 disabled:opacity-50"
+                className="flex-1 rounded-lg bg-rose-600 px-4 py-2 text-sm font-medium text-white hover:bg-rose-700 disabled:opacity-50"
               >
                 {processing ? t('processing') : t('confirm')}
               </button>

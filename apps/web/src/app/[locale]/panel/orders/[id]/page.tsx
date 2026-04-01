@@ -37,7 +37,7 @@ export default function OrderDetailPage() {
   if (loading) {
     return (
       <div className="flex justify-center py-12">
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
+        <div className="h-8 w-8 animate-spin rounded-full border-4 border-violet-500 border-t-transparent" />
       </div>
     );
   }
@@ -47,11 +47,11 @@ export default function OrderDetailPage() {
       <div className="space-y-4">
         <button
           onClick={() => router.push(`/${locale}/panel/orders`)}
-          className="text-sm text-primary hover:underline"
+          className="text-sm text-violet-600 hover:underline"
         >
           &larr; {t('backToOrders')}
         </button>
-        <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-600">
+        <div className="rounded-lg border border-rose-200 bg-rose-50 p-4 text-sm text-rose-700">
           {error || 'Order not found'}
         </div>
       </div>
@@ -62,7 +62,7 @@ export default function OrderDetailPage() {
     <div className="space-y-4">
       <button
         onClick={() => router.push(`/${locale}/panel/orders`)}
-        className="text-sm text-primary hover:underline"
+        className="text-sm text-violet-600 hover:underline"
       >
         &larr; {t('backToOrders')}
       </button>

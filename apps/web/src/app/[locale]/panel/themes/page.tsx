@@ -99,12 +99,12 @@ export default function ThemesPage() {
     return (
       <div className="mx-auto max-w-7xl px-4 py-10">
         <div className="mb-10">
-          <div className="h-8 w-48 animate-pulse rounded bg-gray-200" />
-          <div className="mt-2 h-4 w-80 animate-pulse rounded bg-gray-100" />
+          <div className="h-8 w-48 animate-pulse rounded bg-slate-200" />
+          <div className="mt-2 h-4 w-80 animate-pulse rounded bg-slate-100" />
         </div>
         <div className="grid grid-cols-1 gap-8 md:grid-cols-2 xl:grid-cols-3">
           {Array.from({ length: 9 }).map((_, i) => (
-            <div key={i} className="h-[420px] animate-pulse rounded-2xl border border-gray-200 bg-gray-50" />
+            <div key={i} className="h-[420px] animate-pulse rounded-2xl border border-slate-200 bg-slate-50" />
           ))}
         </div>
       </div>
@@ -115,14 +115,14 @@ export default function ThemesPage() {
     <div className="mx-auto max-w-7xl px-4 py-10">
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-3xl font-bold tracking-tight text-gray-900">Themes</h1>
-        <p className="mt-2 text-base text-gray-500">
+        <h1 className="text-3xl font-bold tracking-tight text-slate-900">Themes</h1>
+        <p className="mt-2 text-base text-slate-500">
           Choose a theme to customize your store&apos;s appearance. Click any theme to preview and apply.
         </p>
       </div>
 
       {/* Filter Tabs */}
-      <div className="mb-8 flex items-center gap-1 rounded-lg bg-gray-100 p-1">
+      <div className="mb-8 flex items-center gap-1 rounded-lg bg-slate-100 p-1">
         {([
           { key: 'all', label: 'All Themes', count: themes.length },
           { key: 'sector', label: 'Sector', count: themes.filter((t) => t.category !== 'universal').length },
@@ -133,13 +133,13 @@ export default function ThemesPage() {
             onClick={() => setFilter(key)}
             className={`flex items-center gap-2 rounded-md px-4 py-2 text-sm font-medium transition-colors ${
               filter === key
-                ? 'bg-white text-gray-900 shadow-sm'
-                : 'text-gray-500 hover:text-gray-700'
+                ? 'bg-white text-slate-900 shadow-sm'
+                : 'text-slate-500 hover:text-slate-700'
             }`}
           >
             {label}
             <span className={`rounded-full px-2 py-0.5 text-xs ${
-              filter === key ? 'bg-gray-100 text-gray-700' : 'bg-gray-200/50 text-gray-400'
+              filter === key ? 'bg-slate-100 text-slate-700' : 'bg-slate-200/50 text-slate-400'
             }`}>
               {count}
             </span>
@@ -160,7 +160,7 @@ export default function ThemesPage() {
       </div>
 
       {filteredThemes.length === 0 && (
-        <div className="py-20 text-center text-gray-400">No themes found in this category.</div>
+        <div className="py-20 text-center text-slate-400">No themes found in this category.</div>
       )}
 
       {/* Preview Modal */}

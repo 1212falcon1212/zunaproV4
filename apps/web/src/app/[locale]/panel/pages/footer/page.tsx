@@ -125,7 +125,7 @@ export default function FooterEditorPage({
   if (loading) {
     return (
       <div className="flex h-96 items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-gray-400" />
+        <Loader2 className="h-8 w-8 animate-spin text-slate-400" />
       </div>
     );
   }
@@ -133,7 +133,7 @@ export default function FooterEditorPage({
   return (
     <div className="flex h-[calc(100vh-4rem)] flex-col">
       {/* Toolbar */}
-      <div className="flex items-center justify-between border-b border-gray-200 bg-white px-4 py-2">
+      <div className="flex items-center justify-between border-b border-slate-200 bg-white px-4 py-2">
         <div className="flex items-center gap-3">
           <Link href={`/${locale}/panel/pages`}>
             <Button variant="ghost" size="sm">
@@ -146,7 +146,7 @@ export default function FooterEditorPage({
           )}
         </div>
         <div className="flex items-center gap-2">
-          <div className="flex items-center rounded-lg border border-gray-200 p-0.5">
+          <div className="flex items-center rounded-lg border border-slate-200 p-0.5">
             <Button
               variant={devicePreview === 'desktop' ? 'default' : 'ghost'}
               size="sm"

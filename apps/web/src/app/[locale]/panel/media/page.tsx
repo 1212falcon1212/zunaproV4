@@ -67,8 +67,8 @@ export default function MediaPage({
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">{t('title')}</h1>
-        <p className="mt-1 text-sm text-gray-500">
+        <h1 className="text-2xl font-bold text-slate-900">{t('title')}</h1>
+        <p className="mt-1 text-sm text-slate-500">
           {t('subtitle', { count: meta.total })}
         </p>
       </div>
@@ -76,14 +76,14 @@ export default function MediaPage({
       <UploadZone onUploadComplete={() => fetchMedia(1)} />
 
       {error && (
-        <div className="rounded-lg bg-destructive/10 p-3 text-sm text-destructive">
+        <div className="rounded-lg bg-rose-50 p-3 text-sm text-rose-700">
           {error}
         </div>
       )}
 
       {loading ? (
         <div className="flex items-center justify-center py-12">
-          <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
+          <div className="h-8 w-8 animate-spin rounded-full border-4 border-violet-500 border-t-transparent" />
         </div>
       ) : (
         <MediaGrid items={items} onDelete={handleDelete} />
@@ -99,7 +99,7 @@ export default function MediaPage({
           >
             {t('prev')}
           </Button>
-          <span className="text-sm text-gray-500">
+          <span className="text-sm text-slate-500">
             {meta.page} / {meta.totalPages}
           </span>
           <Button

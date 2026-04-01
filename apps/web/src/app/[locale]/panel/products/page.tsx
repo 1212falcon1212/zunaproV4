@@ -149,8 +149,8 @@ export default function ProductListPage({
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
         </svg>
       ),
-      bgColor: 'bg-gray-50',
-      textColor: 'text-gray-600',
+      bgColor: 'bg-slate-50',
+      textColor: 'text-slate-600',
     },
   ];
 
@@ -159,10 +159,10 @@ export default function ProductListPage({
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-foreground">
+          <h1 className="text-2xl font-bold tracking-tight text-slate-900">
             {t('title')}
           </h1>
-          <p className="mt-1 text-sm text-muted-foreground">
+          <p className="mt-1 text-sm text-slate-500">
             {t('subtitle', { count: meta.total })}
           </p>
         </div>
@@ -195,8 +195,8 @@ export default function ProductListPage({
                 {stat.icon}
               </div>
               <div>
-                <p className="text-sm font-medium text-muted-foreground">{stat.label}</p>
-                <p className="text-2xl font-bold text-foreground">{stat.value}</p>
+                <p className="text-sm font-medium text-slate-500">{stat.label}</p>
+                <p className="text-2xl font-bold text-slate-900">{stat.value}</p>
               </div>
             </CardContent>
           </Card>
@@ -213,7 +213,7 @@ export default function ProductListPage({
 
       {/* Error */}
       {error && (
-        <div className="rounded-lg bg-destructive/10 p-3 text-sm text-destructive">
+        <div className="rounded-lg bg-rose-50 p-3 text-sm text-rose-700">
           {error}
         </div>
       )}
@@ -223,7 +223,7 @@ export default function ProductListPage({
         <CardContent className="p-0">
           {loading ? (
             <div className="flex items-center justify-center py-16">
-              <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
+              <div className="h-8 w-8 animate-spin rounded-full border-4 border-violet-500 border-t-transparent" />
             </div>
           ) : (
             <ProductTable
@@ -247,7 +247,7 @@ export default function ProductListPage({
           >
             {t('prev')}
           </Button>
-          <span className="text-sm text-muted-foreground">
+          <span className="text-sm text-slate-500">
             {meta.page} / {meta.totalPages}
           </span>
           <Button

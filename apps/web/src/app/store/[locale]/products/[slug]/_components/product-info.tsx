@@ -2,6 +2,7 @@
 
 import { useTranslations } from 'next-intl';
 import { useCurrency } from '../../../_components/hooks/use-currency';
+import type { ProductVariantDisplay } from './variant-selector';
 
 interface ProductInfoProps {
   product: {
@@ -13,18 +14,27 @@ interface ProductInfoProps {
     stock: number;
   };
   locale: string;
+  selectedVariant?: ProductVariantDisplay | null;
 }
 
-export function ProductInfo({ product, locale }: ProductInfoProps) {
+export function ProductInfo({ product, locale, selectedVariant }: ProductInfoProps) {
   const t = useTranslations('storefront');
   const { formatPrice } = useCurrency();
 
   const name = product.name[locale] ?? product.name.en ?? '';
   const description = product.description?.[locale] ?? product.description?.en ?? '';
-  const price = Number(product.price);
-  const compareAt = product.compareAtPrice ? Number(product.compareAtPrice) : null;
-  const hasDiscount = compareAt && compareAt > price;
-  const inStock = product.stock > 0;
+
+  // Use variant price/stock when a variant is selected
+  const price = selectedVariant ? selectedVariant.price : Number(product.price);
+  const compareAt = selectedVariant?.listPrice
+    ? selectedVariant.listPrice
+    : product.compareAtPrice
+      ? Number(product.compareAtPrice)
+      : null;
+  const hasDiscount = compareAt !== null && compareAt > price;
+  const stock = selectedVariant ? selectedVariant.stock : product.stock;
+  const inStock = stock > 0;
+  const displaySku = selectedVariant?.sku ?? product.sku;
 
   return (
     <div>
@@ -38,7 +48,7 @@ export function ProductInfo({ product, locale }: ProductInfoProps) {
       {/* Price */}
       <div className="mt-4 flex items-baseline gap-3">
         <span className="text-3xl font-bold text-[var(--color-foreground)]">{formatPrice(price)}</span>
-        {hasDiscount && (
+        {hasDiscount && compareAt !== null && (
           <>
             <span className="text-lg text-[var(--color-secondary)] line-through">{formatPrice(compareAt)}</span>
             <span className="rounded-full bg-red-100 px-2 py-0.5 text-xs font-semibold text-red-700">
@@ -64,9 +74,9 @@ export function ProductInfo({ product, locale }: ProductInfoProps) {
       </div>
 
       {/* SKU */}
-      {product.sku && (
+      {displaySku && (
         <p className="mt-2 text-sm text-[var(--color-secondary)]">
-          SKU: {product.sku}
+          SKU: {displaySku}
         </p>
       )}
 

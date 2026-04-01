@@ -20,8 +20,10 @@ export interface CartItem {
   price: number;
   quantity: number;
   image?: string;
-  variantIndex?: number;
+  variantId?: string;
   variantName?: string;
+  /** @deprecated Use variantId instead */
+  variantIndex?: number;
 }
 
 export interface Cart {

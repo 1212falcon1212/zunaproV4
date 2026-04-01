@@ -113,6 +113,21 @@ export class StorefrontService {
       where: { slug },
       include: {
         category: { select: { id: true, name: true, slug: true } },
+        productVariants: {
+          where: { isActive: true },
+          orderBy: { sortOrder: 'asc' },
+          include: {
+            optionValues: {
+              include: {
+                variantOption: {
+                  include: {
+                    variantType: true,
+                  },
+                },
+              },
+            },
+          },
+        },
       },
     });
 
@@ -120,7 +135,30 @@ export class StorefrontService {
       throw new NotFoundException('Product not found');
     }
 
-    return product;
+    return {
+      ...product,
+      productVariants: product.productVariants.map((v) => ({
+        id: v.id,
+        sku: v.sku,
+        barcode: v.barcode,
+        price: Number(v.price),
+        listPrice: v.listPrice ? Number(v.listPrice) : null,
+        stock: v.stock,
+        images: v.images as string[],
+        isActive: v.isActive,
+        optionValues: v.optionValues.map((ov) => ({
+          variantOption: {
+            slug: ov.variantOption.slug,
+            name: ov.variantOption.name as Record<string, string>,
+            colorCode: (ov.variantOption as Record<string, unknown>).colorCode as string | undefined,
+            variantType: {
+              slug: ov.variantOption.variantType.slug,
+              name: ov.variantOption.variantType.name as Record<string, string>,
+            },
+          },
+        })),
+      })),
+    };
   }
 
   async getThemeConfig(tenantSlug: string): Promise<ThemeConfig> {

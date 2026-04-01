@@ -24,15 +24,20 @@ model Product {
   weight         Decimal? @db.Decimal(10, 2)
   stock          Int      @default(0)
   images         Json     @default("[]") // string[] as JSONB
-  variants       Json     @default("[]") // ProductVariant[] as JSONB
+  variants       Json     @default("[]") // Legacy: eski JSON varyantlar (migrasyon sonrası boş kalacak)
   categoryId     String?  @map("category_id")
-  seoMeta        Json?    @map("seo_meta") // {"en": {title, description}, "tr": {title, description}}
+  brand          String?  // Marka adı
+  vatRate        Int      @default(20) @map("vat_rate") // KDV oranı
+  productMainId  String?  @map("product_main_id") // Varyant grup ID (TY: productMainId, HB: variantGroupId)
+  seoMeta        Json?    @map("seo_meta")
   status         String   @default("draft") // 'draft' | 'active' | 'archived'
   isFeatured     Boolean  @default(false) @map("is_featured")
   createdAt      DateTime @default(now()) @map("created_at")
   updatedAt      DateTime @updatedAt @map("updated_at")
 
   category              Category?                      @relation(fields: [categoryId], references: [id])
+  productVariants       ProductVariant[]
+  productAttributes     ProductAttribute[]
   marketplaceListings   MarketplaceListing[]
   marketplaceAttributes ProductMarketplaceAttribute[]
 
@@ -280,4 +285,79 @@ model ProductMarketplaceAttribute {
 
   @@unique([productId, marketplace, attributeId, variantIndex])
   @@map("product_marketplace_attributes")
+}
+
+// ==================== Variant System (WooCommerce-style) ====================
+
+model ProductVariant {
+  id        String   @id @default(uuid())
+  productId String   @map("product_id")
+  sku       String?
+  barcode   String?
+  price     Decimal  @db.Decimal(10, 2)
+  listPrice Decimal? @map("list_price") @db.Decimal(10, 2)
+  stock     Int      @default(0)
+  weight    Decimal? @db.Decimal(10, 2)
+  images    Json     @default("[]") // string[] — variant-specific images
+  isActive  Boolean  @default(true) @map("is_active")
+  sortOrder Int      @default(0) @map("sort_order")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  product      Product                      @relation(fields: [productId], references: [id], onDelete: Cascade)
+  optionValues ProductVariantOptionValue[]
+
+  @@map("product_variants")
+}
+
+model VariantType {
+  id        String @id @default(uuid())
+  name      Json   // {"en": "Color", "tr": "Renk"}
+  slug      String @unique // "color", "size", "material"
+  sortOrder Int    @default(0) @map("sort_order")
+
+  options VariantOption[]
+
+  @@map("variant_types")
+}
+
+model VariantOption {
+  id            String  @id @default(uuid())
+  variantTypeId String  @map("variant_type_id")
+  name          Json    // {"en": "Red", "tr": "Kırmızı"}
+  slug          String  // "red", "xl"
+  colorCode     String? @map("color_code") // #FF0000 (for color types)
+  sortOrder     Int     @default(0) @map("sort_order")
+
+  variantType   VariantType                  @relation(fields: [variantTypeId], references: [id], onDelete: Cascade)
+  variantValues ProductVariantOptionValue[]
+
+  @@unique([variantTypeId, slug])
+  @@map("variant_options")
+}
+
+model ProductVariantOptionValue {
+  id               String @id @default(uuid())
+  productVariantId String @map("product_variant_id")
+  variantOptionId  String @map("variant_option_id")
+
+  productVariant ProductVariant @relation(fields: [productVariantId], references: [id], onDelete: Cascade)
+  variantOption  VariantOption  @relation(fields: [variantOptionId], references: [id], onDelete: Cascade)
+
+  @@unique([productVariantId, variantOptionId])
+  @@map("product_variant_option_values")
+}
+
+// ==================== Product Attributes (Trendyol-style) ====================
+
+model ProductAttribute {
+  id        String @id @default(uuid())
+  productId String @map("product_id")
+  name      String // "Kumaş Tipi", "Menşei", "Paket İçeriği"
+  value     String // "Pamuk", "TR", "10 Adet"
+
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([productId, name])
+  @@map("product_attributes")
 }

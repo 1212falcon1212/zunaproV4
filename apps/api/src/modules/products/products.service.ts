@@ -9,6 +9,7 @@ import { getTenantClient, masterPrisma } from '@zunapro/db';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { SearchService } from '../search/search.service';
+import type { ProductVariantDto, ProductAttributeDto } from './dto/create-product.dto';
 
 interface FindAllOptions {
   page?: number;
@@ -17,6 +18,27 @@ interface FindAllOptions {
   categoryId?: string;
   search?: string;
 }
+
+const PRODUCT_INCLUDE = {
+  category: { select: { id: true, name: true, slug: true } },
+  productVariants: {
+    orderBy: { sortOrder: 'asc' as const },
+    include: {
+      optionValues: {
+        include: {
+          variantOption: {
+            include: {
+              variantType: true,
+            },
+          },
+        },
+      },
+    },
+  },
+  productAttributes: {
+    orderBy: { name: 'asc' as const },
+  },
+};
 
 @Injectable()
 export class ProductsService {
@@ -53,7 +75,7 @@ export class ProductsService {
         skip,
         take: limit,
         orderBy: { createdAt: 'desc' },
-        include: { category: { select: { id: true, name: true, slug: true } } },
+        include: PRODUCT_INCLUDE,
       }),
       prisma.product.count({ where }),
     ]);
@@ -74,7 +96,7 @@ export class ProductsService {
 
     const product = await prisma.product.findUnique({
       where: { id },
-      include: { category: { select: { id: true, name: true, slug: true } } },
+      include: PRODUCT_INCLUDE,
     });
 
     if (!product) {
@@ -115,15 +137,34 @@ export class ProductsService {
         images: (dto.images ?? []) as string[],
         variants: (dto.variants ?? []) as object[],
         categoryId: dto.categoryId,
+        brand: dto.brand ?? null,
+        vatRate: dto.vatRate ?? 20,
+        productMainId: dto.productMainId ?? null,
         seoMeta: (dto.seoMeta as object) ?? undefined,
         status: dto.status ?? 'draft',
       },
-      include: { category: { select: { id: true, name: true, slug: true } } },
+      include: PRODUCT_INCLUDE,
     });
 
+    if (dto.productVariants?.length) {
+      await this.createVariants(prisma, product.id, dto.productVariants);
+    }
+
+    if (dto.attributes?.length) {
+      await this.createAttributes(prisma, product.id, dto.attributes);
+    }
+
+    const result =
+      dto.productVariants?.length || dto.attributes?.length
+        ? await prisma.product.findUnique({
+            where: { id: product.id },
+            include: PRODUCT_INCLUDE,
+          })
+        : product;
+
     this.logger.log(`Product created: ${slug} (tenant: ${tenantSlug})`);
-    this.searchService.syncProduct(tenantSlug, product);
-    return product;
+    if (result) this.searchService.syncProduct(tenantSlug, result);
+    return result;
   }
 
   async update(tenantSlug: string, id: string, dto: UpdateProductDto) {
@@ -169,17 +210,44 @@ export class ProductsService {
         ? { connect: { id: dto.categoryId } }
         : { disconnect: true };
     }
+    if (dto.brand !== undefined) data.brand = dto.brand;
+    if (dto.vatRate !== undefined) data.vatRate = dto.vatRate;
+    if (dto.productMainId !== undefined) data.productMainId = dto.productMainId;
     if (dto.seoMeta !== undefined) data.seoMeta = dto.seoMeta as object;
     if (dto.status) data.status = dto.status;
+    if (dto.isFeatured !== undefined) data.isFeatured = dto.isFeatured;
 
-    const updated = await prisma.product.update({
+    await prisma.product.update({
       where: { id },
       data: data as Parameters<typeof prisma.product.update>[0]['data'],
-      include: { category: { select: { id: true, name: true, slug: true } } },
     });
 
-    this.logger.log(`Product updated: ${updated.slug} (tenant: ${tenantSlug})`);
-    this.searchService.syncProduct(tenantSlug, updated);
+    if (dto.productVariants !== undefined) {
+      await prisma.productVariantOptionValue.deleteMany({
+        where: { productVariant: { productId: id } },
+      });
+      await prisma.productVariant.deleteMany({ where: { productId: id } });
+
+      if (dto.productVariants.length) {
+        await this.createVariants(prisma, id, dto.productVariants);
+      }
+    }
+
+    if (dto.attributes !== undefined) {
+      await prisma.productAttribute.deleteMany({ where: { productId: id } });
+
+      if (dto.attributes.length) {
+        await this.createAttributes(prisma, id, dto.attributes);
+      }
+    }
+
+    const updated = await prisma.product.findUnique({
+      where: { id },
+      include: PRODUCT_INCLUDE,
+    });
+
+    this.logger.log(`Product updated: ${updated!.slug} (tenant: ${tenantSlug})`);
+    if (updated) this.searchService.syncProduct(tenantSlug, updated);
     return updated;
   }
 
@@ -199,6 +267,61 @@ export class ProductsService {
     this.logger.log(`Product deleted: ${product.slug} (tenant: ${tenantSlug})`);
     this.searchService.removeProduct(tenantSlug, id);
     return { deleted: true, id };
+  }
+
+  async addAttribute(
+    tenantSlug: string,
+    productId: string,
+    data: { name: string; value: string },
+  ) {
+    const prisma = getTenantClient(tenantSlug);
+
+    const product = await prisma.product.findUnique({
+      where: { id: productId },
+    });
+    if (!product) {
+      throw new NotFoundException(`Product with ID ${productId} not found`);
+    }
+
+    const attribute = await prisma.productAttribute.upsert({
+      where: { productId_name: { productId, name: data.name } },
+      update: { value: data.value },
+      create: { productId, name: data.name, value: data.value },
+    });
+
+    this.logger.log(
+      `Attribute '${data.name}' added to product ${productId} (tenant: ${tenantSlug})`,
+    );
+    return attribute;
+  }
+
+  async removeAttribute(tenantSlug: string, productId: string, name: string) {
+    const prisma = getTenantClient(tenantSlug);
+
+    const product = await prisma.product.findUnique({
+      where: { id: productId },
+    });
+    if (!product) {
+      throw new NotFoundException(`Product with ID ${productId} not found`);
+    }
+
+    const attribute = await prisma.productAttribute.findUnique({
+      where: { productId_name: { productId, name } },
+    });
+    if (!attribute) {
+      throw new NotFoundException(
+        `Attribute '${name}' not found on product ${productId}`,
+      );
+    }
+
+    await prisma.productAttribute.delete({
+      where: { productId_name: { productId, name } },
+    });
+
+    this.logger.log(
+      `Attribute '${name}' removed from product ${productId} (tenant: ${tenantSlug})`,
+    );
+    return { deleted: true, productId, name };
   }
 
   async bulkImport(
@@ -238,10 +361,22 @@ export class ProductsService {
           images: (dto.images ?? []) as string[],
           variants: (dto.variants ?? []) as object[],
           categoryId: dto.categoryId,
+          brand: dto.brand ?? null,
+          vatRate: dto.vatRate ?? 20,
+          productMainId: dto.productMainId ?? null,
           seoMeta: (dto.seoMeta as object) ?? undefined,
           status: dto.status ?? 'draft',
         },
       });
+
+      if (dto.productVariants?.length) {
+        await this.createVariants(prisma, product.id, dto.productVariants);
+      }
+
+      if (dto.attributes?.length) {
+        await this.createAttributes(prisma, product.id, dto.attributes);
+      }
+
       results.push(product);
     }
 
@@ -255,7 +390,9 @@ export class ProductsService {
     const prisma = getTenantClient(tenantSlug);
 
     const products = await prisma.product.findMany({
-      include: { category: { select: { name: true, slug: true } } },
+      include: {
+        ...PRODUCT_INCLUDE,
+      },
       orderBy: { createdAt: 'desc' },
     });
 
@@ -266,13 +403,105 @@ export class ProductsService {
       price: Number(p.price),
       compareAtPrice: p.compareAtPrice ? Number(p.compareAtPrice) : null,
       sku: p.sku,
+      brand: p.brand,
+      vatRate: p.vatRate,
+      productMainId: p.productMainId,
       stock: p.stock,
       images: p.images,
       variants: p.variants,
       categorySlug: p.category?.slug ?? null,
       status: p.status,
+      productVariants: p.productVariants.map((v) => ({
+        sku: v.sku,
+        barcode: v.barcode,
+        price: Number(v.price),
+        listPrice: v.listPrice ? Number(v.listPrice) : null,
+        stock: v.stock,
+        weight: v.weight ? Number(v.weight) : null,
+        images: v.images,
+        isActive: v.isActive,
+        options: v.optionValues.map((ov) => ({
+          variantTypeSlug: ov.variantOption.variantType.slug,
+          variantOptionSlug: ov.variantOption.slug,
+        })),
+      })),
+      productAttributes: p.productAttributes.map((a) => ({
+        name: a.name,
+        value: a.value,
+      })),
       createdAt: p.createdAt,
     }));
+  }
+
+  private async createVariants(
+    prisma: ReturnType<typeof getTenantClient>,
+    productId: string,
+    variants: ProductVariantDto[],
+  ) {
+    for (let i = 0; i < variants.length; i++) {
+      const v = variants[i];
+
+      const productVariant = await prisma.productVariant.create({
+        data: {
+          productId,
+          sku: v.sku ?? null,
+          barcode: v.barcode ?? null,
+          price: v.price,
+          listPrice: v.listPrice ?? null,
+          stock: v.stock ?? 0,
+          weight: v.weight ?? null,
+          images: (v.images ?? []) as string[],
+          isActive: v.isActive ?? true,
+          sortOrder: i,
+        },
+      });
+
+      for (const optRef of v.options) {
+        const variantType = await prisma.variantType.findUnique({
+          where: { slug: optRef.variantTypeSlug },
+        });
+        if (!variantType) {
+          throw new BadRequestException(
+            `VariantType with slug '${optRef.variantTypeSlug}' not found`,
+          );
+        }
+
+        const variantOption = await prisma.variantOption.findUnique({
+          where: {
+            variantTypeId_slug: {
+              variantTypeId: variantType.id,
+              slug: optRef.variantOptionSlug,
+            },
+          },
+        });
+        if (!variantOption) {
+          throw new BadRequestException(
+            `VariantOption with slug '${optRef.variantOptionSlug}' not found for type '${optRef.variantTypeSlug}'`,
+          );
+        }
+
+        await prisma.productVariantOptionValue.create({
+          data: {
+            productVariantId: productVariant.id,
+            variantOptionId: variantOption.id,
+          },
+        });
+      }
+    }
+  }
+
+  private async createAttributes(
+    prisma: ReturnType<typeof getTenantClient>,
+    productId: string,
+    attributes: ProductAttributeDto[],
+  ) {
+    for (const attr of attributes) {
+      await prisma.productAttribute.upsert({
+        where: { productId_name: { productId, name: attr.name } },
+        update: { value: attr.value },
+        create: { productId, name: attr.name, value: attr.value },
+      });
+    }
   }
 
   private async checkProductLimit(

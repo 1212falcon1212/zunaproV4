@@ -99,4 +99,28 @@ export class ProductsController {
   remove(@Req() req: Request, @Param('id') id: string) {
     return this.productsService.remove(req.tenant!.slug, id);
   }
+
+  @Post(':id/attributes')
+  @RequireRoles('owner', 'admin', 'editor')
+  addAttribute(
+    @Req() req: Request,
+    @Param('id') productId: string,
+    @Body() body: { name: string; value: string },
+  ) {
+    return this.productsService.addAttribute(req.tenant!.slug, productId, body);
+  }
+
+  @Delete(':id/attributes/:name')
+  @RequireRoles('owner', 'admin', 'editor')
+  removeAttribute(
+    @Req() req: Request,
+    @Param('id') productId: string,
+    @Param('name') name: string,
+  ) {
+    return this.productsService.removeAttribute(
+      req.tenant!.slug,
+      productId,
+      name,
+    );
+  }
 }

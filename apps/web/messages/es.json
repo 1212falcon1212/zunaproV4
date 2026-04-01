@@ -769,7 +769,9 @@
       "outOfStock": "Agotado",
       "inStock": "En stock",
       "added": "Anadido!",
-      "variants": "Opciones"
+      "variants": "Opciones",
+      "selectVariant": "Seleccionar opciones",
+      "onlyLeft": "Solo quedan {count}"
     },
     "storeSetup": "Tienda en preparacion",
     "storeSetupDescription": "Su tienda se esta preparando. Por favor, vuelva a consultar en breve.",

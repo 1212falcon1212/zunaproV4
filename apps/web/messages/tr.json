@@ -683,7 +683,9 @@
       "outOfStock": "Stokta Yok",
       "inStock": "Stokta Var",
       "added": "Eklendi!",
-      "variants": "Secenekler"
+      "variants": "Secenekler",
+      "selectVariant": "Secenek secin",
+      "onlyLeft": "Sadece {count} adet kaldi"
     },
     "storeSetup": "Magaza hazirlaniyor",
     "storeSetupDescription": "Magazaniz hazirlaniyor. Lutfen kisa bir sure sonra tekrar kontrol edin.",
