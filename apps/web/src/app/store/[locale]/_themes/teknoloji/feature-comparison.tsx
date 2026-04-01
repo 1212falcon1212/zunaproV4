@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { storeApi } from '@/lib/store-api';
+import { useCurrency } from '../../_components/hooks/use-currency';
 
 interface Product {
   id: string;
@@ -23,6 +24,7 @@ interface FeatureComparisonProps {
 
 export function FeatureComparison({ locale }: FeatureComparisonProps) {
   const t = useTranslations('storefront.themes.teknoloji');
+  const { formatPrice } = useCurrency();
   const [products, setProducts] = useState<Product[]>([]);
   const [selected, setSelected] = useState<string[]>([]);
 
@@ -103,7 +105,7 @@ export function FeatureComparison({ locale }: FeatureComparisonProps) {
                 </td>
                 {selectedProducts.map((p) => (
                   <td key={p.id} className="border-b border-[var(--color-border)] p-3 text-center text-sm font-bold text-[var(--color-foreground)]">
-                    ${Number(p.price).toFixed(2)}
+                    {formatPrice(p.price)}
                   </td>
                 ))}
               </tr>

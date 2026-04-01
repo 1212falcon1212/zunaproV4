@@ -21,13 +21,17 @@ export function NewsletterBlock({ block, locale }: NewsletterProps) {
   const [email, setEmail] = useState('');
   const [submitted, setSubmitted] = useState(false);
 
-  const title = props.title?.[locale] ?? props.title?.en ?? '';
+  const getStr = (val: Record<string, string> | string | undefined, fallback: string) => {
+    if (!val) return fallback;
+    if (typeof val === 'string') return val;
+    return val[locale] ?? val['en'] ?? fallback;
+  };
+
+  const title = getStr(props.title as any, '');
   const desc = props.description || props.subtitle;
-  const subtitle = desc?.[locale] ?? desc?.en ?? '';
-  const placeholder =
-    props.placeholder?.[locale] ?? props.placeholder?.en ?? 'Enter your email';
-  const buttonText =
-    props.buttonText?.[locale] ?? props.buttonText?.en ?? 'Subscribe';
+  const subtitle = getStr(desc as any, '');
+  const placeholder = getStr(props.placeholder as any, 'E-posta adresinizi girin');
+  const buttonText = getStr(props.buttonText as any, 'Abone Ol');
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -59,7 +63,7 @@ export function NewsletterBlock({ block, locale }: NewsletterProps) {
         )}
         {submitted ? (
           <p className="mt-4 text-sm font-medium text-green-600">
-            Thank you for subscribing!
+            Abone olduğunuz için teşekkürler!
           </p>
         ) : (
           <form

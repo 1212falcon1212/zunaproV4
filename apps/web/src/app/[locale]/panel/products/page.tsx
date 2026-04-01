@@ -85,6 +85,28 @@ export default function ProductListPage({
     }
   };
 
+  const handleBulkDelete = async (ids: string[]) => {
+    if (ids.length === 0) return;
+    const ok = confirm(`${ids.length} urunu silmek istediginize emin misiniz?`);
+    if (!ok) return;
+    setLoading(true);
+    setError('');
+    let deleted = 0;
+    for (const id of ids) {
+      try {
+        await panelApi.delete(`/products/${id}`);
+        deleted++;
+      } catch {
+        // continue with others
+      }
+    }
+    setLoading(false);
+    if (deleted > 0) fetchProducts(meta.page);
+    if (deleted < ids.length) {
+      setError(`${ids.length - deleted} urun silinemedi`);
+    }
+  };
+
   const statCards = [
     {
       label: t('stats.total'),
@@ -208,6 +230,7 @@ export default function ProductListPage({
               products={products}
               locale={locale}
               onDelete={handleDelete}
+              onBulkDelete={handleBulkDelete}
             />
           )}
         </CardContent>

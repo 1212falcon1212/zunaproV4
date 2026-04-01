@@ -22,6 +22,7 @@ interface ProductTableProps {
   products: Product[];
   locale: string;
   onDelete: (id: string) => void;
+  onBulkDelete?: (ids: string[]) => void;
 }
 
 function StatusBadge({ status, label }: { status: string; label: string }) {
@@ -41,7 +42,7 @@ function StatusBadge({ status, label }: { status: string; label: string }) {
   );
 }
 
-export function ProductTable({ products, locale, onDelete }: ProductTableProps) {
+export function ProductTable({ products, locale, onDelete, onBulkDelete }: ProductTableProps) {
   const t = useTranslations('panel.products');
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
 
@@ -79,7 +80,39 @@ export function ProductTable({ products, locale, onDelete }: ProductTableProps) 
   }
 
   return (
-    <div className="overflow-x-auto">
+    <div>
+      {/* Bulk action bar */}
+      {selectedIds.size > 0 && (
+        <div className="flex items-center gap-3 border-b border-slate-200 bg-violet-50 px-4 py-2.5">
+          <span className="text-xs font-medium text-violet-700">
+            {selectedIds.size} urun secili
+          </span>
+          {onBulkDelete ? (
+            <button
+              type="button"
+              onClick={() => {
+                const ids = Array.from(selectedIds);
+                if (ids.length === 0) return;
+                onBulkDelete(ids);
+              }}
+              className="inline-flex h-7 items-center rounded-md border border-rose-200 bg-white px-3 text-xs font-medium text-rose-600 transition-colors hover:bg-rose-50 hover:text-rose-700"
+            >
+              <svg className="mr-1.5 h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+              </svg>
+              Secilenleri Sil ({selectedIds.size})
+            </button>
+          ) : null}
+          <button
+            onClick={() => setSelectedIds(new Set())}
+            className="text-xs text-violet-500 hover:text-violet-700"
+          >
+            Secimi Temizle
+          </button>
+        </div>
+      )}
+
+      <div className="overflow-x-auto">
       <table className="w-full text-sm">
         <thead>
           <tr className="border-b bg-muted/50 text-left">
@@ -180,11 +213,11 @@ export function ProductTable({ products, locale, onDelete }: ProductTableProps) 
                 </td>
                 <td className="px-4 py-3">
                   <div className="font-semibold text-foreground">
-                    ${price.toFixed(2)}
+                    {new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY' }).format(price)}
                   </div>
                   {compareAtPrice !== null && compareAtPrice > 0 && (
                     <div className="mt-0.5 text-xs text-muted-foreground line-through">
-                      ${compareAtPrice.toFixed(2)}
+                      {new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY' }).format(compareAtPrice)}
                     </div>
                   )}
                 </td>
@@ -232,6 +265,7 @@ export function ProductTable({ products, locale, onDelete }: ProductTableProps) 
           })}
         </tbody>
       </table>
+      </div>
     </div>
   );
 }

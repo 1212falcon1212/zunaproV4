@@ -1,0 +1,168 @@
+{
+  "version": 1,
+  "blocks": [
+    {
+      "id": "promo-banner-1",
+      "type": "promo-banner",
+      "props": {
+        "text": "Limited time offer - 59% discount for all items",
+        "backgroundColor": "#FF6B35",
+        "textColor": "#FFFFFF",
+        "scrolling": true
+      }
+    },
+    {
+      "id": "hero-slider-1",
+      "type": "hero-slider",
+      "props": {
+        "autoplay": true,
+        "interval": 5000,
+        "slides": [
+          {
+            "badge": "59% discount for all items",
+            "title": "Electric charging smart tea maker",
+            "description": "Sell globally in minutes with localized currencies, languages, and experiences in every market.",
+            "image": "https://images.unsplash.com/photo-1585515320310-259814833e62?w=800&h=800&fit=crop",
+            "primaryButtonText": "Shop Now",
+            "secondaryButtonText": "Learn More"
+          },
+          {
+            "badge": "New Arrival",
+            "title": "Premium Wireless Headphones",
+            "description": "Experience crystal clear sound with our latest noise-cancelling technology.",
+            "image": "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=800&h=800&fit=crop",
+            "primaryButtonText": "Discover",
+            "secondaryButtonText": "View Details"
+          }
+        ]
+      }
+    },
+    {
+      "id": "featured-products-1",
+      "type": "featured-products",
+      "props": {
+        "title": "Featured Products",
+        "subtitle": "Our Featured Products",
+        "columns": 4,
+        "products": [
+          {
+            "name": "Apple Macbook Mini",
+            "price": "20.00",
+            "oldPrice": "50.69",
+            "badge": "10% OFF",
+            "image": "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=400&h=400&fit=crop"
+          },
+          {
+            "name": "Apple Watch xMini",
+            "price": "20.00",
+            "oldPrice": "50.69",
+            "badge": "5$ Discount",
+            "image": "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400&h=400&fit=crop"
+          },
+          {
+            "name": "Apple i16x",
+            "price": "192.00",
+            "oldPrice": "200.00",
+            "badge": "43% OFF",
+            "image": "https://images.unsplash.com/photo-1510557880182-3d4d3cba35a5?w=400&h=400&fit=crop"
+          },
+          {
+            "name": "JBL sound system",
+            "price": "33.00",
+            "oldPrice": "35.00",
+            "badge": "Free Shipping",
+            "image": "https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?w=400&h=400&fit=crop"
+          },
+          {
+            "name": "iPhone 16 Max",
+            "price": "500.00",
+            "oldPrice": "501.00",
+            "image": "https://images.unsplash.com/photo-1592286927505-b0c2966e34f3?w=400&h=400&fit=crop"
+          },
+          {
+            "name": "Canon Camera 40D",
+            "price": "430.00",
+            "oldPrice": "500.00",
+            "badge": "10% OFF",
+            "image": "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=400&h=400&fit=crop"
+          },
+          {
+            "name": "Apple Watch Mini",
+            "price": "10.00",
+            "oldPrice": "12.00",
+            "badge": "10% OFF",
+            "image": "https://images.unsplash.com/photo-1579586337278-3befd40fd17a?w=400&h=400&fit=crop"
+          },
+          {
+            "name": "Smart Headphone",
+            "price": "32.00",
+            "oldPrice": "30.00",
+            "badge": "10% OFF",
+            "image": "https://images.unsplash.com/photo-1484704849700-f032a568e944?w=400&h=400&fit=crop"
+          }
+        ]
+      }
+    },
+    {
+      "id": "banner-grid-1",
+      "type": "banner-grid",
+      "props": {
+        "banners": [
+          {
+            "title": "See The Works Like Slide",
+            "subtitle": "get 30% off",
+            "buttonText": "Shop Now",
+            "image": "https://images.unsplash.com/photo-1473496169904-658ba7c44d8a?w=600&h=400&fit=crop",
+            "backgroundColor": "#FF6B35"
+          },
+          {
+            "title": "New Power Double",
+            "subtitle": "get 30% off",
+            "buttonText": "Discover",
+            "image": "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=600&h=400&fit=crop",
+            "backgroundColor": "#4ECDC4"
+          }
+        ]
+      }
+    },
+    {
+      "id": "testimonial-slider-1",
+      "type": "testimonial-slider",
+      "props": {
+        "title": "Testimonial",
+        "subtitle": "What our client say",
+        "testimonials": [
+          {
+            "text": "One of the most powerful takeaways from this book is the emphasis on adopting a mindset of abundance and possibility. The idea that we can choose to see opportunities rather than limitations is a game-changer.",
+            "name": "Ronald Richards",
+            "role": "Marketing Coordinator",
+            "avatar": "https://i.pravatar.cc/150?img=12"
+          },
+          {
+            "text": "The idea that we can choose to see opportunities rather than limitations is a game-changer. The book encourages readers to step out of their comfort zones and embrace a more positive outlook on life.",
+            "name": "Dianne Russell",
+            "role": "Project Manager",
+            "avatar": "https://i.pravatar.cc/150?img=5"
+          },
+          {
+            "text": "The Art of Possibility by Rosamund Stone Zander and Benjamin Zander is a transformative read that challenges conventional thinking and opens up new possibilities. As a reader, I found myself profoundly inspired.",
+            "name": "Ronald Richards",
+            "role": "Marketing Coordinator",
+            "avatar": "https://i.pravatar.cc/150?img=8"
+          }
+        ]
+      }
+    },
+    {
+      "id": "newsletter-1",
+      "type": "newsletter",
+      "props": {
+        "title": "Subscribe to Our Newsletter",
+        "description": "Subscribe to our newsletter and Save your 20% money with discount code today.",
+        "placeholder": "Enter your email",
+        "buttonText": "Subscribe",
+        "backgroundColor": "#F8F9FA"
+      }
+    }
+  ]
+}

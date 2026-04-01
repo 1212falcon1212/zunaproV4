@@ -1,0 +1,327 @@
+{
+  "version": 1,
+  "blocks": [
+    {
+      "id": "hero-slider-1",
+      "type": "hero-slider",
+      "props": {
+        "autoplay": true,
+        "interval": 5000,
+        "slides": [
+          {
+            "badge": "Yeni Ürün",
+            "discount": "Tüm ürünlerde %59 indirim",
+            "title": "Elektrikli Akıllı Çay Makinesi",
+            "description": "Yerelleştirilmiş para birimleri, diller ve deneyimlerle dakikalar içinde küresel olarak satış yapın.",
+            "image": "https://images.unsplash.com/photo-1585515320310-259814833e62?w=800&h=800&fit=crop",
+            "primaryButtonText": "Sepete Ekle",
+            "secondaryButtonText": "Şimdi İncele",
+            "price": "₺125.75"
+          },
+          {
+            "badge": "Çok Satan",
+            "discount": "%30 indirim fırsatı",
+            "title": "Minimalist ve Güçlü",
+            "description": "En son teknoloji ürünlerini keşfedin. Kaliteli ve uygun fiyatlı seçenekler sizi bekliyor.",
+            "image": "https://images.unsplash.com/photo-1546868871-af0de0ae72be?w=800&h=800&fit=crop",
+            "primaryButtonText": "Alışverişe Başla",
+            "secondaryButtonText": "Daha Fazla",
+            "price": "₺299.99"
+          }
+        ]
+      }
+    },
+    {
+      "id": "category-showcase-1",
+      "type": "category-showcase",
+      "props": {
+        "title": { "tr": "", "en": "" },
+        "layout": "carousel",
+        "featuredOnly": true,
+        "limit": 8
+      }
+    },
+    {
+      "id": "featured-products-1",
+      "type": "featured-products",
+      "props": {
+        "title": "ÖNE ÇIKAN ÜRÜNLER",
+        "subtitle": "Öne Çıkan Ürünlerimiz",
+        "columns": 4,
+        "tabs": ["Tümü", "Elektronik", "Bilgisayar", "Saat", "Kamera"],
+        "products": [
+          {
+            "name": "Apple Macbook Mini",
+            "price": "20.00",
+            "oldPrice": "50.69",
+            "badge": "%10 İNDİRİM",
+            "image": "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=400&h=400&fit=crop",
+            "category": "Bilgisayar",
+            "rating": 5,
+            "reviews": 12
+          },
+          {
+            "name": "Apple Watch xMini",
+            "price": "20.00",
+            "oldPrice": "50.69",
+            "badge": "₺5 İndirim",
+            "image": "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400&h=400&fit=crop",
+            "category": "Saat",
+            "rating": 4,
+            "reviews": 8
+          },
+          {
+            "name": "Apple i16x",
+            "price": "192.00",
+            "oldPrice": "200.00",
+            "badge": "%43 İNDİRİM",
+            "image": "https://images.unsplash.com/photo-1510557880182-3d4d3cba35a5?w=400&h=400&fit=crop",
+            "category": "Elektronik",
+            "rating": 5,
+            "reviews": 45
+          },
+          {
+            "name": "JBL Ses Sistemi",
+            "price": "33.00",
+            "oldPrice": "35.00",
+            "badge": "Ücretsiz Kargo",
+            "image": "https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?w=400&h=400&fit=crop",
+            "category": "Elektronik",
+            "rating": 4,
+            "reviews": 22
+          },
+          {
+            "name": "iPhone 16 Max",
+            "price": "500.00",
+            "oldPrice": "501.00",
+            "image": "https://images.unsplash.com/photo-1592286927505-b0c2966e34f3?w=400&h=400&fit=crop",
+            "category": "Elektronik",
+            "rating": 5,
+            "reviews": 99
+          },
+          {
+            "name": "Canon Kamera 40D",
+            "price": "430.00",
+            "oldPrice": "500.00",
+            "badge": "%10 İNDİRİM",
+            "image": "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=400&h=400&fit=crop",
+            "category": "Kamera",
+            "rating": 4,
+            "reviews": 29
+          },
+          {
+            "name": "Apple Watch Mini",
+            "price": "10.00",
+            "oldPrice": "12.00",
+            "badge": "%10 İNDİRİM",
+            "image": "https://images.unsplash.com/photo-1579586337278-3befd40fd17a?w=400&h=400&fit=crop",
+            "category": "Saat",
+            "rating": 4,
+            "reviews": 11
+          },
+          {
+            "name": "Akıllı Kulaklık",
+            "price": "32.00",
+            "oldPrice": "30.00",
+            "badge": "%10 İNDİRİM",
+            "image": "https://images.unsplash.com/photo-1484704849700-f032a568e944?w=400&h=400&fit=crop",
+            "category": "Elektronik",
+            "rating": 5,
+            "reviews": 32
+          }
+        ]
+      }
+    },
+    {
+      "id": "promo-banners-1",
+      "type": "promo-banners",
+      "props": {
+        "banners": [
+          {
+            "id": "promo-1",
+            "title": { "tr": "Yeni Güç İkili", "en": "New Power Double" },
+            "subtitle": { "tr": "%30 İNDİRİM", "en": "GET 30% OFF" },
+            "buttonText": { "tr": "Tümünü Gör", "en": "View All" },
+            "buttonLink": "/products",
+            "image": "https://images.unsplash.com/photo-1473496169904-658ba7c44d8a?w=600&h=400&fit=crop",
+            "backgroundColor": "#FF6B35"
+          },
+          {
+            "id": "promo-2",
+            "title": { "tr": "Yeni Güç İkili", "en": "New Power Double" },
+            "subtitle": { "tr": "%30 İNDİRİM", "en": "GET 30% OFF" },
+            "buttonText": { "tr": "Tümünü Gör", "en": "View All" },
+            "buttonLink": "/products",
+            "image": "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=600&h=400&fit=crop",
+            "backgroundColor": "#4ECDC4"
+          }
+        ]
+      }
+    },
+    {
+      "id": "products-of-week-1",
+      "type": "products-of-week",
+      "props": {
+        "sectionTitle": "Sıcak Satış",
+        "sectionSubtitle": "Haftanın Ürünleri",
+        "viewAllText": "Tümünü Gör",
+        "title": "Haftanın Ürünleri",
+        "subtitle": "Sıcak Satış",
+        "buttonText": "Sepete Ekle",
+        "image": "https://images.unsplash.com/photo-1473968512647-3e447244af8f?w=800&h=600&fit=crop",
+        "backgroundColor": "#1a1a2e",
+        "products": [
+          {
+            "name": "Akıllı Saat Serisi 7",
+            "price": "532",
+            "oldPrice": "753",
+            "badge": "-%30",
+            "tag": "Yeni Geliş",
+            "image": "https://images.unsplash.com/photo-1546868871-af0de0ae72be?w=400&h=400&fit=crop"
+          },
+          {
+            "name": "iPhone 16 Pro Max",
+            "price": "532",
+            "oldPrice": "753",
+            "image": "https://images.unsplash.com/photo-1592286927505-b0c2966e34f3?w=400&h=400&fit=crop"
+          },
+          {
+            "name": "Bluetooth Kulaklık",
+            "price": "532",
+            "oldPrice": "753",
+            "badge": "-%20",
+            "image": "https://images.unsplash.com/photo-1484704849700-f032a568e944?w=400&h=400&fit=crop"
+          },
+          {
+            "name": "Akıllı Saat Serisi 7",
+            "price": "532",
+            "oldPrice": "753",
+            "image": "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400&h=400&fit=crop"
+          },
+          {
+            "name": "Kablosuz Şarj Cihazı",
+            "price": "89",
+            "oldPrice": "120",
+            "badge": "-%25",
+            "image": "https://images.unsplash.com/photo-1625948515291-69613efd103f?w=400&h=400&fit=crop"
+          },
+          {
+            "name": "Akıllı Drone Plus",
+            "price": "120",
+            "oldPrice": "133",
+            "image": "https://images.unsplash.com/photo-1473968512647-3e447244af8f?w=400&h=400&fit=crop"
+          }
+        ]
+      }
+    },
+    {
+      "id": "best-seller-1",
+      "type": "featured-products",
+      "props": {
+        "title": "EN ÇOK SATANLAR",
+        "subtitle": "Haftanın En Çok Satanları",
+        "columns": 4,
+        "products": [
+          {
+            "name": "Sony Kamera",
+            "price": "250.00",
+            "oldPrice": "300.00",
+            "badge": "%17 İNDİRİM",
+            "image": "https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?w=400&h=400&fit=crop",
+            "rating": 5,
+            "reviews": 15
+          },
+          {
+            "name": "Kablosuz Mouse",
+            "price": "15.00",
+            "oldPrice": "20.00",
+            "image": "https://images.unsplash.com/photo-1527864550417-7fd91fc51a46?w=400&h=400&fit=crop",
+            "rating": 4,
+            "reviews": 3
+          },
+          {
+            "name": "Mekanik Klavye",
+            "price": "89.00",
+            "oldPrice": "120.00",
+            "badge": "%26 İNDİRİM",
+            "image": "https://images.unsplash.com/photo-1587829741301-dc798b83add3?w=400&h=400&fit=crop",
+            "rating": 5,
+            "reviews": 28
+          },
+          {
+            "name": "USB-C Hub",
+            "price": "45.00",
+            "oldPrice": "60.00",
+            "image": "https://images.unsplash.com/photo-1625948515291-69613efd103f?w=400&h=400&fit=crop",
+            "rating": 4,
+            "reviews": 7
+          }
+        ]
+      }
+    },
+    {
+      "id": "testimonial-slider-1",
+      "type": "testimonial-slider",
+      "props": {
+        "title": "MÜŞTERİ YORUMLARI",
+        "subtitle": "Müşterilerimiz Ne Diyor",
+        "testimonials": [
+          {
+            "text": "Bu kitaptan alınacak en güçlü derslerden biri, bolluk ve olasılık zihniyetini benimsemeye yapılan vurgudur. Sınırlamalar yerine fırsatları görmeyi seçebileceğimiz fikri oyunun kurallarını değiştiriyor.",
+            "name": "Ahmet Yılmaz",
+            "role": "Pazarlama Koordinatörü",
+            "avatar": "https://i.pravatar.cc/150?img=12"
+          },
+          {
+            "text": "Sınırlamalar yerine fırsatları görmeyi seçebileceğimiz fikri oyunun kurallarını değiştiriyor. Kitap, okuyucuları konfor alanlarından çıkmaya ve hayata daha olumlu bir bakış açısıyla bakmaya teşvik ediyor.",
+            "name": "Ayşe Demir",
+            "role": "Proje Yöneticisi",
+            "avatar": "https://i.pravatar.cc/150?img=5"
+          },
+          {
+            "text": "Rosamund Stone Zander ve Benjamin Zander'ın Olasılık Sanatı kitabı, geleneksel düşünceye meydan okuyan ve yeni olasılıklar açan dönüştürücü bir okuma. Bir okuyucu olarak kendimi derinden ilham almış buldum.",
+            "name": "Mehmet Kaya",
+            "role": "Pazarlama Koordinatörü",
+            "avatar": "https://i.pravatar.cc/150?img=8"
+          },
+          {
+            "text": "İlk bölümden itibaren yazarlar, ilham verici hikayeler ve pratik içgörülerle okuyucuları cezbediyor. Benjamin Zander'ın bir orkestra şefi olarak deneyimleri, liderliğe benzersiz bir bakış açısı getiriyor.",
+            "name": "Zeynep Arslan",
+            "role": "Yazılım Geliştirici",
+            "avatar": "https://i.pravatar.cc/150?img=9"
+          }
+        ]
+      }
+    },
+    {
+      "id": "blog-posts-1",
+      "type": "blog-posts",
+      "props": {
+        "title": {
+          "tr": "Haberler & Blog",
+          "en": "News & Blog"
+        },
+        "subtitle": {
+          "tr": "Son Haberler & Blog",
+          "en": "Latest News & Blog"
+        },
+        "limit": 4,
+        "columns": 4,
+        "showExcerpt": false,
+        "showDate": true,
+        "showAuthor": true
+      }
+    },
+    {
+      "id": "newsletter-1",
+      "type": "newsletter",
+      "props": {
+        "title": "Bültenimize Abone Olun",
+        "description": "Bültenimize abone olun ve bugün indirim koduyla paranızın %20'sini tasarruf edin.",
+        "placeholder": "E-posta adresinizi girin",
+        "buttonText": "Abone Ol",
+        "backgroundColor": "#F8F9FA"
+      }
+    }
+  ]
+}

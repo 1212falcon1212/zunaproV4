@@ -165,7 +165,8 @@
       "lockedModule": "Locked",
       "support": "Support",
       "blog": "Blog",
-      "siteSettings": "Site Settings"
+      "siteSettings": "Site Settings",
+      "productSend": "Send Products"
     },
     "menus": {
       "title": "Menus",

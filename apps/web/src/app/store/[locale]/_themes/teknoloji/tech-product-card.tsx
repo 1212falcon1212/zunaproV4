@@ -1,5 +1,8 @@
+'use client';
+
 import Link from 'next/link';
 import { AddToCartButton } from '../../_components/add-to-cart-button';
+import { useCurrency } from '../../_components/hooks/use-currency';
 
 interface TechProductCardProps {
   product: {
@@ -15,6 +18,7 @@ interface TechProductCardProps {
 }
 
 export function TechProductCard({ product, locale }: TechProductCardProps) {
+  const { formatPrice } = useCurrency();
   const name = product.name[locale] ?? product.name.en ?? product.slug;
   const price = Number(product.price);
   const image = product.images?.[0];
@@ -64,7 +68,7 @@ export function TechProductCard({ product, locale }: TechProductCardProps) {
 
         <div className="mt-3 flex items-center justify-between">
           <span className="text-lg font-bold text-[var(--color-primary)]">
-            ${price.toFixed(2)}
+            {formatPrice(price)}
           </span>
           <AddToCartButton productId={product.id} compact />
         </div>

@@ -1,6 +1,7 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
+import { useCurrency } from '../../_components/hooks/use-currency';
 
 interface CartItem {
   productId: string;
@@ -26,6 +27,7 @@ export function CartItems({
   onRemove,
 }: CartItemsProps) {
   const t = useTranslations('storefront');
+  const { formatPrice } = useCurrency();
 
   if (items.length === 0) {
     return (
@@ -62,7 +64,7 @@ export function CartItems({
               <p className="text-sm text-gray-500">{item.variantName}</p>
             )}
             <p className="text-sm font-medium text-gray-700">
-              ${item.price.toFixed(2)}
+              {formatPrice(item.price)}
             </p>
           </div>
           <div className="flex items-center gap-2">
@@ -86,7 +88,7 @@ export function CartItems({
             </button>
           </div>
           <p className="w-20 text-right font-medium">
-            ${(item.price * item.quantity).toFixed(2)}
+            {formatPrice(item.price * item.quantity)}
           </p>
           <button
             onClick={() => onRemove(item.productId)}
@@ -100,7 +102,7 @@ export function CartItems({
       <div className="border-t pt-4">
         <div className="flex justify-between text-lg font-bold">
           <span>{t('subtotal')}</span>
-          <span>${subtotal.toFixed(2)}</span>
+          <span>{formatPrice(subtotal)}</span>
         </div>
       </div>
     </div>

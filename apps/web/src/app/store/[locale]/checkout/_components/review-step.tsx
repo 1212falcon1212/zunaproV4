@@ -1,6 +1,7 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
+import { useCurrency } from '../../_components/hooks/use-currency';
 
 interface CartItem {
   productId: string;
@@ -42,6 +43,7 @@ export function ReviewStep({
   onBack,
 }: ReviewStepProps) {
   const t = useTranslations('storefront.checkout');
+  const { formatPrice } = useCurrency();
   const subtotal = items.reduce(
     (sum, item) => sum + item.price * item.quantity,
     0,
@@ -73,7 +75,7 @@ export function ReviewStep({
                 <p className="text-xs text-gray-500">x{item.quantity}</p>
               </div>
               <p className="text-sm font-medium">
-                ${(item.price * item.quantity).toFixed(2)}
+                {formatPrice(item.price * item.quantity)}
               </p>
             </div>
           ))}
@@ -81,7 +83,7 @@ export function ReviewStep({
         <div className="border-t bg-gray-50 px-4 py-3">
           <div className="flex justify-between font-bold">
             <span>{t('subtotal')}</span>
-            <span>${subtotal.toFixed(2)}</span>
+            <span>{formatPrice(subtotal)}</span>
           </div>
         </div>
       </div>

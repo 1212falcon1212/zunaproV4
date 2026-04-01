@@ -52,6 +52,10 @@ const BLOCK_TYPE_LABELS: Record<BlockType, string> = {
   'category-products': 'Category Row',
   'promo-banners': 'Promo Banners',
   'contact-form': 'Contact Form',
+  'testimonial-slider': 'Testimonials',
+  'hero-slider': 'Hero Slider',
+  'promo-banner': 'Promo Banner',
+  'featured-products': 'Featured Products',
 };
 
 function getDefaultPropsForType(type: BlockType): Record<string, unknown> {

@@ -80,6 +80,12 @@ export class PageBuilderController {
   duplicate(@Req() req: Request, @Param('id') id: string) {
     return this.pageBuilderService.duplicatePage(req.tenant!.slug, id);
   }
+
+  @Post('demo/ecommerce-homepage')
+  @RequireRoles('owner', 'admin')
+  createDemoHomepage(@Req() req: Request) {
+    return this.pageBuilderService.createDemoEcommerceHomepage(req.tenant!.slug);
+  }
 }
 
 @Controller('global-sections')

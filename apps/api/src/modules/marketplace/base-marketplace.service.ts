@@ -1,4 +1,5 @@
 import { Logger } from '@nestjs/common';
+import { getTenantClient } from '@zunapro/db';
 
 export interface RateLimitConfig {
   maxRequests: number;
@@ -161,5 +162,74 @@ export abstract class BaseMarketplaceService {
 
   private sleep(ms: number): Promise<void> {
     return new Promise((resolve) => setTimeout(resolve, ms));
+  }
+
+  /**
+   * Resolve or create a local category tree from a marketplace category path.
+   * E.g. "Giyim > İç Giyim > Boxer" creates 3-level tree.
+   */
+  protected async resolveOrCreateCategory(
+    prisma: ReturnType<typeof getTenantClient>,
+    categoryPath: string | undefined,
+    brandName?: string,
+  ): Promise<string | null> {
+    if (!categoryPath && !brandName) return null;
+
+    const parts = categoryPath
+      ? categoryPath.split(/\s*[>\/]\s*/).map((p) => p.trim()).filter(Boolean)
+      : [];
+
+    if (parts.length === 0 && !brandName?.trim()) return null;
+
+    let parentId: string | null = null;
+
+    for (const part of parts) {
+      const slug = this.makeSlug(part);
+      if (!slug) continue;
+
+      let category = await prisma.category.findUnique({ where: { slug } });
+      if (!category) {
+        category = await prisma.category.create({
+          data: {
+            name: { tr: part, en: part },
+            slug,
+            parentId,
+            sortOrder: 0,
+          },
+        });
+        this.logger.log(`Created category: ${part} (slug: ${slug})`);
+      }
+      parentId = category.id;
+    }
+
+    // Create or find brand category — this becomes the final categoryId
+    if (brandName?.trim()) {
+      const brandSlug = this.makeSlug(brandName);
+      if (brandSlug) {
+        let brandCat = await prisma.category.findUnique({ where: { slug: brandSlug } });
+        if (!brandCat) {
+          brandCat = await prisma.category.create({
+            data: {
+              name: { tr: brandName, en: brandName },
+              slug: brandSlug,
+              parentId,
+              sortOrder: 0,
+            },
+          });
+          this.logger.log(`Created brand category: ${brandName}`);
+        }
+        return brandCat.id;
+      }
+    }
+
+    return parentId;
+  }
+
+  protected makeSlug(title: string): string {
+    return title
+      .toLowerCase()
+      .replace(/[^a-z0-9çğıöşü]+/gi, '-')
+      .replace(/^-|-$/g, '')
+      .substring(0, 80);
   }
 }

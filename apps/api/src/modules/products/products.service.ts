@@ -191,14 +191,14 @@ export class ProductsService {
       throw new NotFoundException(`Product with ID ${id} not found`);
     }
 
-    const archived = await prisma.product.update({
-      where: { id },
-      data: { status: 'archived' },
-    });
+    // Delete related marketplace listings first
+    await prisma.marketplaceListing.deleteMany({ where: { productId: id } });
 
-    this.logger.log(`Product archived: ${product.slug} (tenant: ${tenantSlug})`);
+    await prisma.product.delete({ where: { id } });
+
+    this.logger.log(`Product deleted: ${product.slug} (tenant: ${tenantSlug})`);
     this.searchService.removeProduct(tenantSlug, id);
-    return archived;
+    return { deleted: true, id };
   }
 
   async bulkImport(

@@ -67,7 +67,7 @@ export class HepsiburadaService extends BaseMarketplaceService {
   private buildHeaders(credentials: HepsiburadaCredentials): Record<string, string> {
     return {
       Authorization: this.buildAuthHeader(credentials),
-      'User-Agent': `${credentials.merchantId} - SelfIntegration`,
+      'User-Agent': 'tedarix_dev',
       'Content-Type': 'application/json',
       Accept: 'application/json',
     };
@@ -137,7 +137,7 @@ export class HepsiburadaService extends BaseMarketplaceService {
       method: 'POST',
       headers: {
         Authorization: this.buildAuthHeader(credentials),
-        'User-Agent': `${credentials.merchantId} - SelfIntegration`,
+        'User-Agent': 'tedarix_dev',
         Accept: 'application/json',
         // Content-Type intentionally omitted: fetch sets multipart boundary
       },
@@ -501,90 +501,190 @@ export class HepsiburadaService extends BaseMarketplaceService {
     };
   }
 
+  async getListings(
+    credentials: HepsiburadaCredentials,
+    offset = 0,
+    limit = 100,
+  ): Promise<Record<string, { price: number; stock: number }>> {
+    try {
+      const json = await this.hbFetch<{ listings?: Array<{ merchantSku: string; price: number; availableStock: number }> }>(
+        HB_LISTING_BASE,
+        `/listings/merchantid/${credentials.merchantId}`,
+        credentials,
+        { query: { offset, limit } },
+      );
+
+      const map: Record<string, { price: number; stock: number }> = {};
+      for (const l of json.listings ?? []) {
+        if (l.merchantSku) {
+          map[l.merchantSku] = { price: l.price ?? 0, stock: l.availableStock ?? 0 };
+        }
+      }
+      return map;
+    } catch (err) {
+      this.logger.warn('Failed to fetch HB listings for price/stock', err);
+      return {};
+    }
+  }
+
   async importProducts(
     tenantSlug: string,
     credentials: HepsiburadaCredentials,
     filters: HBFilterOptions = {},
-  ): Promise<{ imported: number; skipped: number; errors: string[] }> {
+  ): Promise<{ imported: number; skipped: number; errors: string[]; totalVariants: number; groupedInto: number }> {
     const prisma = getTenantClient(tenantSlug);
     const response = await this.getProducts(credentials, filters);
-    const products = response.products as Record<string, unknown>[];
+    const rawProducts = response.products as Record<string, unknown>[];
+
+    // Fetch price/stock from listing API
+    const listingMap = await this.getListings(credentials, 0, 1000);
+
+    // ── Extract info from HB response format ──
+    interface HBParsed {
+      merchantSku: string;
+      barcode: string;
+      title: string;
+      hbSku: string;
+      variantGroupId: string;
+      brand: string;
+      images: string[];
+      attributes: Record<string, string>;
+      status: string;
+    }
+
+    const parsed: HBParsed[] = rawProducts.map((p) => {
+      const matched = (p.matchedHbProductInfo as Array<Record<string, unknown>>)?.[0];
+      const hbImages = ((matched?.images as string[]) ?? []).map((url) =>
+        url.replace('{size}', '500'),
+      );
+      const variantAttrs: Record<string, string> = {};
+      const vtAttrs = (matched?.variantTypeAttributes as Array<{ name: string; value: string }>) ?? [];
+      for (const a of vtAttrs) {
+        if (a.name && a.value) variantAttrs[a.name] = a.value;
+      }
+
+      return {
+        merchantSku: String(p.merchantSku ?? ''),
+        barcode: String(p.barcode ?? ''),
+        title: String(matched?.productName ?? p.productName ?? ''),
+        hbSku: String(p.hbSku ?? ''),
+        variantGroupId: String(p.variantGroupId ?? ''),
+        brand: String(matched?.brand ?? ''),
+        images: hbImages,
+        attributes: variantAttrs,
+        status: String(p.productStatus ?? ''),
+      };
+    });
+
+    // ── Group by variantGroupId (like Trendyol productMainId) ──
+    const groups = new Map<string, HBParsed[]>();
+    for (const p of parsed) {
+      const key = p.variantGroupId || p.merchantSku;
+      const arr = groups.get(key) ?? [];
+      arr.push(p);
+      groups.set(key, arr);
+    }
 
     let imported = 0;
     let skipped = 0;
     const errors: string[] = [];
 
-    for (const hbProduct of products) {
+    for (const [groupId, variants] of groups) {
       try {
-        const title = String(
-          hbProduct.productName ?? hbProduct.merchantSku ?? '',
-        );
-        const barcode = String(hbProduct.barcode ?? '');
-        const sku = String(hbProduct.merchantSku ?? '');
-        const slug = this.generateSlug(title);
+        const main = variants[0];
 
+        // Skip if already exists
         const existing = await prisma.product.findFirst({
           where: {
             OR: [
-              ...(sku ? [{ sku }] : []),
-              ...(barcode ? [{ barcode }] : []),
-              { slug },
+              { sku: groupId },
+              ...variants.map((v) => ({ barcode: v.barcode || undefined })).filter((c) => c.barcode),
             ],
           },
         });
 
         if (existing) {
+          await prisma.marketplaceListing.upsert({
+            where: { marketplace_productId: { marketplace: 'hepsiburada', productId: existing.id } },
+            create: { marketplace: 'hepsiburada', productId: existing.id, marketplaceProductId: main.hbSku, status: 'approved', lastSyncedAt: new Date() },
+            update: { marketplaceProductId: main.hbSku, lastSyncedAt: new Date() },
+          });
           skipped++;
           continue;
         }
 
-        const images: string[] = [];
-        for (let i = 1; i <= 8; i++) {
-          const imgUrl = hbProduct[`Image${i}`];
-          if (imgUrl && typeof imgUrl === 'string') images.push(imgUrl);
-        }
+        // Collect all images (deduplicated)
+        const allImages = [...new Set(variants.flatMap((v) => v.images))];
 
-        const price = parseFloat(
-          String(hbProduct.price ?? '0').replace(',', '.'),
+        // Build variant data with price/stock from listing API
+        const variantData = variants.map((v) => {
+          const listing = listingMap[v.merchantSku];
+          return {
+            name: v.title,
+            sku: v.merchantSku,
+            barcode: v.barcode,
+            hbSku: v.hbSku,
+            price: listing?.price ?? 0,
+            stock: listing?.stock ?? 0,
+            attributes: v.attributes,
+          };
+        });
+
+        const totalStock = variantData.reduce((s, v) => s + v.stock, 0);
+        const prices = variantData.map((v) => v.price).filter((p) => p > 0);
+        const mainPrice = prices.length > 0 ? Math.min(...prices) : 0;
+
+        // Brand & category
+        const brandName = main.brand;
+        const categoryId = await this.resolveOrCreateCategory(
+          prisma,
+          undefined,
+          brandName || undefined,
         );
-        const stock = parseInt(String(hbProduct.stock ?? '0'), 10);
 
-        await prisma.product.create({
+        const slug = this.makeSlug(main.title);
+
+        const product = await prisma.product.create({
           data: {
-            name: { en: title, tr: title },
+            name: { tr: main.title, en: main.title },
             slug: `${slug}-${Date.now()}`,
-            description: hbProduct.description
-              ? {
-                  en: String(hbProduct.description),
-                  tr: String(hbProduct.description),
-                }
-              : {},
-            price,
-            sku: sku || null,
-            barcode: barcode || null,
-            weight: hbProduct.kg
-              ? parseFloat(String(hbProduct.kg))
-              : null,
-            stock,
-            images,
+            description: {},
+            price: mainPrice,
+            sku: groupId,
+            barcode: main.barcode || null,
+            stock: totalStock,
+            categoryId,
+            images: allImages,
+            variants: variantData,
             status: 'draft',
             isFeatured: false,
             seoMeta: {
-              hepsiburadaMerchantSku: sku,
-              hepsiburadaBarcode: barcode,
               source: 'hepsiburada',
+              hbGroupId: groupId,
+              hbSkus: variants.map((v) => v.hbSku),
+              hepsiburadaBrand: brandName,
+              variantCount: variants.length,
             },
           },
         });
 
+        await prisma.marketplaceListing.create({
+          data: {
+            marketplace: 'hepsiburada',
+            productId: product.id,
+            marketplaceProductId: variants.map((v) => v.hbSku).join(','),
+            status: 'approved',
+            lastSyncedAt: new Date(),
+            syncData: { groupId, brand: brandName, variantCount: variants.length },
+          },
+        });
+
         imported++;
+        this.logger.log(`HB imported "${main.title}" with ${variants.length} variant(s)`);
       } catch (err) {
-        const msg =
-          err instanceof Error
-            ? err.message
-            : `Failed to import HB product: ${String(hbProduct.merchantSku ?? '')}`;
+        const msg = err instanceof Error ? err.message : `Failed to import HB group: ${groupId}`;
         errors.push(msg);
-        this.logger.warn('Hepsiburada import error', err);
+        this.logger.warn(`HB import error for group ${groupId}`, err);
       }
     }
 
@@ -595,15 +695,15 @@ export class HepsiburadaService extends BaseMarketplaceService {
         status: 'completed',
         itemCount: imported,
         errorCount: errors.length,
-        details: { imported, skipped, errors },
+        details: { totalProducts: parsed.length, groupedInto: groups.size, imported, skipped, errors: errors.slice(0, 50) },
       },
     });
 
     this.logger.log(
-      `Hepsiburada import: ${imported} imported, ${skipped} skipped, ${errors.length} errors (tenant: ${tenantSlug})`,
+      `HB import: ${imported} products (${parsed.length} variants → ${groups.size} groups), ${skipped} skipped`,
     );
 
-    return { imported, skipped, errors };
+    return { imported, skipped, errors, totalVariants: parsed.length, groupedInto: groups.size };
   }
 
   // ─── Send Products to HB ───────────────────────────────
@@ -612,11 +712,12 @@ export class HepsiburadaService extends BaseMarketplaceService {
     tenantSlug: string,
     credentials: HepsiburadaCredentials,
     productIds: string[],
-  ): Promise<{ trackingId: string | null; sentCount: number }> {
+  ): Promise<{ trackingId: string | null; sentCount: number; errors: string[] }> {
     const prisma = getTenantClient(tenantSlug);
 
+    // 1. Fetch products with category mappings, marketplace attributes, and listings
     const products = await prisma.product.findMany({
-      where: { id: { in: productIds }, status: 'active' },
+      where: { id: { in: productIds } },
       include: {
         category: {
           include: {
@@ -625,91 +726,216 @@ export class HepsiburadaService extends BaseMarketplaceService {
             },
           },
         },
+        marketplaceAttributes: {
+          where: { marketplace: 'hepsiburada' },
+        },
+        marketplaceListings: {
+          where: { marketplace: 'hepsiburada' },
+        },
       },
     });
 
     if (products.length === 0) {
       throw new BadRequestException(
-        'No active products found with the given IDs.',
+        'No products found with the given IDs.',
       );
     }
 
     const hbItems: HBProductItem[] = [];
+    const errors: string[] = [];
+    const sentProductIds: string[] = [];
 
     for (const product of products) {
+      const name = product.name as Record<string, string>;
+      const description = (product.description ?? {}) as Record<string, string>;
+      const images = (product.images ?? []) as string[];
+      const seoMeta = (product.seoMeta ?? {}) as Record<string, unknown>;
+      const variants = (product.variants ?? []) as Array<{
+        name?: string;
+        sku?: string;
+        barcode?: string;
+        price?: number;
+        stock?: number;
+        attributes?: Record<string, string>;
+      }>;
+
+      // 2a. Category mapping — skip if unmapped
       const mapping = product.category?.marketplaceMappings?.[0];
       if (!mapping) {
-        this.logger.warn(
-          `Product ${product.id} skipped: no HB category mapping for category ${product.categoryId}`,
+        errors.push(
+          `Product "${name.en || name.tr}" (${product.id}) skipped: no HB category mapping.`,
+        );
+        continue;
+      }
+      const hbCategoryId = parseInt(mapping.marketplaceCategoryId, 10);
+
+      // 2b. Brand resolution — HB uses brand name string (not ID)
+      // Check all possible brand fields + category name fallback
+      const categoryName = product.category
+        ? ((product.category.name as Record<string, string>)?.tr || (product.category.name as Record<string, string>)?.en || '')
+        : '';
+      const brandName =
+        (seoMeta.hepsiburadaBrand as string) ||
+        (seoMeta.hepsiburadaBrandName as string) ||
+        (seoMeta.trendyolBrand as string) ||
+        (seoMeta.trendyolBrandName as string) ||
+        (seoMeta.brand as string) ||
+        categoryName ||
+        '';
+
+      if (!brandName) {
+        errors.push(
+          `Product "${name.en || name.tr}" (${product.id}) skipped: no brand found.`,
         );
         continue;
       }
 
-      const name =
-        (product.name as Record<string, string>)?.en ??
-        (product.name as Record<string, string>)?.tr ??
-        '';
-      const description = product.description
-        ? ((product.description as Record<string, string>)?.en ??
-            (product.description as Record<string, string>)?.tr ??
-            '')
-        : '';
-      const images = (product.images as string[]) ?? [];
-      const sku = (product.sku ?? product.id).toUpperCase();
+      const productTitle = name.tr || name.en || '';
+      const productDesc = description.tr || description.en || productTitle || 'Urun aciklamasi';
+      const productMainId = (product.sku ?? product.id).toUpperCase();
 
-      // HB expects Turkish decimal format (comma separator)
-      const priceFormatted = Number(product.price).toFixed(2).replace('.', ',');
-
-      const attributes: Record<string, unknown> = {
-        merchantSku: sku,
-        VaryantGroupID: sku,
-        Barcode: product.barcode ?? '',
-        UrunAdi: name,
-        UrunAciklamasi: description,
-        Marka: '',
-        GarantiSuresi: '24',
-        kg: product.weight ? Number(product.weight) : 0,
-        tax_vat_rate: '10',
-        price: priceFormatted,
-        stock: String(product.stock),
-      };
-
-      // Add up to 8 images (Image1 .. Image8)
-      images.slice(0, 8).forEach((imgUrl, idx) => {
-        attributes[`Image${idx + 1}`] = imgUrl;
-      });
-
-      // Merge saved attribute mapping defaults from category mapping
-      if (mapping.attributeMapping) {
-        const defaults = mapping.attributeMapping as Record<string, unknown>;
-        Object.assign(attributes, defaults);
+      // Collect product-level dynamic attributes from ProductMarketplaceAttribute (variantIndex=-1 only)
+      const dynamicAttributes: Record<string, unknown> = {};
+      for (const attr of product.marketplaceAttributes.filter(a => a.variantIndex === -1)) {
+        // Use attributeName as key (HB uses name-based attributes, not numeric IDs)
+        const key = attr.attributeName || attr.attributeId;
+        dynamicAttributes[key] = attr.value;
       }
 
-      hbItems.push({
-        categoryId: parseInt(mapping.marketplaceCategoryId, 10),
-        merchant: credentials.merchantId,
-        attributes,
-      });
+      // Merge attribute defaults from category mapping (lower priority than product-level)
+      if (mapping.attributeMapping) {
+        const defaults = mapping.attributeMapping as Record<string, unknown>;
+        for (const [key, val] of Object.entries(defaults)) {
+          if (!(key in dynamicAttributes)) {
+            dynamicAttributes[key] = val;
+          }
+        }
+      }
+
+      // 2c. Variant expansion
+      if (variants.length > 0) {
+        for (let vi = 0; vi < variants.length; vi++) {
+          const variant = variants[vi];
+          const variantSku = (
+            variant.sku || variant.barcode || `${productMainId}-${vi}`
+          ).toUpperCase();
+          const variantBarcode = variant.barcode || variantSku;
+          const variantPrice = variant.price ?? Number(product.price);
+          const variantStock = variant.stock ?? 0;
+
+          // HB expects Turkish decimal format (comma separator)
+          const priceFormatted = variantPrice.toFixed(2).replace('.', ',');
+
+          const attributes: Record<string, unknown> = {
+            merchantSku: variantSku,
+            VaryantGroupID: productMainId,
+            Barcode: variantBarcode,
+            UrunAdi: productTitle,
+            UrunAciklamasi: productDesc,
+            Marka: brandName,
+            GarantiSuresi: '24',
+            kg: product.weight ? Number(product.weight) : 0,
+            tax_vat_rate: '20',
+            price: priceFormatted,
+            stock: String(variantStock),
+          };
+
+          // Add up to 8 images (Image1 .. Image8)
+          images.slice(0, 8).forEach((imgUrl, idx) => {
+            attributes[`Image${idx + 1}`] = imgUrl;
+          });
+
+          // Merge product-level dynamic attributes
+          Object.assign(attributes, dynamicAttributes);
+
+          // Add wizard-saved variant-level attributes (priority over raw variant attrs)
+          const savedVariantAttrs = product.marketplaceAttributes.filter(a => a.variantIndex === vi);
+          for (const saved of savedVariantAttrs) {
+            const key = saved.attributeName || saved.attributeId;
+            attributes[key] = saved.value;
+          }
+
+          // Add raw variant attributes (only if not already set by wizard)
+          if (variant.attributes) {
+            for (const [attrName, attrValue] of Object.entries(variant.attributes)) {
+              if (!(attrName in attributes)) {
+                attributes[attrName] = attrValue;
+              }
+            }
+          }
+
+          hbItems.push({
+            categoryId: hbCategoryId,
+            merchant: credentials.merchantId,
+            attributes,
+          });
+        }
+      } else {
+        // Single product — no variants
+        const sku = productMainId;
+        const priceFormatted = Number(product.price).toFixed(2).replace('.', ',');
+
+        const attributes: Record<string, unknown> = {
+          merchantSku: sku,
+          VaryantGroupID: sku,
+          Barcode: product.barcode ?? '',
+          UrunAdi: productTitle,
+          UrunAciklamasi: productDesc,
+          Marka: brandName,
+          GarantiSuresi: '24',
+          kg: product.weight ? Number(product.weight) : 0,
+          tax_vat_rate: '20',
+          price: priceFormatted,
+          stock: String(product.stock),
+        };
+
+        // Add up to 8 images (Image1 .. Image8)
+        images.slice(0, 8).forEach((imgUrl, idx) => {
+          attributes[`Image${idx + 1}`] = imgUrl;
+        });
+
+        // Merge product-level dynamic attributes
+        Object.assign(attributes, dynamicAttributes);
+
+        hbItems.push({
+          categoryId: hbCategoryId,
+          merchant: credentials.merchantId,
+          attributes,
+        });
+      }
+
+      sentProductIds.push(product.id);
     }
 
     if (hbItems.length === 0) {
       throw new BadRequestException(
-        'No products could be mapped to Hepsiburada categories. Check category mappings.',
+        `No products could be sent to Hepsiburada. Errors: ${errors.join('; ')}`,
       );
     }
 
-    this.logger.log(`Sending ${hbItems.length} products to Hepsiburada`);
+    this.logger.log(
+      `Sending ${hbItems.length} items (${sentProductIds.length} products) to Hepsiburada`,
+    );
 
-    const result = await this.hbMultipartUpload<{
-      data?: { trackingId?: string };
-      trackingId?: string;
-    }>('/product/api/products/import?version=1', credentials, hbItems);
+    // 3. Upload via multipart form-data
+    let trackingId: string | null = null;
+    try {
+      const result = await this.hbMultipartUpload<{
+        data?: { trackingId?: string };
+        trackingId?: string;
+      }>('/product/api/products/import?version=1', credentials, hbItems);
 
-    const trackingId =
-      result.data?.trackingId ?? result.trackingId ?? null;
+      trackingId = result.data?.trackingId ?? result.trackingId ?? null;
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : String(err);
+      this.logger.error(`Hepsiburada send failed: ${msg}`);
+      errors.push(`HB upload failed: ${msg}`);
+    }
 
-    // Upsert marketplace listings for each product sent
+    // 4. Update MarketplaceListing for each successfully mapped product
     for (const product of products) {
+      if (!sentProductIds.includes(product.id)) continue;
+
       await prisma.marketplaceListing.upsert({
         where: {
           marketplace_productId: {
@@ -723,12 +949,14 @@ export class HepsiburadaService extends BaseMarketplaceService {
           batchId: trackingId,
           status: 'sent',
           lastSyncedAt: new Date(),
+          syncData: { trackingId, itemCount: hbItems.length },
         },
         update: {
           batchId: trackingId,
           status: 'sent',
           lastSyncedAt: new Date(),
           errorMessage: null,
+          syncData: { trackingId, itemCount: hbItems.length },
         },
       });
     }
@@ -739,11 +967,17 @@ export class HepsiburadaService extends BaseMarketplaceService {
         action: 'export',
         status: 'completed',
         itemCount: hbItems.length,
-        details: { trackingId },
+        errorCount: errors.length,
+        details: {
+          trackingId,
+          totalItems: hbItems.length,
+          productCount: sentProductIds.length,
+          ...(errors.length > 0 ? { errors: errors.slice(0, 50) } : {}),
+        },
       },
     });
 
-    return { trackingId, sentCount: hbItems.length };
+    return { trackingId, sentCount: hbItems.length, errors };
   }
 
   // ─── Price & Stock Sync ─────────────────────────────────
@@ -856,13 +1090,4 @@ export class HepsiburadaService extends BaseMarketplaceService {
     );
   }
 
-  // ─── Utilities ──────────────────────────────────────────
-
-  private generateSlug(title: string): string {
-    return title
-      .toLowerCase()
-      .replace(/[^a-z0-9çğıöşü]+/gi, '-')
-      .replace(/^-|-$/g, '')
-      .substring(0, 80);
-  }
 }

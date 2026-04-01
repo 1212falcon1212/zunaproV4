@@ -64,6 +64,7 @@ const BLOCK_GROUPS: BlockGroup[] = [
     label: 'Commerce',
     icon: <ShoppingBag className="h-4 w-4" />,
     items: [
+      { type: 'featured-products', label: 'Featured Products', icon: <Sparkles className="h-5 w-5" /> },
       { type: 'product-showcase', label: 'Products', icon: <ShoppingBag className="h-5 w-5" /> },
       { type: 'category-showcase', label: 'Categories', icon: <Grid3X3 className="h-5 w-5" /> },
       { type: 'product-listing', label: 'Product Listing', icon: <List className="h-5 w-5" /> },
@@ -76,9 +77,12 @@ const BLOCK_GROUPS: BlockGroup[] = [
     icon: <Megaphone className="h-4 w-4" />,
     items: [
       { type: 'hero', label: 'Hero', icon: <Sparkles className="h-5 w-5" /> },
+      { type: 'hero-slider', label: 'Hero Slider', icon: <Sparkles className="h-5 w-5" /> },
       { type: 'banner', label: 'Banner', icon: <Flag className="h-5 w-5" /> },
       { type: 'banner-grid', label: 'Banner Grid', icon: <LayoutGrid className="h-5 w-5" /> },
       { type: 'promo-banners', label: 'Promo Banners', icon: <Flag className="h-5 w-5" /> },
+      { type: 'promo-banner', label: 'Promo Banner', icon: <Megaphone className="h-5 w-5" /> },
+      { type: 'testimonial-slider', label: 'Testimonials', icon: <Sparkles className="h-5 w-5" /> },
     ],
   },
 ];

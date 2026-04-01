@@ -42,7 +42,7 @@ export default async function StorefrontHome({ params }: Props) {
 
   if (pageContent) {
     return (
-      <div>
+      <div className="home-page-content">
         <BlockRenderer blocks={pageContent.blocks} locale={locale} />
       </div>
     );

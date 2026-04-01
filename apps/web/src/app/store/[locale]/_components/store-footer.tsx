@@ -48,6 +48,39 @@ function getLocalizedText(
   return value[locale] ?? value['en'] ?? fallback;
 }
 
+function PhoneIcon() {
+  return (
+    <svg className="h-10 w-10 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 002.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 01-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 00-1.091-.852H4.5A2.25 2.25 0 002.25 4.5v2.25z" />
+    </svg>
+  );
+}
+
+function EmailIcon() {
+  return (
+    <svg className="h-10 w-10 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
+    </svg>
+  );
+}
+
+function ClockIcon() {
+  return (
+    <svg className="h-10 w-10 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+    </svg>
+  );
+}
+
+function LocationIcon() {
+  return (
+    <svg className="h-10 w-10 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
+      <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" />
+    </svg>
+  );
+}
+
 function FacebookIcon() {
   return (
     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
@@ -107,204 +140,181 @@ export async function StoreFooter({
   const serviceLinks = (footerMenuItems ?? []).slice(halfIndex);
 
   return (
-    <footer className="border-t border-[var(--color-border)] bg-[var(--color-foreground)] text-gray-400">
-      <div className="mx-auto max-w-[1300px] px-4 py-12 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
-          {/* Column 1: Brand + Social */}
-          <div>
-            <h3
-              className="text-xl font-bold text-white"
-              style={{ fontFamily: 'var(--font-heading)' }}
-            >
-              {displayName}
-            </h3>
-            <p className="mt-3 text-sm leading-relaxed">
-              {t('footer.description')}
-            </p>
-            {storeInfo?.store_email && (
-              <p className="mt-3 text-sm">
-                {storeInfo.store_email}
-              </p>
-            )}
-            {storeInfo?.store_phone && (
-              <p className="mt-1 text-sm">
-                {storeInfo.store_phone}
-              </p>
-            )}
-            <p className="mt-5 mb-3 text-xs font-semibold uppercase tracking-wider text-gray-300">
-              {t('footer.followUs')}
-            </p>
-            <div className="flex items-center gap-3">
-              {socialLinks.facebook && (
-                <a
-                  href={socialLinks.facebook}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-gray-400 transition-colors hover:text-white"
-                  aria-label="Facebook"
-                >
-                  <FacebookIcon />
-                </a>
-              )}
-              {socialLinks.twitter && (
-                <a
-                  href={socialLinks.twitter}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-gray-400 transition-colors hover:text-white"
-                  aria-label="Twitter"
-                >
-                  <TwitterIcon />
-                </a>
-              )}
-              {socialLinks.instagram && (
-                <a
-                  href={socialLinks.instagram}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-gray-400 transition-colors hover:text-white"
-                  aria-label="Instagram"
-                >
-                  <InstagramIcon />
-                </a>
-              )}
-              {socialLinks.youtube && (
-                <a
-                  href={socialLinks.youtube}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-gray-400 transition-colors hover:text-white"
-                  aria-label="YouTube"
-                >
-                  <YoutubeIcon />
-                </a>
-              )}
+    <footer className="border-t border-[var(--color-border)]">
+      {/* Contact Info Bar - Referans sitedeki gibi 4 kutu */}
+      <div className="bg-white border-b border-gray-200">
+        <div className="mx-auto max-w-[1300px] px-4 py-10 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            <div className="flex items-center gap-4">
+              <div className="flex-shrink-0"><PhoneIcon /></div>
+              <div>
+                <p className="text-xs text-gray-500 font-medium">7/24 Bizi Arayın</p>
+                <p className="text-base font-bold text-gray-900">0850 885 19 19</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-4">
+              <div className="flex-shrink-0"><EmailIcon /></div>
+              <div>
+                <p className="text-xs text-gray-500 font-medium">Teklif Alın</p>
+                <p className="text-base font-bold text-gray-900">{storeInfo?.store_email || 'info@ecomarts.com'}</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-4">
+              <div className="flex-shrink-0"><ClockIcon /></div>
+              <div>
+                <p className="text-xs text-gray-500 font-medium">Çalışma Saatleri</p>
+                <p className="text-base font-bold text-gray-900">Pzt - Cum: 09:00 - 18:00</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-4">
+              <div className="flex-shrink-0"><LocationIcon /></div>
+              <div>
+                <p className="text-xs text-gray-500 font-medium">Konum</p>
+                <p className="text-base font-bold text-gray-900">İstanbul, Türkiye</p>
+              </div>
             </div>
           </div>
+        </div>
+      </div>
 
-          {/* Column 2: Categories */}
-          <div>
-            <h4 className="text-sm font-semibold uppercase tracking-wider text-gray-300">
-              {t('categories')}
-            </h4>
-            <ul className="mt-4 space-y-2">
-              {parentCategories.length > 0 ? (
-                parentCategories.map((cat) => (
-                  <li key={cat.id}>
-                    <Link
-                      href={`/store/${locale}/products?category=${cat.slug}`}
-                      className="text-sm transition-colors hover:text-white"
-                    >
-                      {getLocalizedText(cat.name, locale, cat.slug)}
-                    </Link>
-                  </li>
-                ))
-              ) : (
-                <>
-                  <li>
-                    <Link href={`/store/${locale}/products`} className="text-sm transition-colors hover:text-white">
-                      {t('header.allProducts')}
-                    </Link>
-                  </li>
-                  <li>
-                    <Link href={`/store/${locale}/categories`} className="text-sm transition-colors hover:text-white">
-                      {t('categories')}
-                    </Link>
-                  </li>
-                </>
-              )}
-            </ul>
-          </div>
+      {/* Main Footer */}
+      <div className="bg-[#0a1128] text-gray-400">
+        <div className="mx-auto max-w-[1300px] px-4 py-12 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
+            {/* Column 1: Brand + Social */}
+            <div>
+              <img src="/assets/logo.svg" alt={displayName} className="h-8 w-auto brightness-0 invert" />
+              <p className="mt-3 text-sm leading-relaxed">
+                Müşterilerimize en kaliteli ürünleri en uygun fiyatlarla sunmayı hedefliyoruz. Güvenli alışveriş deneyimi için buradayız.
+              </p>
+              <div className="mt-5 flex items-center gap-3">
+                {socialLinks.facebook && (
+                  <a href={socialLinks.facebook} target="_blank" rel="noopener noreferrer" className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-gray-400 transition-colors hover:bg-red-500 hover:text-white" aria-label="Facebook">
+                    <FacebookIcon />
+                  </a>
+                )}
+                {socialLinks.twitter && (
+                  <a href={socialLinks.twitter} target="_blank" rel="noopener noreferrer" className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-gray-400 transition-colors hover:bg-red-500 hover:text-white" aria-label="Twitter">
+                    <TwitterIcon />
+                  </a>
+                )}
+                {socialLinks.instagram && (
+                  <a href={socialLinks.instagram} target="_blank" rel="noopener noreferrer" className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-gray-400 transition-colors hover:bg-red-500 hover:text-white" aria-label="Instagram">
+                    <InstagramIcon />
+                  </a>
+                )}
+                {socialLinks.youtube && (
+                  <a href={socialLinks.youtube} target="_blank" rel="noopener noreferrer" className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-gray-400 transition-colors hover:bg-red-500 hover:text-white" aria-label="YouTube">
+                    <YoutubeIcon />
+                  </a>
+                )}
+              </div>
+            </div>
 
-          {/* Column 3: Quick Links */}
-          <div>
-            <h4 className="text-sm font-semibold uppercase tracking-wider text-gray-300">
-              {t('footer.quickLinks')}
-            </h4>
-            <ul className="mt-4 space-y-2">
-              {quickLinks.length > 0 ? (
-                quickLinks.map((item) => (
-                  <li key={item.id}>
-                    <Link
-                      href={`/store/${locale}${(item.href || item.url || '/').startsWith('/') ? (item.href || item.url || '/') : `/${item.href || item.url || ''}`}`}
-                      className="text-sm transition-colors hover:text-white"
-                    >
-                      {getLocalizedText(item.label, locale)}
-                    </Link>
-                  </li>
-                ))
-              ) : (
-                <>
-                  <li>
-                    <Link href={`/store/${locale}/products`} className="text-sm transition-colors hover:text-white">
-                      {t('header.allProducts')}
-                    </Link>
-                  </li>
-                  <li>
-                    <Link href={`/store/${locale}/pages/contact`} className="text-sm transition-colors hover:text-white">
-                      {t('footer.contact')}
-                    </Link>
-                  </li>
-                </>
-              )}
-            </ul>
-          </div>
+            {/* Column 2: Müşteri Desteği */}
+            <div>
+              <h4 className="text-sm font-semibold uppercase tracking-wider text-white">
+                Müşteri Desteği
+              </h4>
+              <ul className="mt-4 space-y-2.5">
+                {quickLinks.length > 0 ? (
+                  quickLinks.map((item) => (
+                    <li key={item.id}>
+                      <Link
+                        href={`/store/${locale}${(item.href || item.url || '/').startsWith('/') ? (item.href || item.url || '/') : `/${item.href || item.url || ''}`}`}
+                        className="text-sm transition-colors hover:text-white flex items-center gap-2"
+                      >
+                        <svg className="h-3 w-3 text-red-500" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" /></svg>
+                        {getLocalizedText(item.label, locale)}
+                      </Link>
+                    </li>
+                  ))
+                ) : (
+                  <>
+                    <li><Link href={`/store/${locale}/products`} className="text-sm transition-colors hover:text-white flex items-center gap-2"><svg className="h-3 w-3 text-red-500" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" /></svg>Mağaza</Link></li>
+                    <li><Link href={`/store/${locale}/pages/contact`} className="text-sm transition-colors hover:text-white flex items-center gap-2"><svg className="h-3 w-3 text-red-500" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" /></svg>İletişim</Link></li>
+                    <li><Link href={`/store/${locale}/pages/returns`} className="text-sm transition-colors hover:text-white flex items-center gap-2"><svg className="h-3 w-3 text-red-500" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" /></svg>İade Politikası</Link></li>
+                  </>
+                )}
+              </ul>
+            </div>
 
-          {/* Column 4: Customer Service */}
-          <div>
-            <h4 className="text-sm font-semibold uppercase tracking-wider text-gray-300">
-              {t('footer.customerService')}
-            </h4>
-            <ul className="mt-4 space-y-2">
-              {serviceLinks.length > 0 ? (
-                serviceLinks.map((item) => (
-                  <li key={item.id}>
-                    <Link
-                      href={`/store/${locale}${(item.href || item.url || '/').startsWith('/') ? (item.href || item.url || '/') : `/${item.href || item.url || ''}`}`}
-                      className="text-sm transition-colors hover:text-white"
-                    >
-                      {getLocalizedText(item.label, locale)}
-                    </Link>
-                  </li>
-                ))
-              ) : (
-                <>
-                  <li>
-                    <Link href={`/store/${locale}/pages/faq`} className="text-sm transition-colors hover:text-white">
-                      FAQ
-                    </Link>
-                  </li>
-                  <li>
-                    <Link href={`/store/${locale}/pages/shipping-policy`} className="text-sm transition-colors hover:text-white">
-                      {t('footer.shippingPolicy')}
-                    </Link>
-                  </li>
-                  <li>
-                    <Link href={`/store/${locale}/pages/returns`} className="text-sm transition-colors hover:text-white">
-                      {t('footer.returns')}
-                    </Link>
-                  </li>
-                  <li>
-                    <Link href={`/store/${locale}/pages/privacy`} className="text-sm transition-colors hover:text-white">
-                      {t('footer.privacy')}
-                    </Link>
-                  </li>
-                  <li>
-                    <Link href={`/store/${locale}/pages/terms`} className="text-sm transition-colors hover:text-white">
-                      {t('footer.terms')}
-                    </Link>
-                  </li>
-                </>
-              )}
-            </ul>
+            {/* Column 3: Hızlı Bağlantılar */}
+            <div>
+              <h4 className="text-sm font-semibold uppercase tracking-wider text-white">
+                Hızlı Bağlantılar
+              </h4>
+              <ul className="mt-4 space-y-2.5">
+                {serviceLinks.length > 0 ? (
+                  serviceLinks.map((item) => (
+                    <li key={item.id}>
+                      <Link
+                        href={`/store/${locale}${(item.href || item.url || '/').startsWith('/') ? (item.href || item.url || '/') : `/${item.href || item.url || ''}`}`}
+                        className="text-sm transition-colors hover:text-white flex items-center gap-2"
+                      >
+                        <svg className="h-3 w-3 text-red-500" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" /></svg>
+                        {getLocalizedText(item.label, locale)}
+                      </Link>
+                    </li>
+                  ))
+                ) : (
+                  <>
+                    <li><Link href={`/store/${locale}/pages/about`} className="text-sm transition-colors hover:text-white flex items-center gap-2"><svg className="h-3 w-3 text-red-500" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" /></svg>Hakkımızda</Link></li>
+                    <li><Link href={`/store/${locale}/pages/faq`} className="text-sm transition-colors hover:text-white flex items-center gap-2"><svg className="h-3 w-3 text-red-500" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" /></svg>SSS</Link></li>
+                    <li><Link href={`/store/${locale}/blog`} className="text-sm transition-colors hover:text-white flex items-center gap-2"><svg className="h-3 w-3 text-red-500" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" /></svg>Blog</Link></li>
+                  </>
+                )}
+              </ul>
+            </div>
+
+            {/* Column 4: Bülten */}
+            <div>
+              <h4 className="text-sm font-semibold uppercase tracking-wider text-white">
+                Bülten
+              </h4>
+              <p className="mt-4 text-sm leading-relaxed">
+                Haftalık bültenimize abone olarak en son güncellemelerden haberdar olun.
+              </p>
+              <div className="mt-4 flex">
+                <input
+                  type="email"
+                  placeholder="E-posta adresiniz"
+                  className="flex-1 rounded-l-lg border-0 bg-white/10 px-4 py-3 text-sm text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-red-500"
+                />
+                <button className="rounded-r-lg bg-red-500 px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-red-600">
+                  <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5" />
+                  </svg>
+                </button>
+              </div>
+            </div>
           </div>
         </div>
 
         {/* Bottom Bar */}
-        <div className="mt-12 border-t border-gray-700 pt-8 text-center">
-          <p className="text-sm text-gray-500">
-            &copy; {new Date().getFullYear()} {displayName}. {t('footer.allRightsReserved')}
-          </p>
+        <div className="border-t border-white/10">
+          <div className="mx-auto max-w-[1300px] px-4 py-6 sm:px-6 lg:px-8">
+            <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">
+              <p className="text-sm text-gray-500">
+                &copy; {new Date().getFullYear()} {displayName}. Tüm hakları saklıdır.
+              </p>
+              {/* Ödeme Yöntemleri */}
+              <div className="flex items-center gap-3">
+                <div className="flex h-8 w-12 items-center justify-center rounded bg-white/10 px-1">
+                  <span className="text-[10px] font-bold text-blue-400">VISA</span>
+                </div>
+                <div className="flex h-8 w-12 items-center justify-center rounded bg-white/10 px-1">
+                  <span className="text-[10px] font-bold text-red-400">MC</span>
+                </div>
+                <div className="flex h-8 w-12 items-center justify-center rounded bg-white/10 px-1">
+                  <span className="text-[10px] font-bold text-blue-300">AMEX</span>
+                </div>
+                <div className="flex h-8 w-12 items-center justify-center rounded bg-white/10 px-1">
+                  <span className="text-[10px] font-bold text-yellow-400">PP</span>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </footer>

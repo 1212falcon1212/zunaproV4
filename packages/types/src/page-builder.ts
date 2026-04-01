@@ -38,7 +38,11 @@ export type BlockType =
   | 'banner-grid'
   | 'category-products'
   | 'promo-banners'
-  | 'contact-form';
+  | 'contact-form'
+  | 'testimonial-slider'
+  | 'hero-slider'
+  | 'promo-banner'
+  | 'featured-products';
 
 export interface BlockStyle {
   padding?: string;

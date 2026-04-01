@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { AddToCartButton } from './add-to-cart-button';
+import { useCurrency } from './hooks/use-currency';
 
 interface ProductCardProps {
   product: {
@@ -40,6 +41,7 @@ function StarRating({ rating = 4.5 }: { rating?: number }) {
 }
 
 export function ProductCard({ product, locale }: ProductCardProps) {
+  const { formatPrice } = useCurrency();
   const name = product.name[locale] ?? product.name.en ?? product.slug;
   const price = Number(product.price);
   const compareAt = product.compareAtPrice ? Number(product.compareAtPrice) : null;
@@ -116,11 +118,11 @@ export function ProductCard({ product, locale }: ProductCardProps) {
         <div className="mt-2 flex items-baseline gap-2">
           {hasDiscount && (
             <span className="text-sm text-[var(--color-secondary)] line-through">
-              ${compareAt.toFixed(2)}
+              {formatPrice(compareAt)}
             </span>
           )}
           <span className={`text-base font-bold ${hasDiscount ? 'text-[var(--color-primary)]' : 'text-[var(--color-foreground)]'}`}>
-            ${price.toFixed(2)}
+            {formatPrice(price)}
           </span>
         </div>
 

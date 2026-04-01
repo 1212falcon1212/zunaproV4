@@ -165,7 +165,8 @@
       "lockedModule": "Bloqueado",
       "support": "Soporte",
       "blog": "Blog",
-      "siteSettings": "Configuración del sitio"
+      "siteSettings": "Configuración del sitio",
+      "productSend": "Enviar productos"
     },
     "menus": {
       "title": "Menus",

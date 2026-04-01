@@ -6,6 +6,7 @@ import { useParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { storeApi } from '@/lib/store-api';
 import { useCompare } from '../_components/hooks/use-compare';
+import { useCurrency } from '../_components/hooks/use-currency';
 
 interface Product {
   id: string;
@@ -24,6 +25,7 @@ export default function ComparePage() {
   const { locale } = useParams<{ locale: string }>();
   const t = useTranslations('storefront');
   const { items: compareIds, remove, clear } = useCompare();
+  const { formatPrice } = useCurrency();
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -126,9 +128,9 @@ export default function ComparePage() {
                 <td className="border-b border-[var(--color-border)] p-4 text-sm font-medium text-[var(--color-secondary)]">{t('price')}</td>
                 {products.map((p) => (
                   <td key={p.id} className="border-b border-[var(--color-border)] p-4 text-center">
-                    <span className="text-sm font-semibold text-[var(--color-primary)]">${p.price.toFixed(2)}</span>
+                    <span className="text-sm font-semibold text-[var(--color-primary)]">{formatPrice(p.price)}</span>
                     {p.compareAtPrice && (
-                      <span className="ml-2 text-xs text-[var(--color-secondary)] line-through">${p.compareAtPrice.toFixed(2)}</span>
+                      <span className="ml-2 text-xs text-[var(--color-secondary)] line-through">{formatPrice(p.compareAtPrice)}</span>
                     )}
                   </td>
                 ))}

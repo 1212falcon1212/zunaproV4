@@ -80,7 +80,7 @@ const MODULE_CONFIGS: ModuleConfig[] = [
     items: [
       { href: '/panel/marketplace', labelKey: 'sidebar.dashboard', icon: <BarChart3 className="h-4 w-4" /> },
       { href: '/panel/marketplace/integrations', labelKey: 'sidebar.myMarketplaces', icon: <Layers className="h-4 w-4" /> },
-      { href: '/panel/marketplace/matching', labelKey: 'sidebar.productMatching', icon: <ArrowLeftRight className="h-4 w-4" /> },
+      { href: '/panel/marketplace/matching', labelKey: 'sidebar.productSend', icon: <ArrowLeftRight className="h-4 w-4" /> },
     ],
   },
   {

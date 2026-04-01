@@ -32,8 +32,9 @@ model Product {
   createdAt      DateTime @default(now()) @map("created_at")
   updatedAt      DateTime @updatedAt @map("updated_at")
 
-  category            Category?             @relation(fields: [categoryId], references: [id])
-  marketplaceListings MarketplaceListing[]
+  category              Category?                      @relation(fields: [categoryId], references: [id])
+  marketplaceListings   MarketplaceListing[]
+  marketplaceAttributes ProductMarketplaceAttribute[]
 
   @@map("products")
 }
@@ -253,4 +254,30 @@ model SyncLog {
   createdAt   DateTime @default(now()) @map("created_at")
 
   @@map("sync_logs")
+}
+
+model MarketplaceBrand {
+  id                 String @id @default(uuid())
+  marketplace        String
+  marketplaceBrandId String @map("marketplace_brand_id")
+  brandName          String @map("brand_name")
+
+  @@unique([marketplace, marketplaceBrandId])
+  @@map("marketplace_brands")
+}
+
+model ProductMarketplaceAttribute {
+  id            String  @id @default(uuid())
+  productId     String  @map("product_id")
+  marketplace   String
+  attributeId   String  @map("attribute_id")
+  attributeName String  @map("attribute_name")
+  value         String
+  valueId       String? @map("value_id")
+  variantIndex  Int     @default(-1) @map("variant_index") // -1 = product-level, 0+ = variant index
+
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([productId, marketplace, attributeId, variantIndex])
+  @@map("product_marketplace_attributes")
 }

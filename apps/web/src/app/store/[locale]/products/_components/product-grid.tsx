@@ -1,4 +1,7 @@
+'use client';
+
 import { ProductCard } from '../../_components/product-card';
+import { useCurrency } from '../../_components/hooks/use-currency';
 
 interface Product {
   id: string;
@@ -17,6 +20,8 @@ interface ProductGridProps {
 }
 
 export function ProductGrid({ products, locale, viewMode = 'grid' }: ProductGridProps) {
+  const { formatPrice } = useCurrency();
+
   if (products.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-20 text-center">
@@ -42,7 +47,7 @@ export function ProductGrid({ products, locale, viewMode = 'grid' }: ProductGrid
               <h3 className="font-medium text-[var(--color-foreground)]">
                 {product.name[locale] ?? product.name.en ?? product.slug}
               </h3>
-              <p className="mt-1 text-lg font-bold">${Number(product.price).toFixed(2)}</p>
+              <p className="mt-1 text-lg font-bold">{formatPrice(product.price)}</p>
             </div>
           </div>
         ))}

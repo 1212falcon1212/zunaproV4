@@ -292,4 +292,43 @@ export class PageBuilderService {
   ): Promise<void> {
     await this.redis.del(`page:${tenantSlug}:${slug}`);
   }
+
+  // ─── Demo Content ──────────────────────────────────────
+
+  async createDemoEcommerceHomepage(tenantSlug: string) {
+    const demoData = require('./demo-data/ecommerce-homepage.json');
+
+    const prisma = getTenantClient(tenantSlug);
+
+    // Check if homepage already exists
+    let page = await prisma.page.findUnique({ where: { slug: 'home' } });
+
+    if (page) {
+      // Update existing homepage
+      page = await prisma.page.update({
+        where: { id: page.id },
+        data: {
+          content: jsonInput(demoData),
+          isPublished: true,
+        },
+      });
+      this.logger.log(`Demo homepage updated for tenant: ${tenantSlug}`);
+    } else {
+      // Create new homepage
+      page = await prisma.page.create({
+        data: {
+          title: jsonInput({ en: 'Home', tr: 'Ana Sayfa' }),
+          slug: 'home',
+          content: jsonInput(demoData),
+          template: 'default',
+          isPublished: true,
+          sortOrder: 0,
+        },
+      });
+      this.logger.log(`Demo homepage created for tenant: ${tenantSlug}`);
+    }
+
+    await this.invalidatePageCache(tenantSlug, 'home');
+    return page;
+  }
 }

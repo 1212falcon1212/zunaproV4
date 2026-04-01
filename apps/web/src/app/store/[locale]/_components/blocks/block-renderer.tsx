@@ -25,6 +25,11 @@ import { CategoryProductsBlock } from './category-products-block';
 import { PromoBannersBlock } from './promo-banners-block';
 import { ContactFormBlock } from './contact-form-block';
 import { BlogPostsBlock } from './blog-posts-block';
+import { TestimonialSliderBlock } from './testimonial-slider-block';
+import { HeroSliderBlock } from './hero-slider-block';
+import { PromoBannerBlock } from './promo-banner-block';
+import { FeaturedProductsBlock } from './featured-products-block';
+import { ProductsOfWeekBlock } from './products-of-week-block';
 
 interface BlockRendererProps {
   blocks: Block[];
@@ -61,6 +66,11 @@ const BLOCK_COMPONENTS: Record<
   'promo-banners': PromoBannersBlock,
   'contact-form': ContactFormBlock,
   'blog-posts': BlogPostsBlock,
+  'testimonial-slider': TestimonialSliderBlock,
+  'hero-slider': HeroSliderBlock,
+  'promo-banner': PromoBannerBlock,
+  'featured-products': FeaturedProductsBlock,
+  'products-of-week': ProductsOfWeekBlock,
 };
 
 export function BlockRenderer({ blocks, locale }: BlockRendererProps) {

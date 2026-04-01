@@ -1,6 +1,7 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
+import { useCurrency } from '../../_components/hooks/use-currency';
 
 interface ShippingStepProps {
   selected: string;
@@ -22,6 +23,7 @@ export function ShippingStep({
   onBack,
 }: ShippingStepProps) {
   const t = useTranslations('storefront.checkout');
+  const { formatPrice } = useCurrency();
 
   return (
     <div className="space-y-4">
@@ -52,7 +54,7 @@ export function ShippingStep({
                 </p>
               </div>
             </div>
-            <span className="font-medium">${option.cost.toFixed(2)}</span>
+            <span className="font-medium">{formatPrice(option.cost)}</span>
           </label>
         ))}
       </div>

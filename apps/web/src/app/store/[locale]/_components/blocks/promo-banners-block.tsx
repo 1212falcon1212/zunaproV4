@@ -25,22 +25,12 @@ export function PromoBannersBlock({ block, locale }: PromoBannersBlockProps) {
   };
 
   const banners = props.banners ?? [];
-
-  if (banners.length === 0) {
-    return null;
-  }
-
-  const gridCols =
-    banners.length === 1
-      ? 'grid-cols-1'
-      : banners.length === 2
-        ? 'grid-cols-1 md:grid-cols-2'
-        : 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3';
+  if (banners.length === 0) return null;
 
   return (
     <section className="mx-auto max-w-[1300px] px-4 py-8 sm:px-6 lg:px-8">
-      <div className={`grid ${gridCols} gap-4`}>
-        {banners.slice(0, 3).map((banner) => {
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+        {banners.slice(0, 2).map((banner) => {
           const title = banner.title?.[locale] ?? banner.title?.en ?? '';
           const subtitle = banner.subtitle?.[locale] ?? banner.subtitle?.en ?? '';
           const buttonText = banner.buttonText?.[locale] ?? banner.buttonText?.en ?? '';
@@ -51,43 +41,34 @@ export function PromoBannersBlock({ block, locale }: PromoBannersBlockProps) {
           return (
             <div
               key={banner.id}
-              className="relative flex min-h-[200px] flex-col items-start justify-end overflow-hidden rounded-lg p-6"
-              style={{
-                backgroundColor: bgColor,
-                backgroundImage: banner.image ? `url(${banner.image})` : undefined,
-                backgroundSize: 'cover',
-                backgroundPosition: 'center',
-                color: txtColor,
-              }}
+              className="group relative flex min-h-[240px] md:min-h-[280px] overflow-hidden rounded-2xl"
+              style={{ backgroundColor: bgColor }}
             >
-              {/* Overlay for images */}
               {banner.image && (
-                <div className="absolute inset-0 bg-black/30" />
+                <img
+                  src={banner.image}
+                  alt={title}
+                  className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                />
               )}
+              {banner.image && <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/30 to-transparent" />}
 
-              <div className="relative z-10">
+              <div className="relative z-10 flex flex-col justify-center p-8 md:p-10 max-w-[60%]" style={{ color: txtColor }}>
+                {subtitle && (
+                  <span className="text-xs font-bold uppercase tracking-wider opacity-80 mb-2">{subtitle}</span>
+                )}
                 {title && (
-                  <h3
-                    className="mb-1 text-xl font-bold"
-                    style={{ fontFamily: 'var(--font-heading)', color: txtColor }}
-                  >
+                  <h3 className="text-xl md:text-2xl font-bold mb-4 leading-tight" style={{ fontFamily: 'var(--font-heading)' }}>
                     {title}
                   </h3>
-                )}
-                {subtitle && (
-                  <p
-                    className="mb-3 text-sm opacity-90"
-                    style={{ color: txtColor }}
-                  >
-                    {subtitle}
-                  </p>
                 )}
                 {buttonText && (
                   <Link
                     href={link}
-                    className="inline-flex items-center rounded-lg bg-white px-4 py-2 text-sm font-semibold text-[var(--color-foreground)] shadow-sm transition-colors hover:bg-gray-100"
+                    className="inline-flex items-center gap-2 rounded-lg bg-white px-5 py-2.5 text-sm font-semibold text-gray-900 shadow-sm transition-all hover:bg-red-500 hover:text-white w-fit"
                   >
                     {buttonText}
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
                   </Link>
                 )}
               </div>

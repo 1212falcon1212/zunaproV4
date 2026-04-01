@@ -6,6 +6,7 @@ import { useParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { storeApi } from '@/lib/store-api';
 import { useWishlist } from '../_components/hooks/use-wishlist';
+import { useCurrency } from '../_components/hooks/use-currency';
 
 interface Product {
   id: string;
@@ -20,6 +21,7 @@ export default function WishlistPage() {
   const { locale } = useParams<{ locale: string }>();
   const t = useTranslations('storefront');
   const { items: wishlistIds, remove } = useWishlist();
+  const { formatPrice } = useCurrency();
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -109,11 +111,11 @@ export default function WishlistPage() {
                   </h3>
                   <div className="mt-1 flex items-center gap-2">
                     <span className="text-sm font-semibold text-[var(--color-primary)]">
-                      ${product.price.toFixed(2)}
+                      {formatPrice(product.price)}
                     </span>
                     {product.compareAtPrice && (
                       <span className="text-xs text-[var(--color-secondary)] line-through">
-                        ${product.compareAtPrice.toFixed(2)}
+                        {formatPrice(product.compareAtPrice)}
                       </span>
                     )}
                   </div>

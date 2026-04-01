@@ -67,61 +67,47 @@ function HeaderMessageIcon({ icon }: { icon: string }) {
 
 export function StoreHeader({ locale, logoUrl, storeName, storeInfo, categories = [], menuItems = [] }: StoreHeaderProps) {
   const displayName = storeInfo?.store_name?.[locale] ?? storeInfo?.store_name?.['en'] ?? storeName ?? 'Store';
-  const messages = storeInfo?.header_messages ?? [];
 
   return (
-    <header className="border-b border-[var(--color-border)] bg-[var(--color-background)]">
-      {/* Top Header Bar - WoodMart style */}
-      <div className="mx-auto flex h-[72px] max-w-[1300px] items-center gap-6 px-4 sm:px-6 lg:px-8">
-        {/* Logo */}
-        <Link href={`/store/${locale}`} className="mr-4 flex shrink-0 items-center gap-2">
-          {logoUrl ? (
-            <img src={logoUrl} alt={displayName} className="h-8 w-auto" />
-          ) : (
-            <span className="text-2xl font-bold tracking-tight text-[var(--color-foreground)]" style={{ fontFamily: 'var(--font-heading)' }}>
-              {displayName}
-            </span>
-          )}
-        </Link>
-
-        {/* Search Bar - desktop */}
-        <div className="hidden flex-1 lg:block">
-          <SearchBar locale={locale} variant="header" />
-        </div>
-
-        {/* Header Messages - desktop */}
-        <div className="hidden items-center gap-6 lg:flex">
-          {messages.map((msg, idx) => {
-            const title = msg.title[locale] ?? msg.title['en'] ?? '';
-            const subtitle = msg.subtitle[locale] ?? msg.subtitle['en'] ?? '';
-            return (
-              <div key={idx} className="flex items-center gap-3">
-                <HeaderMessageIcon icon={msg.icon} />
-                <div className="flex flex-col">
-                  <span className="text-sm font-semibold leading-tight text-[var(--color-foreground)]">{title}</span>
-                  <span className="text-sm leading-tight text-[var(--color-primary)]">{subtitle}</span>
-                </div>
-              </div>
-            );
-          })}
+    <header className="border-b border-[var(--color-border)] bg-white">
+      {/* 1. Top Bar (Black) */}
+      <div className="bg-[#0a1128] text-white">
+        <div className="mx-auto flex h-10 max-w-[1300px] items-center justify-between px-4 sm:px-6 lg:px-8">
+          <div className="hidden flex-1 items-center gap-4 text-xs lg:flex">
+             <span className="flex items-center gap-2">
+               <svg className="h-3 w-3 text-orange-400" fill="currentColor" viewBox="0 0 20 20"><path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C10.112 18 2 9.888 2 3z"/></svg>
+               0850 885 19 19
+             </span>
+          </div>
+          <div className="flex-1 text-center">
+             <span className="text-[10px] font-medium tracking-wide sm:text-xs uppercase">
+               🎉 Tüm ürünlerde %59 indirim - Sınırlı süreli teklif
+             </span>
+          </div>
+          <div className="flex flex-1 items-center justify-end gap-4 text-xs font-medium">
+            <div className="flex items-center gap-1.5 cursor-pointer hover:text-orange-400 transition-colors">
+              <img src="https://flagcdn.com/w20/tr.png" width="16" alt="TR" className="rounded-sm" />
+              <span>Türkçe</span>
+              <svg className="h-3 w-3 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 9l-7 7-7-7" strokeWidth="2"/></svg>
+            </div>
+            <a href="#" className="hover:text-orange-400 transition-colors">Hesabım</a>
+          </div>
         </div>
       </div>
 
-      {/* Navigation Bar */}
-      <StoreHeaderClient
-        locale={locale}
-        logoUrl={logoUrl}
-        storeName={displayName}
-        categories={categories}
-        menuItems={menuItems}
-        locales={storeInfo?.locales ?? []}
-        currencies={storeInfo?.currencies ?? []}
-        defaultCurrency={storeInfo?.default_currency ?? 'USD'}
-      />
-
-      {/* Mobile Search */}
-      <div className="mx-auto max-w-[1300px] px-4 pb-3 sm:px-6 lg:hidden lg:px-8">
-        <SearchBar locale={locale} />
+      {/* 2. Main Header (Logo + Search + Icons are handled in Client for state) */}
+      <div className="mx-auto flex h-[90px] max-w-[1300px] items-center px-4 sm:px-6 lg:px-8">
+        <StoreHeaderClient
+          locale={locale}
+          logoUrl="/assets/logo.svg"
+          storeName={displayName}
+          categories={categories}
+          menuItems={menuItems}
+          locales={storeInfo?.locales ?? []}
+          currencies={storeInfo?.currencies ?? []}
+          defaultCurrency={storeInfo?.default_currency ?? 'USD'}
+          isIntegrated={true}
+        />
       </div>
     </header>
   );

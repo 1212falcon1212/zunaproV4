@@ -64,10 +64,10 @@ function CountdownTimer({ target }: { target: string }) {
   return (
     <div className="flex gap-2">
       {[
-        { value: timeLeft.days, label: 'Days' },
-        { value: timeLeft.hours, label: 'Hr' },
-        { value: timeLeft.minutes, label: 'Min' },
-        { value: timeLeft.seconds, label: 'Sc' },
+        { value: timeLeft.days, label: 'Gün' },
+        { value: timeLeft.hours, label: 'Saat' },
+        { value: timeLeft.minutes, label: 'Dk' },
+        { value: timeLeft.seconds, label: 'Sn' },
       ].map((item) => (
         <div key={item.label} className="flex flex-col items-center rounded-md bg-white/90 px-2.5 py-1.5 text-center shadow-sm">
           <span className="text-lg font-bold leading-tight text-[var(--color-foreground)]">{String(item.value).padStart(2, '0')}</span>

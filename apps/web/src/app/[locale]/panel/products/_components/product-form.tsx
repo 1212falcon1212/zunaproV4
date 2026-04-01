@@ -216,7 +216,7 @@ export function ProductForm({ locale, initialData }: ProductFormProps) {
                   <Label className="text-xs font-medium text-slate-500">{t('form.price')}</Label>
                   <div className="relative mt-1.5">
                     <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-sm text-slate-400">
-                      $
+                      ₺
                     </span>
                     <Input
                       type="number"
@@ -234,7 +234,7 @@ export function ProductForm({ locale, initialData }: ProductFormProps) {
                   <Label className="text-xs font-medium text-slate-500">{t('form.compareAtPrice')}</Label>
                   <div className="relative mt-1.5">
                     <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-sm text-slate-400">
-                      $
+                      ₺
                     </span>
                     <Input
                       type="number"
@@ -263,6 +263,81 @@ export function ProductForm({ locale, initialData }: ProductFormProps) {
                   />
                 </div>
               </div>
+
+              {/* Currency prices from seoMeta */}
+              {(() => {
+                const meta = initialData?.seoMeta as Record<string, unknown> | undefined;
+                const prices = meta?.prices as Record<string, number> | undefined;
+                const source = meta?.source as string | undefined;
+                if (!prices) return null;
+                return (
+                  <div className="mt-4 rounded-lg border border-slate-200 bg-slate-50 p-4">
+                    <h4 className="mb-2 text-xs font-semibold text-slate-600">Diger Kur Fiyatlari</h4>
+                    <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+                      {Object.entries(prices).map(([cur, val]) => (
+                        <div key={cur} className="rounded-md bg-white border border-slate-200 px-3 py-2">
+                          <span className="text-[10px] font-medium uppercase text-slate-400">{cur}</span>
+                          <p className="text-sm font-bold text-slate-800">
+                            {new Intl.NumberFormat(cur === 'TRY' ? 'tr-TR' : cur === 'EUR' ? 'de-DE' : 'en-US', { style: 'currency', currency: cur }).format(val)}
+                          </p>
+                        </div>
+                      ))}
+                    </div>
+                    {source && (
+                      <p className="mt-2 text-[10px] text-slate-400">
+                        Kaynak: {source} | Kurlar import aninda hesaplandi
+                      </p>
+                    )}
+                  </div>
+                );
+              })()}
+
+              {/* Marketplace meta info (brand, category, source) */}
+              {(() => {
+                const meta = initialData?.seoMeta as Record<string, unknown> | undefined;
+                if (!meta?.source) return null;
+                const brand = (meta.trendyolBrand || meta.hepsiburadaBrand || meta.brand) as string | undefined;
+                const category = (meta.trendyolCategory || meta.hepsiburadaCategory || meta.category) as string | undefined;
+                const source = meta.source as string;
+                const variantCount = meta.variantCount as number | undefined;
+                const productMainId = meta.productMainId as string | undefined;
+
+                return (
+                  <div className="mt-4 rounded-lg border border-violet-200 bg-violet-50/50 p-4">
+                    <h4 className="mb-2 text-xs font-semibold text-violet-700">Pazaryeri Bilgileri</h4>
+                    <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+                      {brand && (
+                        <div>
+                          <span className="text-[10px] font-medium uppercase text-violet-400">Marka</span>
+                          <p className="text-sm font-semibold text-slate-800">{brand}</p>
+                        </div>
+                      )}
+                      {category && (
+                        <div>
+                          <span className="text-[10px] font-medium uppercase text-violet-400">Kategori</span>
+                          <p className="text-sm font-semibold text-slate-800">{category}</p>
+                        </div>
+                      )}
+                      <div>
+                        <span className="text-[10px] font-medium uppercase text-violet-400">Kaynak</span>
+                        <p className="text-sm font-semibold capitalize text-slate-800">{source}</p>
+                      </div>
+                      {variantCount && variantCount > 1 && (
+                        <div>
+                          <span className="text-[10px] font-medium uppercase text-violet-400">Varyasyon</span>
+                          <p className="text-sm font-semibold text-slate-800">{variantCount} adet</p>
+                        </div>
+                      )}
+                      {productMainId && (
+                        <div>
+                          <span className="text-[10px] font-medium uppercase text-violet-400">Ana Urun ID</span>
+                          <p className="text-xs font-mono text-slate-700">{productMainId}</p>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                );
+              })()}
             </div>
           </Card>
 

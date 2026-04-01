@@ -1,4 +1,7 @@
-import { getTranslations } from 'next-intl/server';
+'use client';
+
+import { useTranslations } from 'next-intl';
+import { useCurrency } from '../../../_components/hooks/use-currency';
 
 interface ProductInfoProps {
   product: {
@@ -12,8 +15,9 @@ interface ProductInfoProps {
   locale: string;
 }
 
-export async function ProductInfo({ product, locale }: ProductInfoProps) {
-  const t = await getTranslations('storefront');
+export function ProductInfo({ product, locale }: ProductInfoProps) {
+  const t = useTranslations('storefront');
+  const { formatPrice } = useCurrency();
 
   const name = product.name[locale] ?? product.name.en ?? '';
   const description = product.description?.[locale] ?? product.description?.en ?? '';
@@ -33,10 +37,10 @@ export async function ProductInfo({ product, locale }: ProductInfoProps) {
 
       {/* Price */}
       <div className="mt-4 flex items-baseline gap-3">
-        <span className="text-3xl font-bold text-[var(--color-foreground)]">${price.toFixed(2)}</span>
+        <span className="text-3xl font-bold text-[var(--color-foreground)]">{formatPrice(price)}</span>
         {hasDiscount && (
           <>
-            <span className="text-lg text-[var(--color-secondary)] line-through">${compareAt.toFixed(2)}</span>
+            <span className="text-lg text-[var(--color-secondary)] line-through">{formatPrice(compareAt)}</span>
             <span className="rounded-full bg-red-100 px-2 py-0.5 text-xs font-semibold text-red-700">
               -{Math.round(((compareAt - price) / compareAt) * 100)}%
             </span>
