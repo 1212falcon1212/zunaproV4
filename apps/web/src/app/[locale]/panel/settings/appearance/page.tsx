@@ -16,8 +16,8 @@ export default function AppearancePage() {
   return (
     <div>
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-gray-900">{t('themeEditor')}</h1>
-        <p className="mt-1 text-sm text-gray-500">{t('themeEditorDescription')}</p>
+        <h1 className="text-2xl font-bold text-slate-900">{t('themeEditor')}</h1>
+        <p className="mt-1 text-sm text-slate-500">{t('themeEditorDescription')}</p>
       </div>
 
       <div className="grid grid-cols-1 gap-8 xl:grid-cols-2">

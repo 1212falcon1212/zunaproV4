@@ -50,18 +50,18 @@ export default function FinanceDashboardPage() {
       </div>
 
       {/* Info Banner */}
-      <div className="overflow-hidden rounded-2xl bg-gradient-to-br from-blue-500 via-indigo-500 to-violet-600 p-6 text-white shadow-sm">
+      <div className="overflow-hidden rounded-2xl bg-gradient-to-br from-violet-500 via-violet-600 to-purple-600 p-6 text-white shadow-sm">
         <div className="flex flex-wrap items-center gap-6">
           <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-white/10 backdrop-blur-sm">
             <Landmark className="h-7 w-7 text-white" />
           </div>
           <div className="flex-1">
             <h2 className="text-lg font-bold">Finans Modülü</h2>
-            <p className="mt-1 text-sm text-blue-100">
+            <p className="mt-1 text-sm text-violet-100">
               E-Fatura, E-Arşiv fatura oluşturun. Gelir-gider takibi yapın ve muhasebe raporlarınızı görüntüleyin.
             </p>
           </div>
-          <button className="flex items-center gap-2 rounded-xl bg-white px-5 py-2.5 text-sm font-semibold text-blue-600 transition hover:bg-blue-50">
+          <button className="flex items-center gap-2 rounded-xl bg-white px-5 py-2.5 text-sm font-semibold text-violet-600 transition hover:bg-violet-50">
             <Plus className="h-4 w-4" />
             Kontör Satın Al
           </button>

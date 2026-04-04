@@ -4,19 +4,31 @@ const basePreset: Partial<Config> = {
   theme: {
     extend: {
       colors: {
+        /* ── shadcn/ui semantic tokens (panel) ── */
+        background: "#ffffff",
+        foreground: "#0f172a",
+        card: {
+          DEFAULT: "#ffffff",
+          foreground: "#0f172a",
+        },
+        popover: {
+          DEFAULT: "#ffffff",
+          foreground: "#0f172a",
+        },
         primary: {
-          50: "#eff6ff",
-          100: "#dbeafe",
-          200: "#bfdbfe",
-          300: "#93c5fd",
-          400: "#60a5fa",
-          500: "#3b82f6",
-          600: "#2563eb",
-          700: "#1d4ed8",
-          800: "#1e40af",
-          900: "#1e3a8a",
-          950: "#172554",
-          DEFAULT: "#2563eb",
+          50: "#f5f3ff",
+          100: "#ede9fe",
+          200: "#ddd6fe",
+          300: "#c4b5fd",
+          400: "#a78bfa",
+          500: "#8b5cf6",
+          600: "#7c3aed",
+          700: "#6d28d9",
+          800: "#5b21b6",
+          900: "#4c1d95",
+          950: "#2e1065",
+          DEFAULT: "#7c3aed",
+          foreground: "#ffffff",
         },
         secondary: {
           50: "#f8fafc",
@@ -30,7 +42,8 @@ const basePreset: Partial<Config> = {
           800: "#1e293b",
           900: "#0f172a",
           950: "#020617",
-          DEFAULT: "#475569",
+          DEFAULT: "#f1f5f9",
+          foreground: "#0f172a",
         },
         accent: {
           50: "#fffbeb",
@@ -44,8 +57,20 @@ const basePreset: Partial<Config> = {
           800: "#92400e",
           900: "#78350f",
           950: "#451a03",
-          DEFAULT: "#f59e0b",
+          DEFAULT: "#f5f3ff",
+          foreground: "#6d28d9",
         },
+        destructive: {
+          DEFAULT: "#e11d48",
+          foreground: "#ffffff",
+        },
+        muted: {
+          DEFAULT: "#f1f5f9",
+          foreground: "#64748b",
+        },
+        border: "#e2e8f0",
+        input: "#e2e8f0",
+        ring: "#7c3aed",
       },
       fontFamily: {
         sans: ["Inter", "system-ui", "sans-serif"],

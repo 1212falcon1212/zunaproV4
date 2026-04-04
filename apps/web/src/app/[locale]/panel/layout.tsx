@@ -297,7 +297,7 @@ export default function PanelLayout({
                               className={cn(
                                 'flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-all duration-150',
                                 isItemActive
-                                  ? 'bg-gradient-to-r from-violet-500 to-indigo-400 font-semibold text-white shadow-sm'
+                                  ? 'bg-gradient-to-r from-violet-500 to-violet-400 font-semibold text-white shadow-sm'
                                   : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900',
                               )}
                             >
@@ -324,7 +324,7 @@ export default function PanelLayout({
                 href={`/${locale}/panel`}
                 className={cn(
                   'flex h-10 w-10 items-center justify-center rounded-xl transition-all',
-                  pathname === `/${locale}/panel` ? 'bg-indigo-50 text-indigo-700' : 'text-slate-500 hover:bg-slate-100 hover:text-slate-900',
+                  pathname === `/${locale}/panel` ? 'bg-violet-50 text-violet-700' : 'text-slate-500 hover:bg-slate-100 hover:text-slate-900',
                 )}
                 title={t('sidebar.controlPanel')}
               >
@@ -362,7 +362,7 @@ export default function PanelLayout({
                 <span>{t('sidebar.collapse')}</span>
               </button>
               <div className="flex items-center gap-3 rounded-xl bg-slate-50 border border-slate-100 px-3 py-2.5">
-                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-violet-500 to-blue-500 text-sm font-bold text-white">
+                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-violet-500 to-purple-500 text-sm font-bold text-white">
                   {userInitial}
                 </div>
                 <div className="min-w-0 flex-1">
@@ -379,7 +379,7 @@ export default function PanelLayout({
               >
                 <ChevronDown className="h-4 w-4 -rotate-90" />
               </button>
-              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-violet-500 to-blue-500 text-sm font-bold text-white">
+              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-violet-500 to-purple-500 text-sm font-bold text-white">
                 {userInitial}
               </div>
             </div>
@@ -431,7 +431,7 @@ export default function PanelLayout({
             </button>
 
             {/* User avatar */}
-            <div className="mx-1 flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-violet-500 to-blue-500 text-sm font-bold text-white cursor-pointer">
+            <div className="mx-1 flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-violet-500 to-purple-500 text-sm font-bold text-white cursor-pointer">
               {userInitial}
             </div>
 

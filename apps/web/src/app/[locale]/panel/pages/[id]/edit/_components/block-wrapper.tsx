@@ -192,7 +192,7 @@ function BlockPreview({ block }: { block: Block }) {
     case 'hero':
       return (
         <div
-          className="relative flex min-h-[200px] flex-col items-center justify-center gap-3 bg-gradient-to-r from-indigo-600 to-purple-600 p-8 text-center"
+          className="relative flex min-h-[200px] flex-col items-center justify-center gap-3 bg-gradient-to-r from-violet-600 to-purple-600 p-8 text-center"
           style={{
             backgroundImage: props.backgroundImage
               ? `url(${props.backgroundImage as string})`
@@ -216,7 +216,7 @@ function BlockPreview({ block }: { block: Block }) {
             </p>
           )}
           <div className="relative z-10 flex items-center gap-2">
-            <span className="rounded-lg bg-white px-4 py-2 text-sm font-medium text-indigo-600">
+            <span className="rounded-lg bg-white px-4 py-2 text-sm font-medium text-violet-600">
               {getLocalizedText(props.buttonText) || 'Button'}
             </span>
           </div>
@@ -446,7 +446,7 @@ function BlockPreview({ block }: { block: Block }) {
       return (
         <div className="p-4">
           <div className="grid grid-cols-2 gap-2">
-            <div className="flex min-h-[100px] items-center justify-center rounded-md bg-gradient-to-br from-violet-500 to-indigo-600 text-white">
+            <div className="flex min-h-[100px] items-center justify-center rounded-md bg-gradient-to-br from-violet-500 to-violet-600 text-white">
               <span className="text-sm font-medium">{bgSlides.length > 0 ? getLocalizedText(bgSlides[0].title) : 'Main Slider'} ({bgSlides.length} slides)</span>
             </div>
             <div className="flex flex-col gap-2">

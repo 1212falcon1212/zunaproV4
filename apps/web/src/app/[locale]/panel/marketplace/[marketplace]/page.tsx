@@ -191,7 +191,7 @@ const MP_CONFIG: Record<string, MpConfig> = {
 
 const STATUS_BADGES: Record<string, { label: string; className: string }> = {
   pending: { label: 'Beklemede', className: 'bg-slate-100 text-slate-500' },
-  sent: { label: 'Gonderildi', className: 'bg-blue-50 text-blue-700' },
+  sent: { label: 'Gonderildi', className: 'bg-violet-50 text-violet-700' },
   approved: { label: 'Onaylandi', className: 'bg-emerald-50 text-emerald-700' },
   rejected: { label: 'Reddedildi', className: 'bg-rose-50 text-rose-700' },
   error: { label: 'Hata', className: 'bg-rose-50 text-rose-700' },
@@ -1259,7 +1259,7 @@ export default function MarketplaceDetailPage({
                                   <p className="text-sm font-semibold text-slate-800 line-clamp-2">{p.title}</p>
                                   <div className="mt-1 flex flex-wrap items-center gap-2">
                                     {(p.brand || p.brandName) && (
-                                      <Badge className="bg-blue-50 text-blue-700 text-[10px]">{(p.brand || p.brandName)}</Badge>
+                                      <Badge className="bg-violet-50 text-violet-700 text-[10px]">{(p.brand || p.brandName)}</Badge>
                                     )}
                                     {p.categoryName && (
                                       <Badge className="bg-amber-50 text-amber-700 text-[10px]">{p.categoryName}</Badge>
@@ -1750,7 +1750,7 @@ export default function MarketplaceDetailPage({
               <div>
                 <h3 className="text-base font-bold text-slate-900">{detailGroup.mainProduct.title}</h3>
                 <div className="mt-2 flex flex-wrap gap-2">
-                  {(detailGroup.mainProduct.brand || detailGroup.mainProduct.brandName) && <Badge className="bg-blue-50 text-blue-700">{(detailGroup.mainProduct.brand || detailGroup.mainProduct.brandName)}</Badge>}
+                  {(detailGroup.mainProduct.brand || detailGroup.mainProduct.brandName) && <Badge className="bg-violet-50 text-violet-700">{(detailGroup.mainProduct.brand || detailGroup.mainProduct.brandName)}</Badge>}
                   {detailGroup.mainProduct.categoryName && <Badge className="bg-amber-50 text-amber-700">{detailGroup.mainProduct.categoryName}</Badge>}
                   {detailGroup.variants.length > 1 && <Badge className="bg-violet-50 text-violet-700">{detailGroup.variants.length} Varyasyon</Badge>}
                 </div>

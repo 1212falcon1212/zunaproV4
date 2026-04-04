@@ -318,9 +318,9 @@ export function EditorCanvas() {
               </span>
             </div>
           ) : activeId ? (
-            <div className="flex items-center gap-2 rounded-lg border border-blue-300 bg-blue-50 px-4 py-3 shadow-lg">
-              <Layers className="h-4 w-4 text-blue-600" />
-              <span className="text-sm font-medium text-blue-700">
+            <div className="flex items-center gap-2 rounded-lg border border-violet-300 bg-violet-50 px-4 py-3 shadow-lg">
+              <Layers className="h-4 w-4 text-violet-600" />
+              <span className="text-sm font-medium text-violet-700">
                 Moving block...
               </span>
             </div>

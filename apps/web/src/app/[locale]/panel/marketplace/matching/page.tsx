@@ -45,7 +45,7 @@ const MARKETPLACES = [
 
 const STATUS_MAP: Record<string, { label: string; cls: string }> = {
   pending: { label: 'Beklemede', cls: 'bg-slate-100 text-slate-500' },
-  sent: { label: 'Gonderildi', cls: 'bg-blue-50 text-blue-700' },
+  sent: { label: 'Gonderildi', cls: 'bg-violet-50 text-violet-700' },
   approved: { label: 'Onayli', cls: 'bg-emerald-50 text-emerald-700' },
   rejected: { label: 'Reddedildi', cls: 'bg-rose-50 text-rose-700' },
   error: { label: 'Hata', cls: 'bg-rose-50 text-rose-700' },

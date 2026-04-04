@@ -85,11 +85,11 @@ export function ThemeCard({ theme, isActive, onPreview }: ThemeCardProps) {
       type="button"
       onClick={() => onPreview(theme)}
       className={`group relative w-full overflow-hidden rounded-2xl border-2 bg-white text-left shadow-sm transition-all duration-300 hover:shadow-lg ${
-        isActive ? 'border-blue-500 ring-2 ring-blue-100' : 'border-slate-200 hover:border-slate-300'
+        isActive ? 'border-violet-500 ring-2 ring-violet-100' : 'border-slate-200 hover:border-slate-300'
       }`}
     >
       {isActive && (
-        <div className="absolute right-3 top-3 z-10 flex items-center gap-1.5 rounded-full bg-blue-500 px-3 py-1 text-xs font-semibold text-white shadow-md">
+        <div className="absolute right-3 top-3 z-10 flex items-center gap-1.5 rounded-full bg-violet-500 px-3 py-1 text-xs font-semibold text-white shadow-md">
           <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
           </svg>

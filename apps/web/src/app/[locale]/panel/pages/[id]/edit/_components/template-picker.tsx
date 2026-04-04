@@ -46,16 +46,16 @@ export function TemplatePicker({
                 onSelect(template.content);
                 onClose();
               }}
-              className="flex flex-col items-center gap-3 rounded-lg border-2 border-gray-200 p-6 text-center transition-all hover:border-blue-400 hover:bg-blue-50"
+              className="flex flex-col items-center gap-3 rounded-lg border-2 border-slate-200 p-6 text-center transition-all hover:border-violet-400 hover:bg-violet-50"
             >
-              <div className="text-gray-400">
+              <div className="text-slate-400">
                 {TEMPLATE_ICONS[template.id] || <FileText className="h-8 w-8" />}
               </div>
               <div>
-                <p className="font-medium text-gray-900">
+                <p className="font-medium text-slate-900">
                   {template.name[locale] ?? template.name.en}
                 </p>
-                <p className="mt-1 text-xs text-gray-500">
+                <p className="mt-1 text-xs text-slate-500">
                   {template.description[locale] ?? template.description.en}
                 </p>
               </div>

@@ -110,7 +110,7 @@ export function ThemePreviewModal({ theme, isActive, onClose, onApplied, tenantS
             <div className="flex items-start gap-2">
               <h2 className="text-xl font-bold text-slate-900">{theme.name}</h2>
               {isActive && (
-                <span className="mt-1 shrink-0 rounded-full bg-blue-100 px-2 py-0.5 text-xs font-semibold text-blue-700">Active</span>
+                <span className="mt-1 shrink-0 rounded-full bg-violet-100 px-2 py-0.5 text-xs font-semibold text-violet-700">Active</span>
               )}
             </div>
             <p className="mt-2 text-sm leading-relaxed text-slate-500">{theme.description}</p>
@@ -159,7 +159,7 @@ export function ThemePreviewModal({ theme, isActive, onClose, onApplied, tenantS
           {/* Apply Section */}
           <div className="border-t border-slate-200 bg-white p-6">
             <label className="mb-2 flex cursor-pointer items-center gap-3">
-              <input type="checkbox" checked={applyLayout} onChange={(e) => setApplyLayout(e.target.checked)} className="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500" />
+              <input type="checkbox" checked={applyLayout} onChange={(e) => setApplyLayout(e.target.checked)} className="h-4 w-4 rounded border-slate-300 text-violet-600 focus:ring-violet-500" />
               <span className="text-sm text-slate-700">Apply layout (homepage, header, footer)</span>
             </label>
             <label className="mb-4 flex cursor-pointer items-center gap-3">
@@ -194,7 +194,7 @@ export function ThemePreviewModal({ theme, isActive, onClose, onApplied, tenantS
             )}
 
             {isActive && status === 'idle' ? (
-              <button disabled className="flex w-full items-center justify-center gap-2 rounded-xl bg-blue-50 px-4 py-3 text-sm font-semibold text-blue-600">
+              <button disabled className="flex w-full items-center justify-center gap-2 rounded-xl bg-violet-50 px-4 py-3 text-sm font-semibold text-violet-600">
                 <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
                 </svg>

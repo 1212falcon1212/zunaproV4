@@ -4,13 +4,6 @@
 
 @layer base {
   :root {
-    --color-primary: #FF6B35;
-    --color-secondary: #64748b;
-    --color-accent: #f59e0b;
-    --color-background: #ffffff;
-    --color-foreground: #0f172a;
-    --color-muted: #f1f5f9;
-    --color-border: #e2e8f0;
     --font-heading: 'Inter', sans-serif;
     --font-body: 'Inter', sans-serif;
     --radius: 0.75rem;
@@ -51,30 +44,6 @@
 
   .font-body {
     font-family: var(--font-body);
-  }
-
-  .theme-primary {
-    color: var(--color-primary);
-  }
-
-  .bg-theme-primary {
-    background-color: var(--color-primary);
-  }
-
-  .theme-accent {
-    color: var(--color-accent);
-  }
-
-  .bg-theme-accent {
-    background-color: var(--color-accent);
-  }
-
-  .border-theme {
-    border-color: var(--color-border);
-  }
-
-  .bg-theme-muted {
-    background-color: var(--color-muted);
   }
 
   .rounded-theme {

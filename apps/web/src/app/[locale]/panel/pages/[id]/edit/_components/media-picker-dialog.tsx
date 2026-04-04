@@ -116,7 +116,7 @@ export function MediaPickerDialog({
           <div className="mb-6 flex gap-4">
             <div className="flex-1">
               <Label>Upload new</Label>
-              <label className="mt-1 flex cursor-pointer items-center gap-2 rounded-lg border-2 border-dashed border-gray-300 px-4 py-3 text-sm text-gray-500 hover:border-gray-400">
+              <label className="mt-1 flex cursor-pointer items-center gap-2 rounded-lg border-2 border-dashed border-slate-300 px-4 py-3 text-sm text-slate-500 hover:border-slate-400">
                 {uploading ? (
                   <Loader2 className="h-4 w-4 animate-spin" />
                 ) : (
@@ -149,10 +149,10 @@ export function MediaPickerDialog({
           {/* Media grid */}
           {loading ? (
             <div className="flex h-40 items-center justify-center">
-              <Loader2 className="h-6 w-6 animate-spin text-gray-400" />
+              <Loader2 className="h-6 w-6 animate-spin text-slate-400" />
             </div>
           ) : media.length === 0 ? (
-            <div className="flex h-40 flex-col items-center justify-center text-gray-400">
+            <div className="flex h-40 flex-col items-center justify-center text-slate-400">
               <ImageIcon className="mb-2 h-8 w-8" />
               <p className="text-sm">No media uploaded yet</p>
             </div>
@@ -170,8 +170,8 @@ export function MediaPickerDialog({
                     }}
                     className={`relative aspect-square overflow-hidden rounded-lg border-2 transition-all ${
                       selectedUrl === item.url
-                        ? 'border-blue-500 ring-2 ring-blue-200'
-                        : 'border-gray-200 hover:border-gray-300'
+                        ? 'border-violet-500 ring-2 ring-violet-200'
+                        : 'border-slate-200 hover:border-slate-300'
                     }`}
                   >
                     <img
@@ -180,7 +180,7 @@ export function MediaPickerDialog({
                       className="h-full w-full object-cover"
                     />
                     {selectedUrl === item.url && (
-                      <div className="absolute right-1 top-1 rounded-full bg-blue-500 p-0.5">
+                      <div className="absolute right-1 top-1 rounded-full bg-violet-500 p-0.5">
                         <Check className="h-3 w-3 text-white" />
                       </div>
                     )}

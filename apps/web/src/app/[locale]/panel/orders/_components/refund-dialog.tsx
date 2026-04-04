@@ -165,7 +165,7 @@ export function RefundDialog({
               <select
                 value={reason}
                 onChange={(e) => setReason(e.target.value as RefundReason)}
-                className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200"
+                className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:border-violet-500 focus:outline-none focus:ring-2 focus:ring-violet-200"
               >
                 {REFUND_REASONS.map((r) => (
                   <option key={r} value={r}>
@@ -185,7 +185,7 @@ export function RefundDialog({
                 onChange={(e) => setNotes(e.target.value)}
                 placeholder={t('notesPlaceholder')}
                 rows={3}
-                className="w-full resize-none rounded-lg border border-slate-200 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200"
+                className="w-full resize-none rounded-lg border border-slate-200 px-3 py-2 text-sm focus:border-violet-500 focus:outline-none focus:ring-2 focus:ring-violet-200"
               />
             </div>
 

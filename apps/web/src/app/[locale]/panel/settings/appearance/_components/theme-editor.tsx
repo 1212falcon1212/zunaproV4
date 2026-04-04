@@ -86,7 +86,7 @@ export function ThemeEditor({ onConfigChange }: ThemeEditorProps) {
   };
 
   if (!loaded) {
-    return <div className="animate-pulse space-y-4"><div className="h-8 bg-gray-200 rounded" /><div className="h-8 bg-gray-200 rounded" /></div>;
+    return <div className="animate-pulse space-y-4"><div className="h-8 bg-slate-200 rounded" /><div className="h-8 bg-slate-200 rounded" /></div>;
   }
 
   return (
@@ -97,7 +97,7 @@ export function ThemeEditor({ onConfigChange }: ThemeEditorProps) {
         <div className="mt-4 grid grid-cols-2 gap-4 sm:grid-cols-3">
           {(['primary', 'secondary', 'accent', 'background', 'foreground', 'muted', 'border'] as const).map((colorKey) => (
             <div key={colorKey}>
-              <label className="mb-1 block text-sm font-medium capitalize text-gray-700">{colorKey}</label>
+              <label className="mb-1 block text-sm font-medium capitalize text-slate-700">{colorKey}</label>
               <div className="flex items-center gap-2">
                 <input
                   type="color"
@@ -122,7 +122,7 @@ export function ThemeEditor({ onConfigChange }: ThemeEditorProps) {
         <h3 className="text-lg font-semibold">{t('fonts')}</h3>
         <div className="mt-4 grid grid-cols-2 gap-4">
           <div>
-            <label className="mb-1 block text-sm font-medium text-gray-700">{t('headingFont')}</label>
+            <label className="mb-1 block text-sm font-medium text-slate-700">{t('headingFont')}</label>
             <select
               value={config.fonts.heading}
               onChange={(e) => updateField('fonts', { ...config.fonts, heading: e.target.value })}
@@ -134,7 +134,7 @@ export function ThemeEditor({ onConfigChange }: ThemeEditorProps) {
             </select>
           </div>
           <div>
-            <label className="mb-1 block text-sm font-medium text-gray-700">{t('bodyFont')}</label>
+            <label className="mb-1 block text-sm font-medium text-slate-700">{t('bodyFont')}</label>
             <select
               value={config.fonts.body}
               onChange={(e) => updateField('fonts', { ...config.fonts, body: e.target.value })}
@@ -153,7 +153,7 @@ export function ThemeEditor({ onConfigChange }: ThemeEditorProps) {
         <h3 className="text-lg font-semibold">{t('layout')}</h3>
         <div className="mt-4 grid grid-cols-2 gap-4">
           <div>
-            <label className="mb-1 block text-sm font-medium text-gray-700">{t('headerStyle')}</label>
+            <label className="mb-1 block text-sm font-medium text-slate-700">{t('headerStyle')}</label>
             <select
               value={config.layout.headerStyle}
               onChange={(e) => updateField('layout', { ...config.layout, headerStyle: e.target.value })}
@@ -165,7 +165,7 @@ export function ThemeEditor({ onConfigChange }: ThemeEditorProps) {
             </select>
           </div>
           <div>
-            <label className="mb-1 block text-sm font-medium text-gray-700">{t('borderRadius')}</label>
+            <label className="mb-1 block text-sm font-medium text-slate-700">{t('borderRadius')}</label>
             <select
               value={config.borderRadius}
               onChange={(e) => updateField('borderRadius', e.target.value)}
@@ -179,7 +179,7 @@ export function ThemeEditor({ onConfigChange }: ThemeEditorProps) {
             </select>
           </div>
           <div>
-            <label className="mb-1 block text-sm font-medium text-gray-700">{t('gridColumns')}</label>
+            <label className="mb-1 block text-sm font-medium text-slate-700">{t('gridColumns')}</label>
             <select
               value={config.layout.productGridColumns}
               onChange={(e) => updateField('layout', { ...config.layout, productGridColumns: Number(e.target.value) })}

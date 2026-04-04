@@ -71,7 +71,7 @@ const MOCK_PRODUCTS: TopProduct[] = [
   { name: 'Bluetooth Speaker Mini', sold: 128, revenue: '€6,400', trend: 'up' },
 ];
 
-function MiniBarChart({ color = 'bg-gradient-to-t from-violet-500 to-blue-400' }: { color?: string }) {
+function MiniBarChart({ color = 'bg-gradient-to-t from-violet-500 to-violet-400' }: { color?: string }) {
   const bars = [35, 58, 42, 68, 45, 72, 55, 80, 62, 90, 70, 85];
   return (
     <div className="flex items-end gap-[2px] h-8">
@@ -285,7 +285,7 @@ export function PanelDashboard({ locale }: { locale: string }) {
 
             <div className="relative mt-3 overflow-hidden rounded-2xl border border-white/25 bg-gradient-to-r from-fuchsia-200/25 to-violet-200/15 p-5 backdrop-blur-sm">
               <div className="absolute -left-6 -top-6 h-28 w-28 rounded-full bg-white/10" />
-              <div className="absolute -right-10 -bottom-10 h-36 w-36 rounded-full bg-indigo-900/30" />
+              <div className="absolute -right-10 -bottom-10 h-36 w-36 rounded-full bg-violet-900/30" />
               <div className="relative flex items-center gap-4">
                 <div className="relative h-32 w-60 shrink-0 overflow-hidden rounded-2xl border border-white/30 bg-white/10">
                   <img
@@ -407,7 +407,7 @@ export function PanelDashboard({ locale }: { locale: string }) {
                 <TrendingUp className="h-4 w-4 text-emerald-500" />
               </div>
               <div className="h-1.5 rounded-full bg-slate-100">
-                <div className="h-full w-[62%] rounded-full bg-gradient-to-r from-violet-500 to-blue-500" />
+                <div className="h-full w-[62%] rounded-full bg-gradient-to-r from-violet-500 to-violet-400" />
               </div>
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
@@ -559,7 +559,7 @@ export function PanelDashboard({ locale }: { locale: string }) {
                 <div key={m} className="flex flex-1 flex-col items-center gap-1">
                   <div className="w-full flex gap-0.5 items-end" style={{ height: '100%' }}>
                     <div className="flex-1 rounded-t bg-slate-200" style={{ height: `${[40,55,35,60,45,70,65][i]}%` }} />
-                    <div className="flex-1 rounded-t bg-indigo-500" style={{ height: `${[25,35,20,40,30,50,45][i]}%` }} />
+                    <div className="flex-1 rounded-t bg-violet-500" style={{ height: `${[25,35,20,40,30,50,45][i]}%` }} />
                   </div>
                   <span className="text-[9px] text-slate-400">{m}</span>
                 </div>
