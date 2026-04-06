@@ -575,107 +575,189 @@ export default function ProductSendPage({
         />
       )}
 
-      {/* Order Statistics */}
-      <div className="space-y-4">
-        <h2 className="text-lg font-semibold text-slate-800">Pazaryeri Siparis Istatistikleri</h2>
+      {/* ── Marketplace Dashboard ── */}
+      <div className="space-y-5">
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-lg font-bold text-slate-900">Pazaryeri Raporu</h2>
+            <p className="text-xs text-slate-500">Tum kanallardaki siparis ve gelir ozeti</p>
+          </div>
+        </div>
+
         {statsLoading ? (
-          <div className="flex items-center justify-center py-12">
+          <div className="flex items-center justify-center py-16">
             <Loader2 className="h-6 w-6 animate-spin text-violet-500" />
           </div>
         ) : orderStats.length === 0 ? (
-          <div className="rounded-lg border border-slate-200 bg-white py-12 text-center text-sm text-slate-400">
-            Istatistik verisi bulunamadi
+          <div className="rounded-xl border border-dashed border-slate-300 bg-white py-16 text-center">
+            <Package className="mx-auto h-8 w-8 text-slate-300" />
+            <p className="mt-3 text-sm text-slate-400">Henuz siparis verisi yok</p>
           </div>
-        ) : (
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {orderStats.map((stat) => {
-              const mpColors: Record<string, { dot: string; border: string; bg: string; text: string }> = {
-                trendyol: { dot: 'bg-orange-500', border: 'border-orange-200', bg: 'bg-orange-50/50', text: 'text-orange-700' },
-                hepsiburada: { dot: 'bg-purple-500', border: 'border-purple-200', bg: 'bg-purple-50/50', text: 'text-purple-700' },
-                ciceksepeti: { dot: 'bg-pink-500', border: 'border-pink-200', bg: 'bg-pink-50/50', text: 'text-pink-700' },
-                web: { dot: 'bg-slate-500', border: 'border-slate-200', bg: 'bg-slate-50/50', text: 'text-slate-700' },
-              };
-              const c = mpColors[stat.marketplace] ?? mpColors.web;
+        ) : (() => {
+          const totalAllOrders = orderStats.reduce((s, st) => s + st.totalOrders, 0);
+          const totalAllRevenue = orderStats.reduce((s, st) => s + st.totalRevenue, 0);
+          const mpOnly = orderStats.filter((s) => s.marketplace !== 'web');
+          const mpTotalOrders = mpOnly.reduce((s, st) => s + st.totalOrders, 0);
 
-              const statusColors: Record<string, string> = {
-                pending: 'bg-yellow-400',
-                preparing: 'bg-violet-500',
-                shipped: 'bg-blue-500',
-                delivered: 'bg-emerald-500',
-                cancelled: 'bg-rose-500',
-              };
+          const statusColors: Record<string, { bg: string; bar: string; text: string }> = {
+            pending: { bg: 'bg-amber-50', bar: 'bg-amber-400', text: 'text-amber-700' },
+            preparing: { bg: 'bg-violet-50', bar: 'bg-violet-500', text: 'text-violet-700' },
+            shipped: { bg: 'bg-sky-50', bar: 'bg-sky-500', text: 'text-sky-700' },
+            delivered: { bg: 'bg-emerald-50', bar: 'bg-emerald-500', text: 'text-emerald-700' },
+            completed: { bg: 'bg-green-50', bar: 'bg-green-500', text: 'text-green-700' },
+            cancelled: { bg: 'bg-rose-50', bar: 'bg-rose-400', text: 'text-rose-600' },
+            refunded: { bg: 'bg-slate-50', bar: 'bg-slate-400', text: 'text-slate-600' },
+          };
+          const statusLabels: Record<string, string> = {
+            pending: 'Beklemede', preparing: 'Hazirlaniyor', shipped: 'Kargoda',
+            delivered: 'Teslim Edildi', completed: 'Tamamlandi', cancelled: 'Iptal', refunded: 'Iade',
+          };
+          const mpThemes: Record<string, { gradient: string; iconBg: string; ring: string; accent: string }> = {
+            trendyol: { gradient: 'from-orange-500 to-amber-500', iconBg: 'bg-orange-100 text-orange-600', ring: 'ring-orange-200', accent: 'text-orange-600' },
+            hepsiburada: { gradient: 'from-purple-500 to-violet-500', iconBg: 'bg-purple-100 text-purple-600', ring: 'ring-purple-200', accent: 'text-purple-600' },
+            ciceksepeti: { gradient: 'from-pink-500 to-rose-400', iconBg: 'bg-pink-100 text-pink-600', ring: 'ring-pink-200', accent: 'text-pink-600' },
+          };
 
-              const statusLabels: Record<string, string> = {
-                pending: 'Beklemede',
-                preparing: 'Hazirlaniyor',
-                shipped: 'Kargoda',
-                delivered: 'Teslim Edildi',
-                cancelled: 'Iptal',
-              };
-
-              const total = stat.totalOrders;
-
-              return (
-                <div
-                  key={stat.marketplace}
-                  className={`rounded-xl border ${c.border} ${c.bg} p-5 space-y-3`}
-                >
-                  <div className="flex items-center gap-2">
-                    <span className={`inline-block h-2.5 w-2.5 rounded-full ${c.dot}`} />
-                    <span className={`text-sm font-semibold capitalize ${c.text}`}>{stat.marketplace}</span>
-                  </div>
-
-                  {total === 0 ? (
-                    <p className="text-xs text-slate-400">Henuz siparis yok</p>
-                  ) : (
-                    <>
-                      <div className="flex items-end justify-between">
-                        <div>
-                          <p className="text-xs text-slate-500">Toplam Siparis</p>
-                          <p className="text-2xl font-bold text-slate-900">{total}</p>
-                        </div>
-                        <div className="text-right">
-                          <p className="text-xs text-slate-500">Toplam Gelir</p>
-                          <p className="text-lg font-bold text-slate-800">
-                            {stat.totalRevenue.toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}
-                          </p>
-                        </div>
-                      </div>
-
-                      {/* Status distribution bar */}
-                      <div>
-                        <div className="flex h-2.5 overflow-hidden rounded-full bg-slate-200">
-                          {Object.entries(stat.byStatus).map(([status, count]) => {
-                            const pct = (count / total) * 100;
-                            if (pct === 0) return null;
-                            return (
-                              <div
-                                key={status}
-                                className={`${statusColors[status] ?? 'bg-slate-400'}`}
-                                style={{ width: `${pct}%` }}
-                                title={`${statusLabels[status] ?? status}: ${count}`}
-                              />
-                            );
-                          })}
-                        </div>
-                        <div className="mt-2 flex flex-wrap gap-x-3 gap-y-1">
-                          {Object.entries(stat.byStatus).map(([status, count]) => (
-                            <div key={status} className="flex items-center gap-1">
-                              <span className={`inline-block h-1.5 w-1.5 rounded-full ${statusColors[status] ?? 'bg-slate-400'}`} />
-                              <span className="text-[10px] text-slate-500">
-                                {statusLabels[status] ?? status} ({count})
-                              </span>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    </>
-                  )}
+          return (
+            <>
+              {/* Summary row */}
+              <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+                <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+                  <p className="text-xs font-medium uppercase tracking-wider text-slate-400">Toplam Siparis</p>
+                  <p className="mt-1 text-3xl font-extrabold text-slate-900">{totalAllOrders}</p>
+                  <p className="mt-1 text-xs text-slate-500">{mpTotalOrders} pazaryeri + {totalAllOrders - mpTotalOrders} web</p>
                 </div>
-              );
-            })}
-          </div>
-        )}
+                <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+                  <p className="text-xs font-medium uppercase tracking-wider text-slate-400">Toplam Gelir</p>
+                  <p className="mt-1 text-3xl font-extrabold text-emerald-600">
+                    {totalAllRevenue.toLocaleString('tr-TR', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
+                    <span className="ml-1 text-base font-semibold text-slate-400">TRY</span>
+                  </p>
+                </div>
+                <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+                  <p className="text-xs font-medium uppercase tracking-wider text-slate-400">Aktif Kanal</p>
+                  <p className="mt-1 text-3xl font-extrabold text-violet-600">{mpOnly.filter((m) => m.totalOrders > 0).length}</p>
+                  <p className="mt-1 text-xs text-slate-500">{mpOnly.length} pazaryeri bagli</p>
+                </div>
+                <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+                  <p className="text-xs font-medium uppercase tracking-wider text-slate-400">Ort. Siparis Tutari</p>
+                  <p className="mt-1 text-3xl font-extrabold text-slate-900">
+                    {totalAllOrders > 0 ? Math.round(totalAllRevenue / totalAllOrders).toLocaleString('tr-TR') : 0}
+                    <span className="ml-1 text-base font-semibold text-slate-400">TRY</span>
+                  </p>
+                </div>
+              </div>
+
+              {/* Marketplace cards */}
+              <div className="grid grid-cols-1 gap-5 lg:grid-cols-3">
+                {mpOnly.map((stat) => {
+                  const theme = mpThemes[stat.marketplace] ?? mpThemes.trendyol;
+                  const allStatuses = Object.entries(stat.byStatus).sort(([, a], [, b]) => b - a);
+                  const maxCount = Math.max(...allStatuses.map(([, c]) => c), 1);
+
+                  return (
+                    <div key={stat.marketplace} className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+                      {/* Gradient header */}
+                      <div className={`bg-gradient-to-r ${theme.gradient} px-5 py-4`}>
+                        <div className="flex items-center justify-between">
+                          <h3 className="text-sm font-bold uppercase tracking-wider text-white/90">{stat.marketplace}</h3>
+                          <span className="rounded-full bg-white/20 px-2.5 py-0.5 text-xs font-bold text-white">
+                            {stat.totalOrders} siparis
+                          </span>
+                        </div>
+                        <p className="mt-2 text-2xl font-extrabold text-white">
+                          {stat.totalRevenue.toLocaleString('tr-TR', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
+                          <span className="ml-1 text-sm font-medium text-white/70">TRY</span>
+                        </p>
+                      </div>
+
+                      {/* Status breakdown */}
+                      <div className="px-5 py-4">
+                        {stat.totalOrders === 0 ? (
+                          <p className="py-4 text-center text-xs text-slate-400">Henuz siparis yok</p>
+                        ) : (
+                          <div className="space-y-2.5">
+                            {allStatuses.map(([status, count]) => {
+                              const sc = statusColors[status] ?? { bg: 'bg-slate-50', bar: 'bg-slate-400', text: 'text-slate-600' };
+                              const pct = (count / maxCount) * 100;
+                              return (
+                                <div key={status}>
+                                  <div className="mb-1 flex items-center justify-between">
+                                    <span className={`text-xs font-medium ${sc.text}`}>{statusLabels[status] ?? status}</span>
+                                    <span className="text-xs font-bold text-slate-700">{count}</span>
+                                  </div>
+                                  <div className="h-1.5 overflow-hidden rounded-full bg-slate-100">
+                                    <div
+                                      className={`h-full rounded-full ${sc.bar} transition-all duration-500`}
+                                      style={{ width: `${pct}%` }}
+                                    />
+                                  </div>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Footer */}
+                      <div className="border-t border-slate-100 px-5 py-3">
+                        <Link
+                          href={`/${locale}/panel/marketplace/${stat.marketplace}`}
+                          className={`flex items-center gap-1 text-xs font-medium ${theme.accent} hover:underline`}
+                        >
+                          Detaylari Gor
+                          <ChevronRight className="h-3 w-3" />
+                        </Link>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+
+              {/* Combined status distribution */}
+              {mpTotalOrders > 0 && (
+                <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+                  <h3 className="mb-4 text-sm font-bold text-slate-700">Genel Durum Dagilimi</h3>
+                  <div className="flex h-4 overflow-hidden rounded-full bg-slate-100">
+                    {(() => {
+                      const combined: Record<string, number> = {};
+                      mpOnly.forEach((st) => Object.entries(st.byStatus).forEach(([k, v]) => { combined[k] = (combined[k] ?? 0) + v; }));
+                      return Object.entries(combined).sort(([, a], [, b]) => b - a).map(([status, count]) => {
+                        const sc = statusColors[status] ?? { bar: 'bg-slate-400' };
+                        const pct = (count / mpTotalOrders) * 100;
+                        if (pct < 1) return null;
+                        return (
+                          <div
+                            key={status}
+                            className={`${sc.bar} transition-all duration-500`}
+                            style={{ width: `${pct}%` }}
+                            title={`${statusLabels[status] ?? status}: ${count} (${pct.toFixed(0)}%)`}
+                          />
+                        );
+                      });
+                    })()}
+                  </div>
+                  <div className="mt-3 flex flex-wrap gap-x-5 gap-y-1.5">
+                    {(() => {
+                      const combined: Record<string, number> = {};
+                      mpOnly.forEach((st) => Object.entries(st.byStatus).forEach(([k, v]) => { combined[k] = (combined[k] ?? 0) + v; }));
+                      return Object.entries(combined).sort(([, a], [, b]) => b - a).map(([status, count]) => {
+                        const sc = statusColors[status] ?? { bar: 'bg-slate-400', text: 'text-slate-600' };
+                        return (
+                          <div key={status} className="flex items-center gap-1.5">
+                            <span className={`h-2 w-2 rounded-full ${sc.bar}`} />
+                            <span className="text-xs text-slate-600">{statusLabels[status] ?? status}</span>
+                            <span className="text-xs font-bold text-slate-800">{count}</span>
+                          </div>
+                        );
+                      });
+                    })()}
+                  </div>
+                </div>
+              )}
+            </>
+          );
+        })()}
       </div>
     </div>
   );
