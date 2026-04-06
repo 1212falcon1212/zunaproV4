@@ -413,6 +413,7 @@
         "payment": "Odeme",
         "total": "Toplam",
         "date": "Tarih",
+        "source": "Kaynak",
         "actions": "Islemler"
       },
       "actions": {

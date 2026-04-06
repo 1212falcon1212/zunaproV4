@@ -29,6 +29,7 @@ interface FindOrdersOptions {
   dateFrom?: string;
   dateTo?: string;
   search?: string;
+  source?: string;
 }
 
 @Injectable()
@@ -159,6 +160,7 @@ export class OrdersService {
       dateFrom,
       dateTo,
       search,
+      source,
     } = options;
     const prisma = getTenantClient(tenantSlug);
     const skip = (page - 1) * limit;
@@ -172,6 +174,7 @@ export class OrdersService {
       if (dateTo) createdAt.lte = new Date(dateTo);
       where.createdAt = createdAt;
     }
+    if (source) where.source = source;
     if (search) {
       where.OR = [
         { orderNumber: { contains: search, mode: 'insensitive' } },

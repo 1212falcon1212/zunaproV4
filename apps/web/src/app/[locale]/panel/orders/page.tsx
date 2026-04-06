@@ -14,6 +14,7 @@ interface OrdersResponse {
     paymentStatus: string;
     totalAmount: string;
     currency: string;
+    source?: string;
     createdAt: string;
     customer?: {
       id: string;

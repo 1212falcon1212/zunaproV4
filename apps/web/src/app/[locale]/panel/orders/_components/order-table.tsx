@@ -12,6 +12,8 @@ interface Order {
   paymentStatus: string;
   totalAmount: string;
   currency: string;
+  source?: string;
+  marketplaceOrderId?: string;
   createdAt: string;
   customer?: {
     id: string;
@@ -65,6 +67,9 @@ export function OrderTable({ orders, meta, onPageChange, onDelete }: OrderTableP
               <th className="px-4 py-3 text-left font-medium text-slate-500">
                 {t('table.date')}
               </th>
+              <th className="px-4 py-3 text-left font-medium text-slate-500">
+                {t('table.source')}
+              </th>
               <th className="px-4 py-3 text-right font-medium text-slate-500">
                 {t('table.actions')}
               </th>
@@ -97,6 +102,17 @@ export function OrderTable({ orders, meta, onPageChange, onDelete }: OrderTableP
                 </td>
                 <td className="px-4 py-3 text-slate-500">
                   {new Date(order.createdAt).toLocaleDateString()}
+                </td>
+                <td className="px-4 py-3">
+                  {!order.source || order.source === 'web' ? (
+                    <span className="inline-flex items-center rounded-full bg-slate-100 px-2 py-0.5 text-xs font-medium text-slate-600">Web</span>
+                  ) : order.source === 'trendyol' ? (
+                    <span className="inline-flex items-center rounded-full bg-orange-50 px-2 py-0.5 text-xs font-medium text-orange-700">Trendyol</span>
+                  ) : order.source === 'hepsiburada' ? (
+                    <span className="inline-flex items-center rounded-full bg-purple-50 px-2 py-0.5 text-xs font-medium text-purple-700">Hepsiburada</span>
+                  ) : (
+                    <span className="inline-flex items-center rounded-full bg-pink-50 px-2 py-0.5 text-xs font-medium text-pink-700">Ciceksepeti</span>
+                  )}
                 </td>
                 <td className="px-4 py-3 text-right">
                   <button

@@ -38,6 +38,13 @@ export class MarketplaceController {
     return this.currencyService.getRates();
   }
 
+  /** Marketplace order stats across all marketplaces */
+  @Get('stats/orders')
+  @RequireRoles('owner', 'admin', 'editor', 'viewer')
+  async getOrderStats(@Req() req: Request) {
+    return this.syncService.getMarketplaceOrderStats(req.tenant!.slug);
+  }
+
   /** Convert TRY amount to target currency */
   @Get('currency/convert')
   @RequireRoles('owner', 'admin', 'editor', 'viewer')
@@ -342,5 +349,37 @@ export class MarketplaceController {
     @Param('marketplace') mp: string,
   ) {
     return this.syncService.autoMatchBrands(req.tenant!.slug, mp);
+  }
+
+  // -----------------------------------------------------------------------
+  // Order sync endpoints
+  // -----------------------------------------------------------------------
+
+  @Post(':marketplace/sync-orders')
+  @RequireRoles('owner', 'admin')
+  async syncOrders(
+    @Req() req: Request,
+    @Param('marketplace') mp: string,
+    @Body() body?: { startDate?: number; endDate?: number },
+  ) {
+    return this.syncService.syncOrders(req.tenant!.slug, mp, body);
+  }
+
+  @Get(':marketplace/orders')
+  @RequireRoles('owner', 'admin', 'editor', 'viewer')
+  async getMarketplaceOrders(
+    @Req() req: Request,
+    @Param('marketplace') mp: string,
+    @Query('page', new DefaultValuePipe(0), ParseIntPipe) page: number,
+    @Query('limit', new DefaultValuePipe(50), ParseIntPipe) limit: number,
+    @Query('status') status?: string,
+  ) {
+    return this.syncService.getMarketplaceOrders(
+      req.tenant!.slug,
+      mp,
+      page,
+      limit,
+      status,
+    );
   }
 }

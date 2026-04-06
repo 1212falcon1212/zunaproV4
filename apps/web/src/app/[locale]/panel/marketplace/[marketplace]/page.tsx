@@ -41,6 +41,7 @@ import {
   Zap,
   FolderTree,
   X,
+  ShoppingBag,
 } from 'lucide-react';
 
 /* ------------------------------------------------------------------ */
@@ -254,6 +255,17 @@ export default function MarketplaceDetailPage({
   const [savingBrandMapping, setSavingBrandMapping] = useState<Record<string, boolean>>({});
   const [syncingStock, setSyncingStock] = useState(false);
   const [showSendWizard, setShowSendWizard] = useState(false);
+
+  /* ---------- Orders state ---------- */
+  const [mpOrders, setMpOrders] = useState<Array<{
+    id: string; orderNumber: string; status: string; paymentStatus: string;
+    totalAmount: string; currency: string; createdAt: string; source: string;
+    marketplaceOrderId?: string; trackingNumber?: string; shippingMethod?: string;
+    customer?: { id: string; email: string; firstName: string; lastName: string };
+  }>>([]);
+  const [mpOrdersMeta, setMpOrdersMeta] = useState({ total: 0, page: 0, limit: 50, totalPages: 0 });
+  const [mpOrdersLoading, setMpOrdersLoading] = useState(false);
+  const [syncingOrders, setSyncingOrders] = useState(false);
 
   /* ---------- Sync logs state ---------- */
   const [syncLogs, setSyncLogs] = useState<SyncLog[]>([]);
@@ -634,6 +646,29 @@ export default function MarketplaceDetailPage({
     }
   };
 
+  /* Orders */
+  const fetchMpOrders = useCallback(async (page = 0) => {
+    setMpOrdersLoading(true);
+    try {
+      const res = await panelApi.get<{ data: typeof mpOrders; meta: typeof mpOrdersMeta }>(`/marketplace/${mp}/orders`, { page, limit: 50 });
+      setMpOrders(res.data ?? []);
+      setMpOrdersMeta(res.meta ?? { total: 0, page: 0, limit: 50, totalPages: 0 });
+    } catch { setMpOrders([]); }
+    finally { setMpOrdersLoading(false); }
+  }, [mp]);
+
+  const handleSyncOrders = async () => {
+    setSyncingOrders(true);
+    try {
+      await panelApi.post(`/marketplace/${mp}/sync-orders`, {});
+      await fetchMpOrders(0);
+    } catch (err) {
+      // silent — error shown via sync logs
+    } finally {
+      setSyncingOrders(false);
+    }
+  };
+
   /* ---------------------------------------------------------------- */
   /*  Helpers                                                          */
   /* ---------------------------------------------------------------- */
@@ -755,6 +790,7 @@ export default function MarketplaceDetailPage({
             }
           }
           if (val === 'logs' && syncLogs.length === 0) fetchSyncLogs();
+          if (val === 'orders' && mpOrders.length === 0) fetchMpOrders();
           if (val === 'brands' && brandMappings.length === 0) fetchBrandMappings();
         }}
       >
@@ -774,6 +810,10 @@ export default function MarketplaceDetailPage({
           <TabsTrigger value="logs" className="data-[state=active]:bg-white data-[state=active]:shadow-sm">
             <History className="mr-1.5 h-3.5 w-3.5" />
             Gecmis
+          </TabsTrigger>
+          <TabsTrigger value="orders" className="data-[state=active]:bg-white data-[state=active]:shadow-sm">
+            <ShoppingBag className="mr-1.5 h-3.5 w-3.5" />
+            Siparisler
           </TabsTrigger>
           {mp === 'trendyol' && (
             <TabsTrigger value="brands" className="data-[state=active]:bg-white data-[state=active]:shadow-sm">
@@ -1707,6 +1747,128 @@ export default function MarketplaceDetailPage({
             </Card>
           </TabsContent>
         )}
+
+        {/* ============================================================ */}
+        {/*  TAB 6: Orders                                               */}
+        {/* ============================================================ */}
+        <TabsContent value="orders" className="mt-6 space-y-4">
+          <div className="flex items-center justify-between">
+            <h2 className="text-sm font-semibold text-slate-800">Pazaryeri Siparisleri</h2>
+            <Button onClick={handleSyncOrders} disabled={syncingOrders} className="bg-violet-600 hover:bg-violet-700">
+              <RefreshCw className={`mr-2 h-4 w-4 ${syncingOrders ? 'animate-spin' : ''}`} />
+              Senkronize Et
+            </Button>
+          </div>
+
+          {mpOrdersLoading ? (
+            <div className="flex items-center justify-center py-12">
+              <Loader2 className="h-6 w-6 animate-spin text-violet-500" />
+            </div>
+          ) : mpOrders.length === 0 ? (
+            <Card className="overflow-hidden border border-slate-200 shadow-sm">
+              <div className="flex flex-col items-center justify-center py-12">
+                <ShoppingBag className="h-10 w-10 text-slate-300" />
+                <p className="mt-3 text-sm text-slate-500">Henuz pazaryeri siparisi bulunamadi</p>
+                <p className="mt-1 text-xs text-slate-400">Siparisleri cekip senkronize etmek icin butona tiklayin</p>
+              </div>
+            </Card>
+          ) : (
+            <Card className="overflow-hidden border border-slate-200 shadow-sm">
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead>
+                    <tr className="border-b border-slate-100 bg-slate-50/40 text-left">
+                      <th className="px-5 py-3 text-xs font-semibold uppercase tracking-wide text-slate-600">Siparis No</th>
+                      <th className="px-5 py-3 text-xs font-semibold uppercase tracking-wide text-slate-600">Marketplace ID</th>
+                      <th className="px-5 py-3 text-xs font-semibold uppercase tracking-wide text-slate-600">Durum</th>
+                      <th className="px-5 py-3 text-xs font-semibold uppercase tracking-wide text-slate-600">Musteri</th>
+                      <th className="px-5 py-3 text-xs font-semibold uppercase tracking-wide text-slate-600 text-right">Toplam</th>
+                      <th className="px-5 py-3 text-xs font-semibold uppercase tracking-wide text-slate-600">Kargo</th>
+                      <th className="px-5 py-3 text-xs font-semibold uppercase tracking-wide text-slate-600">Tarih</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100">
+                    {mpOrders.map((order) => {
+                      const statusColors: Record<string, string> = {
+                        pending: 'bg-yellow-50 text-yellow-700',
+                        preparing: 'bg-violet-50 text-violet-700',
+                        shipped: 'bg-blue-50 text-blue-700',
+                        delivered: 'bg-emerald-50 text-emerald-700',
+                        completed: 'bg-green-50 text-green-700',
+                        cancelled: 'bg-rose-50 text-rose-700',
+                        refunded: 'bg-slate-100 text-slate-600',
+                      };
+                      const statusLabels: Record<string, string> = {
+                        pending: 'Beklemede',
+                        preparing: 'Hazirlaniyor',
+                        shipped: 'Kargoda',
+                        delivered: 'Teslim Edildi',
+                        completed: 'Tamamlandi',
+                        cancelled: 'Iptal',
+                        refunded: 'Iade',
+                      };
+                      const badgeClass = statusColors[order.status] ?? 'bg-slate-100 text-slate-500';
+                      const badgeLabel = statusLabels[order.status] ?? order.status;
+
+                      return (
+                        <tr key={order.id} className="transition-colors hover:bg-slate-50/50">
+                          <td className="px-5 py-3 text-sm font-medium text-slate-800">{order.orderNumber}</td>
+                          <td className="px-5 py-3 font-mono text-xs text-slate-500">{order.marketplaceOrderId || '-'}</td>
+                          <td className="px-5 py-3">
+                            <Badge className={badgeClass}>{badgeLabel}</Badge>
+                          </td>
+                          <td className="px-5 py-3 text-sm text-slate-600">
+                            {order.customer ? `${order.customer.firstName} ${order.customer.lastName}` : '-'}
+                          </td>
+                          <td className="px-5 py-3 text-right text-sm font-semibold text-slate-800">
+                            {Number(order.totalAmount).toLocaleString('tr-TR', { style: 'currency', currency: order.currency || 'TRY' })}
+                          </td>
+                          <td className="px-5 py-3 text-xs text-slate-500">
+                            {order.trackingNumber ? (
+                              <span className="font-mono">{order.trackingNumber}</span>
+                            ) : order.shippingMethod ? (
+                              <span>{order.shippingMethod}</span>
+                            ) : '-'}
+                          </td>
+                          <td className="px-5 py-3 text-xs text-slate-500">
+                            {new Date(order.createdAt).toLocaleDateString('tr-TR', { day: '2-digit', month: '2-digit', year: 'numeric' })}
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+
+              {/* Pagination */}
+              {mpOrdersMeta.totalPages > 1 && (
+                <div className="flex items-center justify-between border-t border-slate-100 px-5 py-3">
+                  <p className="text-xs text-slate-500">
+                    Toplam {mpOrdersMeta.total} siparis — Sayfa {mpOrdersMeta.page + 1} / {mpOrdersMeta.totalPages}
+                  </p>
+                  <div className="flex gap-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      disabled={mpOrdersMeta.page === 0}
+                      onClick={() => fetchMpOrders(mpOrdersMeta.page - 1)}
+                    >
+                      Onceki
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      disabled={mpOrdersMeta.page >= mpOrdersMeta.totalPages - 1}
+                      onClick={() => fetchMpOrders(mpOrdersMeta.page + 1)}
+                    >
+                      Sonraki
+                    </Button>
+                  </div>
+                </div>
+              )}
+            </Card>
+          )}
+        </TabsContent>
       </Tabs>
 
       {/* ─── Product Group Detail Modal ─── */}

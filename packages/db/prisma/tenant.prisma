@@ -85,6 +85,9 @@ model Order {
   shippingMethod  String?  @map("shipping_method") // yurtici, aras, mng
   notes           String?
   locale          String   @default("tr") // locale used when order was placed
+  source             String   @default("web") // 'web' | 'trendyol' | 'hepsiburada' | 'ciceksepeti'
+  marketplaceOrderId String?  @unique @map("marketplace_order_id")
+  marketplaceData    Json?    @map("marketplace_data")
   createdAt       DateTime @default(now()) @map("created_at")
   updatedAt       DateTime @updatedAt @map("updated_at")
 

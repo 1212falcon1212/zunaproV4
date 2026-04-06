@@ -87,6 +87,15 @@ export default function ProductSendPage({
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [batchResult, setBatchResult] = useState<any>(null);
 
+  // Order statistics
+  const [orderStats, setOrderStats] = useState<Array<{
+    marketplace: string;
+    totalOrders: number;
+    totalRevenue: number;
+    byStatus: Record<string, number>;
+  }>>([]);
+  const [statsLoading, setStatsLoading] = useState(false);
+
   const mpConfig = MARKETPLACES.find((m) => m.key === selectedMp)!;
 
   const fetchProducts = useCallback(async (page = 0) => {
@@ -110,6 +119,23 @@ export default function ProductSendPage({
   useEffect(() => {
     fetchProducts(0);
   }, [fetchProducts]);
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      setStatsLoading(true);
+      try {
+        const data = await panelApi.get<Array<{
+          marketplace: string;
+          totalOrders: number;
+          totalRevenue: number;
+          byStatus: Record<string, number>;
+        }>>('/marketplace/stats/orders');
+        setOrderStats(data);
+      } catch { /* ignore */ }
+      finally { setStatsLoading(false); }
+    };
+    fetchStats();
+  }, []);
 
   const fetchSyncLogs = useCallback(async () => {
     setLogsLoading(true);
@@ -548,6 +574,109 @@ export default function ProductSendPage({
           }}
         />
       )}
+
+      {/* Order Statistics */}
+      <div className="space-y-4">
+        <h2 className="text-lg font-semibold text-slate-800">Pazaryeri Siparis Istatistikleri</h2>
+        {statsLoading ? (
+          <div className="flex items-center justify-center py-12">
+            <Loader2 className="h-6 w-6 animate-spin text-violet-500" />
+          </div>
+        ) : orderStats.length === 0 ? (
+          <div className="rounded-lg border border-slate-200 bg-white py-12 text-center text-sm text-slate-400">
+            Istatistik verisi bulunamadi
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {orderStats.map((stat) => {
+              const mpColors: Record<string, { dot: string; border: string; bg: string; text: string }> = {
+                trendyol: { dot: 'bg-orange-500', border: 'border-orange-200', bg: 'bg-orange-50/50', text: 'text-orange-700' },
+                hepsiburada: { dot: 'bg-purple-500', border: 'border-purple-200', bg: 'bg-purple-50/50', text: 'text-purple-700' },
+                ciceksepeti: { dot: 'bg-pink-500', border: 'border-pink-200', bg: 'bg-pink-50/50', text: 'text-pink-700' },
+                web: { dot: 'bg-slate-500', border: 'border-slate-200', bg: 'bg-slate-50/50', text: 'text-slate-700' },
+              };
+              const c = mpColors[stat.marketplace] ?? mpColors.web;
+
+              const statusColors: Record<string, string> = {
+                pending: 'bg-yellow-400',
+                preparing: 'bg-violet-500',
+                shipped: 'bg-blue-500',
+                delivered: 'bg-emerald-500',
+                cancelled: 'bg-rose-500',
+              };
+
+              const statusLabels: Record<string, string> = {
+                pending: 'Beklemede',
+                preparing: 'Hazirlaniyor',
+                shipped: 'Kargoda',
+                delivered: 'Teslim Edildi',
+                cancelled: 'Iptal',
+              };
+
+              const total = stat.totalOrders;
+
+              return (
+                <div
+                  key={stat.marketplace}
+                  className={`rounded-xl border ${c.border} ${c.bg} p-5 space-y-3`}
+                >
+                  <div className="flex items-center gap-2">
+                    <span className={`inline-block h-2.5 w-2.5 rounded-full ${c.dot}`} />
+                    <span className={`text-sm font-semibold capitalize ${c.text}`}>{stat.marketplace}</span>
+                  </div>
+
+                  {total === 0 ? (
+                    <p className="text-xs text-slate-400">Henuz siparis yok</p>
+                  ) : (
+                    <>
+                      <div className="flex items-end justify-between">
+                        <div>
+                          <p className="text-xs text-slate-500">Toplam Siparis</p>
+                          <p className="text-2xl font-bold text-slate-900">{total}</p>
+                        </div>
+                        <div className="text-right">
+                          <p className="text-xs text-slate-500">Toplam Gelir</p>
+                          <p className="text-lg font-bold text-slate-800">
+                            {stat.totalRevenue.toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* Status distribution bar */}
+                      <div>
+                        <div className="flex h-2.5 overflow-hidden rounded-full bg-slate-200">
+                          {Object.entries(stat.byStatus).map(([status, count]) => {
+                            const pct = (count / total) * 100;
+                            if (pct === 0) return null;
+                            return (
+                              <div
+                                key={status}
+                                className={`${statusColors[status] ?? 'bg-slate-400'}`}
+                                style={{ width: `${pct}%` }}
+                                title={`${statusLabels[status] ?? status}: ${count}`}
+                              />
+                            );
+                          })}
+                        </div>
+                        <div className="mt-2 flex flex-wrap gap-x-3 gap-y-1">
+                          {Object.entries(stat.byStatus).map(([status, count]) => (
+                            <div key={status} className="flex items-center gap-1">
+                              <span className={`inline-block h-1.5 w-1.5 rounded-full ${statusColors[status] ?? 'bg-slate-400'}`} />
+                              <span className="text-[10px] text-slate-500">
+                                {statusLabels[status] ?? status} ({count})
+                              </span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </div>
     </div>
   );
 }

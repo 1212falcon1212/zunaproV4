@@ -39,6 +39,7 @@ export class OrdersPanelController {
     @Query('dateFrom') dateFrom?: string,
     @Query('dateTo') dateTo?: string,
     @Query('search') search?: string,
+    @Query('source') source?: string,
   ) {
     return this.ordersService.findAll(req.tenant!.slug, {
       page,
@@ -48,6 +49,7 @@ export class OrdersPanelController {
       dateFrom,
       dateTo,
       search,
+      source,
     });
   }
 

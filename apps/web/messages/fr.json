@@ -478,6 +478,7 @@
         "payment": "Paiement",
         "total": "Total",
         "date": "Date",
+        "source": "Source",
         "actions": "Actions"
       },
       "deleteConfirm": "Êtes-vous sûr de vouloir supprimer cette commande ?",

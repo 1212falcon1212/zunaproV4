@@ -478,6 +478,7 @@
         "payment": "Zahlung",
         "total": "Gesamt",
         "date": "Datum",
+        "source": "Quelle",
         "actions": "Aktionen"
       },
       "deleteConfirm": "Möchten Sie diese Bestellung wirklich löschen?",

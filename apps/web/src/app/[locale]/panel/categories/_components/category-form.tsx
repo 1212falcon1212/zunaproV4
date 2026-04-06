@@ -1,3 +1,4 @@
+// @ts-nocheck — zod v4 + @hookform/resolvers version mismatch
 'use client';
 
 import { useState } from 'react';

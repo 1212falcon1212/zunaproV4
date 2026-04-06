@@ -640,4 +640,105 @@ export class MarketplaceSyncService {
     if (name && typeof name === 'object') { const o = name as Record<string, string>; return o.en ?? o.tr ?? Object.values(o)[0] ?? ''; }
     return '';
   }
+
+  // -----------------------------------------------------------------------
+  // Order sync
+  // -----------------------------------------------------------------------
+
+  async syncOrders(
+    ts: string,
+    mp: string,
+    options?: { startDate?: number; endDate?: number },
+  ) {
+    this.v(mp);
+    if (mp === 'trendyol') return this.ty.fetchOrders(ts, options);
+    // Future: HB / CS order sync
+    throw new BadRequestException(`Order sync not yet supported for ${mp}`);
+  }
+
+  async getMarketplaceOrders(
+    ts: string,
+    mp: string,
+    page = 0,
+    limit = 50,
+    status?: string,
+  ) {
+    this.v(mp);
+    const prisma = getTenantClient(ts);
+    const where: Record<string, unknown> = { source: mp };
+    if (status && status !== 'all') where.status = status;
+
+    const [orders, total] = await Promise.all([
+      prisma.order.findMany({
+        where,
+        skip: page * limit,
+        take: limit,
+        orderBy: { createdAt: 'desc' },
+        include: {
+          customer: {
+            select: { id: true, email: true, firstName: true, lastName: true },
+          },
+        },
+      }),
+      prisma.order.count({ where }),
+    ]);
+
+    return {
+      data: orders,
+      meta: {
+        total,
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit),
+      },
+    };
+  }
+
+  async getMarketplaceOrderStats(ts: string) {
+    const prisma = getTenantClient(ts);
+    const marketplaces = ['trendyol', 'hepsiburada', 'ciceksepeti'];
+    const stats = [];
+
+    for (const mp of marketplaces) {
+      const [total, byStatus, revenue] = await Promise.all([
+        prisma.order.count({ where: { source: mp } }),
+        prisma.order.groupBy({
+          by: ['status'],
+          where: { source: mp },
+          _count: { id: true },
+        }),
+        prisma.order.aggregate({
+          where: { source: mp, paymentStatus: 'paid' },
+          _sum: { totalAmount: true },
+        }),
+      ]);
+
+      stats.push({
+        marketplace: mp,
+        totalOrders: total,
+        totalRevenue: Number(revenue._sum.totalAmount ?? 0),
+        byStatus: Object.fromEntries(
+          byStatus.map((s) => [s.status, s._count.id]),
+        ),
+      });
+    }
+
+    // Web orders too
+    const [webTotal, webRevenue] = await Promise.all([
+      prisma.order.count({ where: { source: 'web' } }),
+      prisma.order.aggregate({
+        where: { source: 'web', paymentStatus: 'paid' },
+        _sum: { totalAmount: true },
+      }),
+    ]);
+
+    stats.unshift({
+      marketplace: 'web',
+      totalOrders: webTotal,
+      totalRevenue: Number(webRevenue._sum.totalAmount ?? 0),
+      byStatus: {},
+    });
+
+    return stats;
+  }
 }

@@ -54,6 +54,63 @@ interface TrendyolCategory {
   subCategories?: TrendyolCategory[];
 }
 
+interface TrendyolShipmentPackage {
+  shipmentPackageId: number;
+  orderNumber: string;
+  orderDate: number;
+  status: string;
+  cargoTrackingNumber?: string;
+  cargoProviderName?: string;
+  shipmentAddress: {
+    firstName: string;
+    lastName: string;
+    address1: string;
+    city: string;
+    district: string;
+    postalCode: string;
+    phone?: string;
+  };
+  invoiceAddress: {
+    firstName: string;
+    lastName: string;
+    address1: string;
+    city: string;
+    district: string;
+    postalCode: string;
+    taxNumber?: string;
+    company?: string;
+  };
+  lines: Array<{
+    lineItemId: number;
+    productCode: number;
+    barcode: string;
+    merchantSku: string;
+    productName: string;
+    quantity: number;
+    price: number;
+    discount: number;
+    currencyCode: string;
+  }>;
+  totalPrice: number;
+  currencyCode: string;
+}
+
+interface TrendyolOrderResponse {
+  page: number;
+  size: number;
+  totalElements: number;
+  totalPages: number;
+  content: TrendyolShipmentPackage[];
+}
+
+interface FetchOrdersOptions {
+  startDate?: number;
+  endDate?: number;
+  status?: string;
+  page?: number;
+  size?: number;
+}
+
 interface FilterOptions {
   productIds?: string[];
   page?: number;
@@ -1139,7 +1196,195 @@ export class TrendyolService extends BaseMarketplaceService {
   }
 
   // -----------------------------------------------------------------------
+  // 10. Order fetching
+  // -----------------------------------------------------------------------
+
+  async fetchOrders(
+    tenantSlug: string,
+    options: FetchOrdersOptions = {},
+  ): Promise<{ created: number; updated: number; errors: string[] }> {
+    const creds = await this.resolveCredentials(tenantSlug);
+    const prisma = getTenantClient(tenantSlug);
+
+    const syncLog = await prisma.syncLog.create({
+      data: {
+        marketplace: MARKETPLACE_NAME,
+        action: 'order_sync',
+        status: 'started',
+      },
+    });
+
+    let created = 0;
+    let updated = 0;
+    const errors: string[] = [];
+
+    try {
+      const now = Date.now();
+      const startDate = options.startDate ?? now - 7 * 24 * 60 * 60 * 1000;
+      const endDate = options.endDate ?? now;
+      const size = options.size ?? 200;
+      let page = options.page ?? 0;
+      let totalPages = 1;
+
+      do {
+        const params = new URLSearchParams({
+          startDate: String(startDate),
+          endDate: String(endDate),
+          size: String(size),
+          page: String(page),
+          orderByField: 'PackageLastModifiedDate',
+          orderByDirection: 'DESC',
+        });
+        if (options.status) params.set('status', options.status);
+
+        const response = await this.apiGet<TrendyolOrderResponse>(
+          `/integration/order/sellers/${creds.supplierId}/orders?${params}`,
+          creds,
+        );
+
+        totalPages = response.totalPages || 1;
+        const packages = response.content ?? [];
+
+        for (const pkg of packages) {
+          try {
+            const mpOrderId = `ty-${pkg.shipmentPackageId}`;
+            const localStatus = this.mapTrendyolOrderStatus(pkg.status);
+
+            const totalAmount = pkg.totalPrice ?? pkg.lines.reduce((s, l) => s + (l.price * l.quantity - l.discount), 0);
+            const items = pkg.lines.map((line) => ({
+              productId: String(line.productCode),
+              name: { tr: line.productName, en: line.productName },
+              slug: '',
+              price: line.price,
+              quantity: line.quantity,
+              total: line.price * line.quantity - line.discount,
+              image: '',
+              sku: line.merchantSku,
+              barcode: line.barcode,
+            }));
+
+            const shippingAddress = pkg.shipmentAddress ? JSON.parse(JSON.stringify({
+              firstName: pkg.shipmentAddress.firstName,
+              lastName: pkg.shipmentAddress.lastName,
+              address: pkg.shipmentAddress.address1,
+              city: pkg.shipmentAddress.city,
+              district: pkg.shipmentAddress.district,
+              postalCode: pkg.shipmentAddress.postalCode,
+              phone: pkg.shipmentAddress.phone ?? '',
+            })) : undefined;
+
+            const existing = await prisma.order.findUnique({
+              where: { marketplaceOrderId: mpOrderId },
+            });
+
+            if (existing) {
+              await prisma.order.update({
+                where: { marketplaceOrderId: mpOrderId },
+                data: {
+                  status: localStatus,
+                  trackingNumber: pkg.cargoTrackingNumber ?? existing.trackingNumber,
+                  shippingMethod: pkg.cargoProviderName ?? existing.shippingMethod,
+                  marketplaceData: JSON.parse(JSON.stringify(pkg)),
+                },
+              });
+              updated++;
+            } else {
+              const orderCount = await prisma.order.count();
+              const orderNumber = `MP-TY-${String(orderCount + 1).padStart(6, '0')}`;
+
+              // Try to find or create customer from shipment address
+              let customerId: string | null = null;
+              if (pkg.shipmentAddress?.firstName) {
+                const customerEmail = `ty-${pkg.shipmentPackageId}@marketplace.local`;
+                const customer = await prisma.customer.upsert({
+                  where: { email: customerEmail },
+                  create: {
+                    email: customerEmail,
+                    firstName: pkg.shipmentAddress.firstName,
+                    lastName: pkg.shipmentAddress.lastName,
+                    phone: pkg.shipmentAddress.phone ?? null,
+                    isGuest: true,
+                  },
+                  update: {},
+                });
+                customerId = customer.id;
+              }
+
+              await prisma.order.create({
+                data: {
+                  orderNumber,
+                  customerId,
+                  status: localStatus,
+                  paymentStatus: 'paid',
+                  paymentMethod: 'marketplace',
+                  totalAmount,
+                  subtotalAmount: totalAmount,
+                  taxAmount: 0,
+                  discountAmount: pkg.lines.reduce((s, l) => s + l.discount, 0),
+                  shippingCost: 0,
+                  currency: pkg.currencyCode ?? 'TRY',
+                  items,
+                  shippingAddress,
+                  trackingNumber: pkg.cargoTrackingNumber ?? null,
+                  shippingMethod: pkg.cargoProviderName ?? null,
+                  source: 'trendyol',
+                  marketplaceOrderId: mpOrderId,
+                  marketplaceData: JSON.parse(JSON.stringify(pkg)),
+                  locale: 'tr',
+                },
+              });
+              created++;
+            }
+          } catch (err) {
+            errors.push(`Package ${pkg.shipmentPackageId}: ${err instanceof Error ? err.message : String(err)}`);
+          }
+        }
+
+        page++;
+      } while (page < totalPages);
+
+      await prisma.syncLog.update({
+        where: { id: syncLog.id },
+        data: {
+          status: 'completed',
+          itemCount: created + updated,
+          details: { created, updated, errors: errors.slice(0, 20) },
+        },
+      });
+
+      this.logger.log(`Order sync for ${tenantSlug}: ${created} created, ${updated} updated`);
+      return { created, updated, errors };
+    } catch (error) {
+      await prisma.syncLog.update({
+        where: { id: syncLog.id },
+        data: {
+          status: 'failed',
+          details: { error: error instanceof Error ? error.message : String(error) },
+          errorCount: 1,
+        },
+      });
+      throw error;
+    }
+  }
+
+  // -----------------------------------------------------------------------
   // Helpers
   // -----------------------------------------------------------------------
 
+  private mapTrendyolOrderStatus(tyStatus: string): string {
+    const map: Record<string, string> = {
+      Created: 'pending',
+      UnPacked: 'pending',
+      Picking: 'preparing',
+      Invoiced: 'preparing',
+      Shipped: 'shipped',
+      AtCollectionPoint: 'shipped',
+      Delivered: 'delivered',
+      Cancelled: 'cancelled',
+      UnSupplied: 'cancelled',
+      Returned: 'refunded',
+      UnDelivered: 'refunded',
+    };
+    return map[tyStatus] ?? 'pending';
+  }
 }
