@@ -2,8 +2,8 @@ import createMiddleware from 'next-intl/middleware';
 import { NextRequest, NextResponse } from 'next/server';
 import { routing } from './i18n/routing';
 
-const PLATFORM_DOMAINS = ['zunapro.com', 'www.zunapro.com'];
-const PLATFORM_SUBDOMAINS = ['www', 'admin', 'api', 'mail'];
+const PLATFORM_DOMAINS = ['zunapro.com', 'www.zunapro.com', 'panel.zunapro.com'];
+const PLATFORM_SUBDOMAINS = ['www', 'admin', 'api', 'mail', 'panel'];
 const LOCALES = routing.locales as readonly string[];
 const DEFAULT_LOCALE = routing.defaultLocale;
 
@@ -84,6 +84,22 @@ export default function middleware(request: NextRequest) {
       response.headers.set('x-tenant-locale', storeLocale);
       response.headers.set('x-tenant-custom-domain', 'false');
       return response;
+    }
+  }
+
+  // --- panel.zunapro.com → redirect to /[locale]/panel ---
+  if (!tenantSlug && hostname === 'panel.zunapro.com') {
+    const pathSegments = pathname.split('/').filter(Boolean);
+    const firstSegment = pathSegments[0] || '';
+    const hasLocale = LOCALES.includes(firstSegment);
+    const locale = hasLocale ? firstSegment : DEFAULT_LOCALE;
+    const rest = hasLocale ? '/' + pathSegments.slice(1).join('/') : pathname;
+
+    // Root or locale-only → redirect to panel
+    if (rest === '/' || rest === '') {
+      const url = request.nextUrl.clone();
+      url.pathname = `/${locale}/panel`;
+      return NextResponse.redirect(url);
     }
   }
 
