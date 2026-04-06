@@ -49,11 +49,13 @@ interface OrderDetailProps {
 }
 
 const statusOptions: Record<string, string[]> = {
-  pending: ['confirmed', 'cancelled'],
-  confirmed: ['processing', 'cancelled'],
-  processing: ['shipped'],
-  shipped: ['delivered'],
-  delivered: [],
+  pending: ['preparing', 'cancelled'],
+  preparing: ['shipped', 'cancelled'],
+  shipped: ['delivered', 'cancelled'],
+  delivered: ['completed', 'refunded'],
+  completed: ['refunded'],
+  cancelled: [],
+  refunded: [],
 };
 
 export function OrderDetail({ order, onStatusUpdate }: OrderDetailProps) {

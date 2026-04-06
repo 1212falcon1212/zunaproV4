@@ -397,12 +397,14 @@
       "status": {
         "all": "Tumu",
         "pending": "Beklemede",
-        "confirmed": "Onaylandi",
-        "processing": "Hazirlaniyor",
+        "preparing": "Hazirlaniyor",
         "shipped": "Kargoya Verildi",
         "delivered": "Teslim Edildi",
+        "completed": "Tamamlandi",
         "cancelled": "Iptal Edildi",
-        "refunded": "Iade Edildi"
+        "refunded": "Iade Edildi",
+        "paid": "Odendi",
+        "failed": "Basarisiz"
       },
       "table": {
         "orderNumber": "Siparis #",
@@ -410,13 +412,14 @@
         "status": "Durum",
         "payment": "Odeme",
         "total": "Toplam",
-        "date": "Tarih"
+        "date": "Tarih",
+        "actions": "Islemler"
       },
       "actions": {
-        "confirmed": "Onayla",
-        "processing": "Hazirlamaya Basla",
+        "preparing": "Hazirlamaya Basla",
         "shipped": "Kargoya Ver",
         "delivered": "Teslim Edildi",
+        "completed": "Tamamla",
         "cancelled": "Iptal Et",
         "refunded": "Iade Et"
       },

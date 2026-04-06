@@ -462,8 +462,10 @@
       "status": {
         "all": "Toutes",
         "pending": "En attente",
-        "confirmed": "Confirmee",
-        "processing": "En cours",
+        "preparing": "En préparation",
+        "completed": "Terminée",
+        "paid": "Payé",
+        "failed": "Échoué",
         "shipped": "Expediee",
         "delivered": "Livree",
         "cancelled": "Annulee",
@@ -480,8 +482,8 @@
       },
       "deleteConfirm": "Êtes-vous sûr de vouloir supprimer cette commande ?",
       "actions": {
-        "confirmed": "Confirmer",
-        "processing": "Commencer le traitement",
+        "preparing": "Commencer la préparation",
+        "completed": "Terminer",
         "shipped": "Marquer comme expediee",
         "delivered": "Marquer comme livree",
         "cancelled": "Annuler",

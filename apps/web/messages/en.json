@@ -462,12 +462,14 @@
       "status": {
         "all": "All",
         "pending": "Pending",
-        "confirmed": "Confirmed",
-        "processing": "Processing",
+        "preparing": "Preparing",
         "shipped": "Shipped",
         "delivered": "Delivered",
+        "completed": "Completed",
         "cancelled": "Cancelled",
-        "refunded": "Refunded"
+        "refunded": "Refunded",
+        "paid": "Paid",
+        "failed": "Failed"
       },
       "table": {
         "orderNumber": "Order #",
@@ -480,10 +482,10 @@
       },
       "deleteConfirm": "Are you sure you want to delete this order?",
       "actions": {
-        "confirmed": "Confirm",
-        "processing": "Start Processing",
+        "preparing": "Start Preparing",
         "shipped": "Mark Shipped",
         "delivered": "Mark Delivered",
+        "completed": "Complete",
         "cancelled": "Cancel",
         "refunded": "Refund"
       },

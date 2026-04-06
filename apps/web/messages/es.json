@@ -460,8 +460,10 @@
       "status": {
         "all": "Todos",
         "pending": "Pendiente",
-        "confirmed": "Confirmado",
-        "processing": "En proceso",
+        "preparing": "En preparación",
+        "completed": "Completado",
+        "paid": "Pagado",
+        "failed": "Fallido",
         "shipped": "Enviado",
         "delivered": "Entregado",
         "cancelled": "Cancelado",
@@ -478,8 +480,8 @@
       },
       "deleteConfirm": "¿Está seguro de que desea eliminar este pedido?",
       "actions": {
-        "confirmed": "Confirmar",
-        "processing": "Iniciar procesamiento",
+        "preparing": "Comenzar preparación",
+        "completed": "Completar",
         "shipped": "Marcar como enviado",
         "delivered": "Marcar como entregado",
         "cancelled": "Cancelar",

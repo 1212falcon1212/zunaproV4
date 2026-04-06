@@ -462,8 +462,10 @@
       "status": {
         "all": "Alle",
         "pending": "Ausstehend",
-        "confirmed": "Bestatigt",
-        "processing": "In Bearbeitung",
+        "preparing": "In Vorbereitung",
+        "completed": "Abgeschlossen",
+        "paid": "Bezahlt",
+        "failed": "Fehlgeschlagen",
         "shipped": "Versendet",
         "delivered": "Zugestellt",
         "cancelled": "Storniert",
@@ -480,8 +482,8 @@
       },
       "deleteConfirm": "Möchten Sie diese Bestellung wirklich löschen?",
       "actions": {
-        "confirmed": "Bestatigen",
-        "processing": "Bearbeitung starten",
+        "preparing": "Vorbereitung starten",
+        "completed": "Abschließen",
         "shipped": "Als versendet markieren",
         "delivered": "Als zugestellt markieren",
         "cancelled": "Stornieren",

@@ -5,10 +5,10 @@ import { useTranslations } from 'next-intl';
 const statuses = [
   'all',
   'pending',
-  'confirmed',
-  'processing',
+  'preparing',
   'shipped',
   'delivered',
+  'completed',
   'cancelled',
   'refunded',
 ];

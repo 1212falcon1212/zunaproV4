@@ -128,6 +128,7 @@ export default function PanelLayout({
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [user, setUser] = useState<ReturnType<typeof getUserFromToken>>(null);
   const [expandedModules, setExpandedModules] = useState<string[]>([]);
+  const [localeDropdownOpen, setLocaleDropdownOpen] = useState(false);
   const { locale } = use(params);
 
   useEffect(() => {
@@ -224,16 +225,41 @@ export default function PanelLayout({
           </button>
         </div>
 
-        {/* Country selector */}
+        {/* Language selector */}
         {!sidebarCollapsed && (
-          <div className="px-3 pt-3 pb-1">
-            <button className="flex w-full items-center justify-between rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-700 hover:bg-slate-100 transition-colors">
+          <div className="relative px-3 pt-3 pb-1">
+            <button
+              onClick={() => setLocaleDropdownOpen((prev) => !prev)}
+              className="flex w-full items-center justify-between rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-700 hover:bg-slate-100 transition-colors"
+            >
               <div className="flex items-center gap-2">
                 <span>{flag}</span>
                 <span className="font-medium">{localeName}</span>
               </div>
-              <ChevronDown className="h-4 w-4 text-slate-400" />
+              <ChevronDown className={`h-4 w-4 text-slate-400 transition-transform ${localeDropdownOpen ? 'rotate-180' : ''}`} />
             </button>
+            {localeDropdownOpen && (
+              <div className="absolute left-3 right-3 z-50 mt-1 rounded-lg border border-slate-200 bg-white py-1 shadow-lg">
+                {Object.entries(LOCALE_FLAGS).map(([loc, locFlag]) => (
+                  <button
+                    key={loc}
+                    onClick={() => {
+                      setLocaleDropdownOpen(false);
+                      const newPath = pathname?.replace(`/${locale}`, `/${loc}`) || `/${loc}/panel`;
+                      router.push(newPath);
+                    }}
+                    className={`flex w-full items-center gap-2 px-3 py-2 text-sm transition-colors ${
+                      loc === locale
+                        ? 'bg-violet-50 text-violet-700 font-medium'
+                        : 'text-slate-700 hover:bg-slate-50'
+                    }`}
+                  >
+                    <span>{locFlag}</span>
+                    <span>{LOCALE_NAMES[loc]}</span>
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
         )}
 

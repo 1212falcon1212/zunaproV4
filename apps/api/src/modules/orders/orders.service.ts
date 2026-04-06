@@ -12,11 +12,11 @@ import { UpdateOrderStatusDto } from './dto/update-order-status.dto';
 import type { OrderItem, Cart } from '@zunapro/types';
 
 const VALID_TRANSITIONS: Record<string, string[]> = {
-  pending: ['confirmed', 'cancelled'],
-  confirmed: ['processing', 'cancelled', 'refunded'],
-  processing: ['shipped', 'refunded'],
-  shipped: ['delivered', 'refunded'],
-  delivered: ['refunded'],
+  pending: ['preparing', 'cancelled'],
+  preparing: ['shipped', 'cancelled', 'refunded'],
+  shipped: ['delivered', 'cancelled', 'refunded'],
+  delivered: ['completed', 'refunded'],
+  completed: ['refunded'],
   cancelled: [],
   refunded: [],
 };
