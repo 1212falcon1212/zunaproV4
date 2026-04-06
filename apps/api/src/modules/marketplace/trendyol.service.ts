@@ -81,18 +81,26 @@ interface TrendyolShipmentPackage {
     company?: string;
   };
   lines: Array<{
-    lineItemId: number;
-    productCode: number;
-    barcode: string;
-    merchantSku: string;
+    lineItemId?: number;
+    lineId?: number;
+    productCode?: number;
+    contentId?: number;
+    barcode?: string;
+    stockCode?: string;
+    merchantSku?: string;
     productName: string;
     quantity: number;
-    price: number;
-    discount: number;
-    currencyCode: string;
+    price?: number;
+    lineUnitPrice?: number;
+    lineGrossAmount?: number;
+    discount?: number;
+    lineTotalDiscount?: number;
+    currencyCode?: string;
+    vatRate?: number;
   }>;
-  totalPrice: number;
-  currencyCode: string;
+  totalPrice?: number;
+  packageGrossAmount?: number;
+  currencyCode?: string;
 }
 
 interface TrendyolOrderResponse {
@@ -1220,7 +1228,7 @@ export class TrendyolService extends BaseMarketplaceService {
 
     try {
       const now = Date.now();
-      const startDate = options.startDate ?? now - 7 * 24 * 60 * 60 * 1000;
+      const startDate = options.startDate ?? now - 14 * 24 * 60 * 60 * 1000;
       const endDate = options.endDate ?? now;
       const size = options.size ?? 200;
       let page = options.page ?? 0;
@@ -1250,17 +1258,17 @@ export class TrendyolService extends BaseMarketplaceService {
             const mpOrderId = `ty-${pkg.shipmentPackageId}`;
             const localStatus = this.mapTrendyolOrderStatus(pkg.status);
 
-            const totalAmount = pkg.totalPrice ?? pkg.lines.reduce((s, l) => s + (l.price * l.quantity - l.discount), 0);
+            const totalAmount = pkg.totalPrice ?? pkg.lines.reduce((s, l) => s + ((l.lineUnitPrice ?? l.price ?? 0) * l.quantity - (l.discount ?? 0)), 0);
             const items = pkg.lines.map((line) => ({
-              productId: String(line.productCode),
+              productId: String(line.productCode ?? line.contentId ?? ''),
               name: { tr: line.productName, en: line.productName },
               slug: '',
-              price: line.price,
+              price: line.lineUnitPrice ?? line.price ?? 0,
               quantity: line.quantity,
-              total: line.price * line.quantity - line.discount,
+              total: (line.lineUnitPrice ?? line.price ?? 0) * line.quantity - (line.discount ?? 0),
               image: '',
-              sku: line.merchantSku,
-              barcode: line.barcode,
+              sku: line.merchantSku ?? line.stockCode ?? '',
+              barcode: line.barcode ?? '',
             }));
 
             const shippingAddress = pkg.shipmentAddress ? JSON.parse(JSON.stringify({
@@ -1282,7 +1290,7 @@ export class TrendyolService extends BaseMarketplaceService {
                 where: { marketplaceOrderId: mpOrderId },
                 data: {
                   status: localStatus,
-                  trackingNumber: pkg.cargoTrackingNumber ?? existing.trackingNumber,
+                  trackingNumber: pkg.cargoTrackingNumber ? String(pkg.cargoTrackingNumber) : existing.trackingNumber,
                   shippingMethod: pkg.cargoProviderName ?? existing.shippingMethod,
                   marketplaceData: JSON.parse(JSON.stringify(pkg)),
                 },
@@ -1313,19 +1321,19 @@ export class TrendyolService extends BaseMarketplaceService {
               await prisma.order.create({
                 data: {
                   orderNumber,
-                  customerId,
+                  ...(customerId ? { customer: { connect: { id: customerId } } } : {}),
                   status: localStatus,
                   paymentStatus: 'paid',
                   paymentMethod: 'marketplace',
                   totalAmount,
                   subtotalAmount: totalAmount,
                   taxAmount: 0,
-                  discountAmount: pkg.lines.reduce((s, l) => s + l.discount, 0),
+                  discountAmount: pkg.lines.reduce((s, l) => s + (l.discount ?? 0), 0),
                   shippingCost: 0,
                   currency: pkg.currencyCode ?? 'TRY',
                   items,
                   shippingAddress,
-                  trackingNumber: pkg.cargoTrackingNumber ?? null,
+                  trackingNumber: pkg.cargoTrackingNumber ? String(pkg.cargoTrackingNumber) : null,
                   shippingMethod: pkg.cargoProviderName ?? null,
                   source: 'trendyol',
                   marketplaceOrderId: mpOrderId,
