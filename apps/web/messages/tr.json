@@ -163,7 +163,10 @@
       "pages": "Sayfalar",
       "settings": "Ayarlar",
       "support": "Destek",
-      "lockedModule": "Kilitli"
+      "lockedModule": "Kilitli",
+      "menus": "Menuler",
+      "blog": "Blog",
+      "siteSettings": "Site Ayarlari"
     },
     "controlPanel": {
       "title": "Kontrol Paneli",
